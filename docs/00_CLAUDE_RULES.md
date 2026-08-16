@@ -2,7 +2,7 @@
 
 **File:** `docs/00_CLAUDE_RULES.md`
 **Project:** AI Digital Invitation Platform
-**Status:** Draft — Owner Approval Required
+**Status:** Approved — Owner Approved 16 August 2026
 **Purpose:** Permanent engineering constitution for Claude Code and any future implementation agent working in this repository.
 
 ---

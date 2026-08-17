@@ -2,13 +2,13 @@
 
 An AI-assisted digital invitation platform for creating, personalizing, publishing, sharing and managing beautiful wedding invitations and RSVPs through one secure, mobile-first service.
 
-**Repository status:** Documentation package complete; final audit corrections in progress  
+**Repository status:** Documentation package complete; implementation-preparation ready  
 **Application status:** Not yet implemented or released  
 **Initial operating market:** Mauritius  
 **Availability vision:** Global  
 **MVP event type:** Weddings only  
 **Document status:** Approved — Owner Approved  
-**Version:** 1.1  
+**Version:** 1.2  
 **Approved date:** 2026-08-17
 
 ---
@@ -335,15 +335,16 @@ Public contribution rules, licensing and external support channels have not yet 
 
 ## Current next steps
 
-The planned Claude Code documentation package is complete. Application implementation has not started, no application release exists, and implementation authorization has not been granted.
+The planned Claude Code documentation package, final cross-document audit, and approved audit corrections are complete and verified. Application implementation has not started, no application release exists, and implementation authorization has not been granted.
 
 Current sequence:
 
-1. commit and verify the approved final-audit corrections;
-2. reconcile the package handoff and implementation-preparation gate;
-3. begin only an explicitly authorized implementation-preparation task;
-4. perform current official technical/provider research and Claude Code Plan Mode readiness review;
-5. obtain explicit owner authorization before any application implementation.
+1. wait for the owner's next instruction;
+2. when instructed, perform only `IMP-001 — Inspect repository baseline` as read-only implementation preparation;
+3. conduct current official technical/provider research and approve the implementation stack through the task ledger;
+4. configure the local environment and Claude Code under an authorized preparation task;
+5. run Claude Code Plan Mode readiness review;
+6. obtain separate explicit owner authorization before any application implementation.
 
 GitHub `main` is the permanent source of truth. Claude Code must enter through `CLAUDE.md`, which preserves the implementation hard stop.
 
@@ -396,6 +397,6 @@ GitHub `main` is the permanent source of truth. Claude Code must enter through `
 ## Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.1.  
+**Approved version:** 1.2.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

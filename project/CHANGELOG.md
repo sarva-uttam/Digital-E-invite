@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.1  
+**Version:** 1.2  
 **Approved date:** 2026-08-17  
 **Current phase:** Implementation preparation — implementation not authorized  
 **Application release status:** No application release exists
@@ -142,20 +142,22 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 **Track:** PACKAGE  
 **Package version:** 0.x  
-**Status:** AUDIT CORRECTIONS IN PROGRESS  
+**Status:** IMPLEMENTATION-PREPARATION READY — APPLICATION IMPLEMENTATION NOT AUTHORIZED  
 **Application release:** None
 
 ### Completed
 
-- Completed and owner-approved the full 28-file Claude Code documentation package, including `CLAUDE.md`, `README.md`, `.gitignore`, and `.env.example`.
+- Completed and owner-approved the full 28-file Claude Code documentation package.
 - Completed the read-only final cross-document audit with verdict `CONDITIONAL PASS — CORRECTIONS REQUIRED`.
-- Owner approved the minimal seven-file audit-reconciliation scope.
+- Committed the approved seven-file correction set in `fae0e60850ce12834f549a39c056a14ff92e6741`.
+- Verified that the correction commit changed exactly the seven authorized paths and that every GitHub copy matched the reviewed content.
+- Reconciled `DOC-009` and `DOC-010`; only the read-only implementation-preparation task `IMP-001` is eligible next.
 
-### In progress
+### Pending owner instruction
 
-- Reconcile `CURRENT_STATE.md`, `TASKS.md`, `README.md`, `DECISIONS.md`, this changelog, `CLAUDE.md`, and `docs/13_ROADMAP.md`.
-- Verify the correction commit and then reconcile the documentation handoff gate.
-- Keep package version at `0.x` until every correction and handoff record is verified.
+- Decide whether to declare the documentation package as Claude Package v1.0.
+- Decide when to perform `IMP-001`; readiness does not authorize automatic execution.
+- Application implementation requires a separate later owner authorization.
 
 ### Not authorized
 
@@ -372,6 +374,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.1.  
+**Approved version:** 1.2.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

@@ -3,7 +3,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.1  
+**Version:** 1.2  
 **Snapshot date:** 2026-08-17  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`
@@ -42,13 +42,13 @@ The immediate work is to finish the remaining project-control and repository-roo
 ## 3. Current phase
 
 **Phase:** Implementation preparation — implementation not authorized  
-**Phase state:** Audit corrections approved and being applied/verified  
+**Phase state:** Implementation-preparation ready; application implementation not authorized  
 **Implementation state:** Not started; authorization not granted  
 **Production state:** No production application exists  
 **Customer availability:** Not launched  
-**Next action:** Commit and verify the approved final-audit correction set.
+**Next action:** Await owner instruction before performing `IMP-001 — Inspect repository baseline`.
 
-All 28 planned Claude Code package files exist on `main` and are owner-approved. Documentation-package assembly is complete, and the final cross-document audit has been completed with a conditional pass. This correction cycle reconciles the package before implementation-preparation work may begin.
+All 28 planned Claude Code package files exist on `main` and are owner-approved. Documentation-package assembly is complete. The final cross-document audit and its approved correction set are complete and verified. The repository is ready for implementation preparation, but no implementation-preparation task should be performed without the owner's next instruction.
 
 Claude Code must not infer authorization to scaffold or implement the application from the completeness of this package.
 
@@ -123,13 +123,11 @@ All 28 planned package files are approved, committed to `main`, and verified.
 
 No planned package file remains to be created.
 
-The remaining pre-handoff work is limited to:
+The final audit corrections were committed and verified in commit `fae0e60850ce12834f549a39c056a14ff92e6741`. `DOC-009` and `DOC-010` are reconciled from that evidence.
 
-1. committing and verifying the approved audit corrections;
-2. reconciling `DOC-009` and `DOC-010` from verified GitHub evidence;
-3. confirming implementation-preparation readiness while preserving the implementation hard stop.
+The next eligible task is the read-only implementation-preparation task `IMP-001 — Inspect repository baseline`. Eligibility is not execution: this task must not be performed until the owner instructs the assistant or Claude Code to proceed.
 
-No application implementation is authorized by this completion state.
+No application implementation is authorized by this handoff state.
 
 ---
 
@@ -355,9 +353,9 @@ Deferred features belong in `project/BACKLOG.md`, not in MVP tasks unless an app
 
 ## 19. Current blockers
 
-### 19.1 Documentation handoff blocker
+### 19.1 Documentation handoff blockers
 
-- approved audit corrections must be committed and verified before the handoff record is closed.
+None. The planned package, final audit, correction commit, and handoff records are complete and verified.
 
 ### 19.2 Implementation-start blockers
 
@@ -380,11 +378,11 @@ Deferred features belong in `project/BACKLOG.md`, not in MVP tasks unless an app
 
 ## 20. Immediate next actions
 
-1. Commit the owner-approved final-audit correction set.
-2. Verify every corrected repository file and the resulting commit.
-3. Mark the audit and documentation handoff tasks from verified evidence.
-4. Confirm that only the implementation-preparation repository-baseline task is eligible next.
-5. Wait for the owner's next instruction; do not perform implementation-preparation or application implementation automatically.
+1. Wait for the owner's next instruction.
+2. When explicitly instructed, perform only `IMP-001 — Inspect repository baseline` as read-only implementation preparation.
+3. Continue through current official technical/provider research and stack approval in dependency order.
+4. Configure the local environment and Claude Code only when the applicable preparation task is authorized.
+5. Obtain separate explicit owner authorization before any application implementation begins.
 
 ---
 
@@ -498,6 +496,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.1.  
+**Approved version:** 1.2.  
 **Snapshot date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

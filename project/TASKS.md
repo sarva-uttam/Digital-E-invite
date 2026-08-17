@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.1  
+**Version:** 1.2  
 **Approved date:** 2026-08-17  
 **Current phase:** Implementation preparation — implementation not authorized  
 **Implementation:** Not authorized; only the explicitly ready preparation task may proceed after handoff verification
@@ -208,7 +208,7 @@ These are the only tasks currently authorized to proceed.
 ### DOC-009 — Final package consistency audit
 
 **Priority:** P0  
-**State:** IN_PROGRESS  
+**State:** VERIFIED  
 **Dependencies:** DOC-001 through DOC-008 verified  
 **Outcome:** certify the documentation package is internally consistent enough to start implementation.
 
@@ -226,7 +226,7 @@ These are the only tasks currently authorized to proceed.
 ### DOC-010 — Mark documentation handoff complete
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** VERIFIED  
 **Dependencies:** DOC-009 verified and owner approval  
 **Outcome:** change the project from documentation assembly to implementation preparation.
 
@@ -253,7 +253,7 @@ Passing the documentation gate authorizes implementation preparation, not produc
 ### IMP-001 — Inspect repository baseline
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** READY  
 **Dependencies:** DOC-010  
 **Outcome:** determine actual repository contents and preserve existing user work.
 
@@ -807,6 +807,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.1.  
+**Approved version:** 1.2.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.2  
+**Version:** 1.3  
 **Approved date:** 2026-08-17  
 **Current phase:** Implementation preparation — implementation not authorized  
 **Implementation:** Not authorized; only the explicitly ready preparation task may proceed after handoff verification
@@ -582,12 +582,12 @@ Passing the documentation gate authorizes implementation preparation, not produc
 **Dependencies:** IMP-071  
 **Acceptance criteria:** member `PENDING/ATTENDING/NOT_ATTENDING`; derived partial party; deadline/lock; guest and host history; no unauthorized additions/cross-party access.
 
-### IMP-073 — Implement CSV guest import/export
+### IMP-073 — Implement CSV guest export
 
-**Priority:** P1  
+**Priority:** P0  
 **State:** BLOCKED  
 **Dependencies:** IMP-070  
-**Acceptance criteria:** UTF-8 preview/map/validate/confirm; duplicate warnings; capacity calculation; formula neutralization; temp deletion; short-lived authenticated export.
+**Acceptance criteria:** short-lived authenticated export; UTF-8-safe output; spreadsheet-formula neutralization; server-side authorization; no private token or unrelated-party disclosure.
 
 ### IMP-074 — Implement guest dashboard totals and filtering
 
@@ -595,6 +595,13 @@ Passing the documentation gate authorizes implementation preparation, not produc
 **State:** BLOCKED  
 **Dependencies:** IMP-072  
 **Acceptance criteria:** person-not-party totals; pending/attending/declined/partial/unnamed/remaining; accessible filters; server-derived counts.
+
+### IMP-075 — Implement CSV guest import
+
+**Priority:** P2  
+**State:** BLOCKED  
+**Dependencies:** IMP-070  
+**Acceptance criteria:** bounded UTF-8 preview/map/validate/confirm; duplicate warnings; capacity calculation; formula neutralization; temporary-file deletion; failure or deferral must not block the P0 MVP journey.
 
 ---
 
@@ -807,6 +814,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.2.  
+**Approved version:** 1.3.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

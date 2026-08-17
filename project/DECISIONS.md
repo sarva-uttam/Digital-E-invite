@@ -3,7 +3,7 @@
 **File:** `project/DECISIONS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
+**Version:** 1.1  
 **Approved date:** 2026-08-17  
 **Current MVP focus:** Weddings only
 
@@ -246,18 +246,25 @@ First publication must occur within 180 days of purchase unless an approved exce
 
 **Sources:** `docs/08_PAYMENT_ARCHITECTURE.md`; `product/PRICING_RULES.md`.
 
-### DEC-014 — Provider-neutral architecture
+### DEC-014 — Provider-neutral architecture and controlled provider baselines
 
-**State:** ACCEPTED  
-**Decision date:** 2026-08-17
+**State:** ACCEPTED — CLARIFIED  
+**Decision date:** 2026-08-17  
+**Clarification date:** 2026-08-17
 
-**Context:** Early examples named frameworks and vendors before comparative architecture work was complete.
+**Context:** Early examples named frameworks and vendors before comparative architecture work was complete. Later owner-approved specialist documents established several technology and provisional provider baselines while preserving adapter boundaries, portability, and production confirmation gates.
 
-**Decision:** Preserve provider-neutral domain boundaries and defer final framework, database, identity, AI, payment, hosting, storage, email, monitoring and analytics selections until the relevant decision gate and current official research.
+**Decision:** Provider-neutral domain boundaries, narrow adapters, and portability remain mandatory. The following already-approved specialist decisions are authoritative within their scopes:
 
-**Consequences:** Documentation may define required capabilities and adapters, but examples such as Next.js, Supabase, Clerk or Replicate are not selections.
+- Next.js 16 App Router, strict TypeScript, Node.js 24 LTS subject to exact-patch compatibility verification, PostgreSQL, a modular monolith, a separate Worker, durable jobs, object storage, and a transactional outbox/equivalent are approved architectural choices under `docs/05_SYSTEM_ARCHITECTURE.md`;
+- OpenAI Responses API is the approved initial text adapter and Replicate official models are the approved initial image adapter under `docs/07_AI_ARCHITECTURE.md`; exact production model identifiers remain gated by implementation-time evaluation;
+- Render Singapore, Amazon S3 Singapore, Render PostgreSQL/Key Value, and the related deployment topology are provisional approved baselines under `docs/12_DEPLOYMENT.md`, not unconditional production activation.
 
-**Sources:** `docs/00_CLAUDE_RULES.md`; `docs/05_SYSTEM_ARCHITECTURE.md`; `docs/12_DEPLOYMENT.md`.
+Authentication, payment/acquiring, email, analytics, and any provider not explicitly selected by its governing specialist document remain unresolved. Exact patches, AI model snapshots, accounts, plans, contracts, pricing, legal/privacy acceptance, regional/latency evidence, and production provider activation remain subject to their documented implementation or production gates.
+
+**Consequences:** A provisional or initial baseline must not be described as a permanent provider commitment. Provider-specific SDKs remain confined to adapters. A provider/model/version may be enabled only after its required security, privacy, licensing, compatibility, cost, operational, and production-confirmation checks. Replacing a provider must not require rewriting domain rules.
+
+**Sources:** `docs/00_CLAUDE_RULES.md`; `docs/05_SYSTEM_ARCHITECTURE.md`; `docs/07_AI_ARCHITECTURE.md`; `docs/12_DEPLOYMENT.md`.
 
 ### DEC-015 — Kubernetes is excluded from the MVP
 
@@ -470,6 +477,6 @@ Do not rewrite history to make a changed decision appear as though it was always
 ## 10. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
+**Approved version:** 1.1.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

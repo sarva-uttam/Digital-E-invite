@@ -3,9 +3,9 @@
 **Project:** AI Digital Invitation Platform  
 **File:** `CLAUDE.md`  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
+**Version:** 1.1  
 **Approved date:** 2026-08-17  
-**Current phase:** Development-package preparation  
+**Current phase:** Implementation preparation — implementation not authorized  
 **Implementation authorization:** Not granted
 
 ---
@@ -82,6 +82,7 @@ Treat a file as authoritative only when its header and approval record state tha
 
 - `Draft` or `Pending Owner Review` — not authoritative;
 - `Approved — Owner Approved` — authoritative after commit verification;
+- a shorter `Status: Approved` is also authoritative when the same committed document's explicit metadata and approval record unambiguously record owner approval, approval date, approved version, and source-of-truth authority;
 - proposals inside a draft — not decisions;
 - approved owner decisions — authoritative within the document's scope;
 - backlog items — not approved scope even when well specified;
@@ -542,6 +543,6 @@ Never report a feature as released unless it has been deployed and verified in t
 ## 19. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
+**Approved version:** 1.1.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

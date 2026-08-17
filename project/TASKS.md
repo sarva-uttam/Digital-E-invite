@@ -3,10 +3,10 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
+**Version:** 1.1  
 **Approved date:** 2026-08-17  
-**Current phase:** Documentation package assembly  
-**Implementation:** Blocked until package completion and final consistency approval
+**Current phase:** Implementation preparation — implementation not authorized  
+**Implementation:** Not authorized; only the explicitly ready preparation task may proceed after handoff verification
 
 ---
 
@@ -97,14 +97,14 @@ These are the only tasks currently authorized to proceed.
 - status/version/date and decisions are finalized;
 - file is committed to `main`;
 - repository file and commit SHA are verified;
-- `project/BACKLOG.md` becomes the next document.
+- `project/BACKLOG.md` was subsequently approved, committed, and verified.
 
 **Evidence:** owner approval and verified GitHub commit/file history for `project/TASKS.md`.
 
 ### DOC-002 — Create `project/BACKLOG.md`
 
 **Priority:** P0  
-**State:** READY  
+**State:** VERIFIED  
 **Dependencies:** DOC-001 verified  
 **Outcome:** capture deferred/non-MVP ideas without allowing scope leakage.
 
@@ -119,7 +119,7 @@ These are the only tasks currently authorized to proceed.
 ### DOC-003 — Create `project/DECISIONS.md`
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** VERIFIED  
 **Dependencies:** DOC-002 verified  
 **Outcome:** create the durable architectural/product decision log.
 
@@ -134,7 +134,7 @@ These are the only tasks currently authorized to proceed.
 ### DOC-004 — Create `project/CHANGELOG.md`
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** VERIFIED  
 **Dependencies:** DOC-003 verified  
 **Outcome:** establish a human-readable package/product change history.
 
@@ -148,7 +148,7 @@ These are the only tasks currently authorized to proceed.
 ### DOC-005 — Create root `CLAUDE.md`
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** VERIFIED  
 **Dependencies:** DOC-004 verified  
 **Outcome:** provide Claude Code with concise repository-specific operating instructions.
 
@@ -163,7 +163,7 @@ These are the only tasks currently authorized to proceed.
 ### DOC-006 — Update root `README.md`
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** VERIFIED  
 **Dependencies:** DOC-005 verified  
 **Outcome:** accurately describe the repository and its pre-implementation status.
 
@@ -178,7 +178,7 @@ These are the only tasks currently authorized to proceed.
 ### DOC-007 — Create `.gitignore`
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** VERIFIED  
 **Dependencies:** DOC-006 verified; implementation tooling direction sufficiently known  
 **Outcome:** establish safe repository hygiene without hiding required source files.
 
@@ -192,7 +192,7 @@ These are the only tasks currently authorized to proceed.
 ### DOC-008 — Create `.env.example`
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** VERIFIED  
 **Dependencies:** DOC-007 verified; provider variables documented generically  
 **Outcome:** define a safe, secret-free environment-variable contract.
 
@@ -208,7 +208,7 @@ These are the only tasks currently authorized to proceed.
 ### DOC-009 — Final package consistency audit
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** IN_PROGRESS  
 **Dependencies:** DOC-001 through DOC-008 verified  
 **Outcome:** certify the documentation package is internally consistent enough to start implementation.
 
@@ -221,7 +221,7 @@ These are the only tasks currently authorized to proceed.
 - provider/version claims requiring fresh verification are labelled;
 - security/legal/tax limitations remain explicit;
 - `CURRENT_STATE.md`, `TASKS.md`, `DECISIONS.md`, and `CHANGELOG.md` reflect repository truth;
-- owner explicitly approves implementation handoff.
+- owner explicitly approves the audit verdict and correction set; this does not authorize application implementation.
 
 ### DOC-010 — Mark documentation handoff complete
 
@@ -234,7 +234,7 @@ These are the only tasks currently authorized to proceed.
 
 - `CURRENT_STATE.md` updated/versioned;
 - DOC-001–DOC-009 evidence recorded;
-- first implementation task becomes `READY`;
+- `IMP-001`, the repository-baseline implementation-preparation task, becomes `READY`; application-building tasks remain `BLOCKED`;
 - no production launch claim is made;
 - changes committed and verified.
 
@@ -807,6 +807,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
+**Approved version:** 1.1.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

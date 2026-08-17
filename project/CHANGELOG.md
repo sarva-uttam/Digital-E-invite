@@ -3,9 +3,9 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
+**Version:** 1.1  
 **Approved date:** 2026-08-17  
-**Current phase:** Claude Code development-package preparation  
+**Current phase:** Implementation preparation — implementation not authorized  
 **Application release status:** No application release exists
 
 ---
@@ -142,25 +142,27 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 **Track:** PACKAGE  
 **Package version:** 0.x  
-**Status:** IN PROGRESS
+**Status:** AUDIT CORRECTIONS IN PROGRESS  
+**Application release:** None
 
-### Planned
+### Completed
 
-- Complete and approve the remaining root package files:
-  - `CLAUDE.md`;
-  - `README.md`;
-  - `.gitignore`;
-  - `.env.example`.
-- Perform the required full-package consistency, decision, security and premature-vendor-assumption audit.
-- Resolve every contradiction or orphaned proposal before implementation authorization.
-- Record package readiness in `project/CURRENT_STATE.md` and authorize implementation through `project/TASKS.md` only after owner approval.
+- Completed and owner-approved the full 28-file Claude Code documentation package, including `CLAUDE.md`, `README.md`, `.gitignore`, and `.env.example`.
+- Completed the read-only final cross-document audit with verdict `CONDITIONAL PASS — CORRECTIONS REQUIRED`.
+- Owner approved the minimal seven-file audit-reconciliation scope.
+
+### In progress
+
+- Reconcile `CURRENT_STATE.md`, `TASKS.md`, `README.md`, `DECISIONS.md`, this changelog, `CLAUDE.md`, and `docs/13_ROADMAP.md`.
+- Verify the correction commit and then reconcile the documentation handoff gate.
+- Keep package version at `0.x` until every correction and handoff record is verified.
 
 ### Not authorized
 
-- application implementation;
-- production deployment;
-- customer launch;
-- final vendor selection;
+- application implementation or scaffolding;
+- dependency installation;
+- production deployment or customer launch;
+- provider onboarding or new provider selection;
 - final pricing publication;
 - activation or advertisement of payment methods;
 - production tax behavior;
@@ -206,11 +208,11 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 - Added and approved `docs/04_DOMAIN_MODEL.md`, defining core entities, invariants, lifecycle concepts and domain boundaries.  
   Commit: `f19ef4ac5327df8e20eca330f94bf5878d437def`
-- Added and approved `docs/05_SYSTEM_ARCHITECTURE.md`, defining provider-neutral system boundaries and deferring final stack choices.  
+- Added and approved `docs/05_SYSTEM_ARCHITECTURE.md`, defining the approved modular-monolith/runtime framework direction, provider adapters, and unresolved provider boundaries.  
   Commit: `b0e6b518eed96e49e8a09e220d28d919076a2218`
 - Added and approved `docs/06_DATABASE_DESIGN.md`, defining logical persistence, history, money, entitlement, audit and access-control requirements without selecting a database provider.  
   Commit: `1e2abdc26bcf5434540c2558b468bb0f46ca8897`
-- Added and approved `docs/07_AI_ARCHITECTURE.md`, defining bounded provider-neutral AI orchestration and prohibiting silent cross-provider failover.  
+- Added and approved `docs/07_AI_ARCHITECTURE.md`, selecting initial OpenAI text and Replicate image adapter baselines while preserving bounded orchestration, evaluation gates, and no silent cross-provider failover.  
   Commit: `1cea899a2d82ffb18a70b90ab87ec4eeac9abb3f`
 - Added and approved `docs/08_PAYMENT_ARCHITECTURE.md`, defining hosted checkout, verified payment truth, MUR base currency, controlled EUR/USD support, local-method verification and professional tax review.  
   Commit: `1630e31b1da3656150252b157d446fc7331705c0`
@@ -245,7 +247,7 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - Established one-time Essential, Signature and Premium event packages instead of subscriptions (`DEC-005`).
 - Required the complete core workflow and universal security, privacy and accessibility baseline in every tier (`DEC-006`, `DEC-021`).
 - Approved bounded package dimensions and prohibited automatic overages (`DEC-007`, `DEC-008`).
-- Kept final prices and final providers undecided (`DEC-009`, `DEC-014`).
+- Kept final prices undecided and preserved provider abstraction while allowing specialist documents to approve initial/provisional baselines subject to exact-model, compatibility, legal/privacy, contract and production gates (`DEC-009`, clarified `DEC-014`).
 - Established MUR as base currency with gated EUR/USD price books (`DEC-010`).
 - Required hosted checkout, server-verified payment truth and production verification of every advertised payment method (`DEC-011`, `DEC-012`).
 - Required qualified Mauritius accounting/tax approval before production launch (`DEC-013`).
@@ -370,6 +372,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
+**Approved version:** 1.1.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

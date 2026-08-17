@@ -3,7 +3,7 @@
 **File:** `docs/13_ROADMAP.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
+**Version:** 1.1  
 **Approved date:** 2026-08-17  
 **Depends on:** `docs/00_CLAUDE_RULES.md` through `docs/12_DEPLOYMENT.md`
 
@@ -408,7 +408,8 @@ An owner can manage guest parties and a guest can respond privately without crea
 
 - guest-party-first domain and capacity rules;
 - manual guest/party management;
-- validated CSV import with downloadable safe error report;
+- manual guest entry and CSV export in the P0 path;
+- bounded validated CSV guest import is P2, may follow the stable P0 journey, and must not block P0 completion;
 - closed RSVP default;
 - hard-to-guess public invitation slug plus separate private RSVP/management token where required;
 - hashed tokens, expiry/revocation, replay/abuse controls, and non-disclosing errors;
@@ -424,7 +425,7 @@ An owner can manage guest parties and a guest can respond privately without crea
 - one party cannot view/change another party;
 - repeated/concurrent submission produces one consistent result and recorded revisions;
 - no marketing consent is bundled;
-- CSV formula/injection, encoding, size, duplicate, and invalid-row cases are safe.
+- when the P2 CSV import is implemented, formula/injection, encoding, size, duplicate, and invalid-row cases are safe.
 
 ---
 
@@ -545,7 +546,7 @@ Real customers complete a small number of weddings under close observation befor
 - AI concept acceptance/regeneration/failure/cost;
 - checkout conversion, verification delay, failure, refund, and discrepancy;
 - publication success and invitation performance;
-- CSV/guest-party usability;
+- guest-party and CSV-export usability; P2 CSV-import usability only when that capability is activated;
 - RSVP completion, revision, and support issues;
 - accessibility/language issues;
 - support volume and time to resolution;
@@ -880,6 +881,6 @@ Success is not measured by registrations, AI generations, or page views alone.
 ## 31. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
+**Approved version:** 1.1.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–18 approved as proposed.

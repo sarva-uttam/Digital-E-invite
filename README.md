@@ -2,13 +2,13 @@
 
 An AI-assisted digital invitation platform for creating, personalizing, publishing, sharing and managing beautiful wedding invitations and RSVPs through one secure, mobile-first service.
 
-**Repository status:** Documentation package in preparation  
+**Repository status:** Documentation package complete; final audit corrections in progress  
 **Application status:** Not yet implemented or released  
 **Initial operating market:** Mauritius  
 **Availability vision:** Global  
 **MVP event type:** Weddings only  
 **Document status:** Approved — Owner Approved  
-**Version:** 1.0  
+**Version:** 1.1  
 **Approved date:** 2026-08-17
 
 ---
@@ -335,15 +335,17 @@ Public contribution rules, licensing and external support channels have not yet 
 
 ## Current next steps
 
-The remaining package sequence is:
+The planned Claude Code documentation package is complete. Application implementation has not started, no application release exists, and implementation authorization has not been granted.
 
-1. approve and commit this `README.md`;
-2. draft, approve and commit `.gitignore`;
-3. draft, approve and commit `.env.example`;
-4. perform the final cross-document consistency and decision audit;
-5. correct any approved-document contradictions through the controlled workflow;
-6. update project state, tasks, decisions and changelog for package readiness;
-7. request explicit owner authorization before implementation begins.
+Current sequence:
+
+1. commit and verify the approved final-audit corrections;
+2. reconcile the package handoff and implementation-preparation gate;
+3. begin only an explicitly authorized implementation-preparation task;
+4. perform current official technical/provider research and Claude Code Plan Mode readiness review;
+5. obtain explicit owner authorization before any application implementation.
+
+GitHub `main` is the permanent source of truth. Claude Code must enter through `CLAUDE.md`, which preserves the implementation hard stop.
 
 ---
 
@@ -394,6 +396,6 @@ The remaining package sequence is:
 ## Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
+**Approved version:** 1.1.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

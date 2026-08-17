@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.2  
+**Version:** 1.3  
 **Approved date:** 2026-08-17  
 **Current phase:** Implementation preparation — implementation not authorized  
 **Application release status:** No application release exists
@@ -138,24 +138,24 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 ---
 
-## 8. Unreleased
+## 8. 2026-08-17 — Claude Package v1.0 declaration
 
 **Track:** PACKAGE  
-**Package version:** 0.x  
-**Status:** IMPLEMENTATION-PREPARATION READY — APPLICATION IMPLEMENTATION NOT AUTHORIZED  
+**Package version:** 1.0  
+**Status:** IMPLEMENTATION PREPARATION READY — APPLICATION IMPLEMENTATION NOT AUTHORIZED  
 **Application release:** None
 
 ### Completed
 
 - Completed and owner-approved the full 28-file Claude Code documentation package.
-- Completed the read-only final cross-document audit with verdict `CONDITIONAL PASS — CORRECTIONS REQUIRED`.
-- Committed the approved seven-file correction set in `fae0e60850ce12834f549a39c056a14ff92e6741`.
-- Verified that the correction commit changed exactly the seven authorized paths and that every GitHub copy matched the reviewed content.
-- Reconciled `DOC-009` and `DOC-010`; only the read-only implementation-preparation task `IMP-001` is eligible next.
+- Completed the final cross-document audit; after the approved corrections were committed and verified, all Critical, High and Medium findings were closed and the audit passed.
+- Committed the approved correction cycle in `fae0e60850ce12834f549a39c056a14ff92e6741`, `5b516c1593ae039a44dd03034185306e8285e83f`, and `222c5f7c5e2c935ca74a6ee2f4a81172808d2650`.
+- Verified the corrected repository copies and confirmed that no unrelated file, application code or infrastructure was created.
+- Verified `DOC-001` through `DOC-010`; only the read-only implementation-preparation task `IMP-001` is `READY`.
+- Formally declared Claude Package v1.0 with package status `Implementation Preparation Ready`.
 
 ### Pending owner instruction
 
-- Decide whether to declare the documentation package as Claude Package v1.0.
 - Decide when to perform `IMP-001`; readiness does not authorize automatic execution.
 - Application implementation requires a separate later owner authorization.
 
@@ -374,6 +374,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.2.  
+**Approved version:** 1.3.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

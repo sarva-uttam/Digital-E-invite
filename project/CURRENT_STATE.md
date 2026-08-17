@@ -3,10 +3,12 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.2  
+**Version:** 1.3  
 **Snapshot date:** 2026-08-17  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
-**Branch:** `main`
+**Branch:** `main`  
+**Claude Package version:** 1.0  
+**Package status:** Implementation Preparation Ready
 
 ---
 
@@ -35,7 +37,7 @@ The product, domain, architecture, security, testing, deployment, roadmap, prici
 
 Application implementation has **not** started. There is no approved production application, infrastructure deployment, database instance, payment integration, AI-provider integration, or customer launch.
 
-The immediate work is to finish the remaining project-control and repository-root documents before handing the approved package to Claude Code for systematic implementation.
+The documentation package and handoff declaration are complete. The next eligible work is the explicitly authorized implementation-preparation sequence; application implementation remains prohibited.
 
 ---
 
@@ -48,7 +50,7 @@ The immediate work is to finish the remaining project-control and repository-roo
 **Customer availability:** Not launched  
 **Next action:** Await owner instruction before performing `IMP-001 — Inspect repository baseline`.
 
-All 28 planned Claude Code package files exist on `main` and are owner-approved. Documentation-package assembly is complete. The final cross-document audit and its approved correction set are complete and verified. The repository is ready for implementation preparation, but no implementation-preparation task should be performed without the owner's next instruction.
+All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. No implementation-preparation task should be performed without the owner's next instruction.
 
 Claude Code must not infer authorization to scaffold or implement the application from the completeness of this package.
 
@@ -123,7 +125,7 @@ All 28 planned package files are approved, committed to `main`, and verified.
 
 No planned package file remains to be created.
 
-The final audit corrections were committed and verified in commit `fae0e60850ce12834f549a39c056a14ff92e6741`. `DOC-009` and `DOC-010` are reconciled from that evidence.
+The final audit corrections and handoff reconciliation were committed and verified in `fae0e60850ce12834f549a39c056a14ff92e6741`, `5b516c1593ae039a44dd03034185306e8285e83f`, and `222c5f7c5e2c935ca74a6ee2f4a81172808d2650`. `DOC-001` through `DOC-010` are verified.
 
 The next eligible task is the read-only implementation-preparation task `IMP-001 — Inspect repository baseline`. Eligibility is not execution: this task must not be performed until the owner instructs the assistant or Claude Code to proceed.
 
@@ -496,6 +498,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.2.  
+**Approved version:** 1.3.  
 **Snapshot date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

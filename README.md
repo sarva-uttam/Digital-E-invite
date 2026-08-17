@@ -2,13 +2,15 @@
 
 An AI-assisted digital invitation platform for creating, personalizing, publishing, sharing and managing beautiful wedding invitations and RSVPs through one secure, mobile-first service.
 
-**Repository status:** Documentation package complete; implementation-preparation ready  
+**Claude Package version:** 1.0  
+**Package status:** Implementation Preparation Ready  
+**Repository status:** Documentation package complete; final audit passed and corrections verified  
 **Application status:** Not yet implemented or released  
 **Initial operating market:** Mauritius  
 **Availability vision:** Global  
 **MVP event type:** Weddings only  
 **Document status:** Approved — Owner Approved  
-**Version:** 1.2  
+**Version:** 1.3  
 **Approved date:** 2026-08-17
 
 ---
@@ -335,7 +337,7 @@ Public contribution rules, licensing and external support channels have not yet 
 
 ## Current next steps
 
-The planned Claude Code documentation package, final cross-document audit, and approved audit corrections are complete and verified. Application implementation has not started, no application release exists, and implementation authorization has not been granted.
+Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. The planned documentation package is complete, the final cross-document audit passed after all approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Application implementation has not started, no application release exists, and owner authorization for application implementation has not been granted.
 
 Current sequence:
 
@@ -397,6 +399,6 @@ GitHub `main` is the permanent source of truth. Claude Code must enter through `
 ## Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.2.  
+**Approved version:** 1.3.  
 **Approved date:** 2026-08-17.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

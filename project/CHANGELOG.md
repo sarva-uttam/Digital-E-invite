@@ -3,10 +3,10 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.8  
-**Approved date:** 2026-08-20  
+**Version:** 1.9  
+**Approved date:** 2026-08-21  
 **Current phase:** Application implementation — authorized and task-controlled  
-**Application release status:** No application release exists (engineering baseline implemented on an unmerged feature branch)
+**Application release status:** No application release exists
 
 ---
 
@@ -208,7 +208,7 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 **Track:** APPLICATION  
 **Application version:** 0.1.0 (unreleased)  
-**Status:** DRAFT — implemented on feature branch `imp-004-engineering-baseline`, not merged to `main`, not deployed  
+**Status:** VERIFIED — merged to `main`, not deployed  
 **Application release:** None
 
 - Implemented the minimal Next.js `16.3.1` App Router scaffold, strict TypeScript `6.0.3`, ESLint (`eslint-config-next`), Prettier, and Vitest, exactly matching the `DEC-023` approved stack; `package-lock.json` committed for reproducible `npm ci`.
@@ -217,8 +217,10 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - Added a `worker/` structural placeholder establishing the web/worker boundary from `docs/05_SYSTEM_ARCHITECTURE.md`, with no job processing or business logic.
 - Declared Drizzle ORM `0.45.2`, Drizzle Kit `0.31.10`, and pg-boss `12.27.0` as dependencies only; created no schema, migration, queue, or database connection.
 - Verified from a clean `npm ci`: `format:check`, `lint`, `typecheck`, `test` (8/8 passing), and `build` all passed; smoke-tested the production build over HTTP.
-- Recorded `IMP-004` as `VERIFIED` in `project/TASKS.md`; `IMP-005` and every later task remain `BLOCKED` and were not performed.
-- **Migration/action required:** None. **Compatibility/customer impact:** None — not merged, not deployed, no customer-visible change.
+- Final repository-side audit result: `PASS WITH NON-BLOCKING FOLLOW-UP`. The disclosed Node.js verification-host mismatch (`24.14.0` versus pinned `24.19.0`) is carried forward to exact-runtime CI verification under `IMP-005`.
+- PR #1 merged by normal merge commit `1ae399202fb34ac7c760321c0b8831527c62b968`, preserving implementation commit `da9c8b7a1ddab0b0f5470fc9ed5aa5d29a99339f` in history; all 24 reviewed paths were verified on `main`.
+- Recorded `IMP-004` as `VERIFIED` on `main` and changed only its direct dependent `IMP-005` to `READY`. `IMP-005` was not performed, and every later task remains `BLOCKED`.
+- **Migration/action required:** None. **Compatibility/customer impact:** None — merged but not deployed, with no customer-visible change and `Application release: None`.
 
 ---
 
@@ -424,6 +426,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.8.  
-**Approved date:** 2026-08-20.  
-**Owner decisions:** Decisions 1–10 approved as proposed; the `IMP-004` engineering-baseline entry recorded under Decision 8 (release truth: `DRAFT`, unmerged, undeployed).
+**Approved version:** 1.9.  
+**Approved date:** 2026-08-21.  
+**Owner decisions:** Decisions 1–10 approved as proposed; the `IMP-004` engineering-baseline entry recorded under Decision 8 (release truth: `VERIFIED`, merged, undeployed).

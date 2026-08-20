@@ -3,8 +3,8 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.8  
-**Approved date:** 2026-08-20  
+**Version:** 1.9  
+**Approved date:** 2026-08-21  
 **Current phase:** Application implementation — authorized and task-controlled  
 **Application implementation authorization:** GRANTED — task-controlled; only `READY` tasks may be performed
 
@@ -343,7 +343,7 @@ This gate does not authorize production deployment, customer launch, provider co
 
 **Verification evidence — 2026-08-20:**
 
-- implemented on branch `imp-004-engineering-baseline` from verified `main` at `89ae65b4ac532403addbae0dab76bca975d1f934`;
+- implemented in commit `da9c8b7a1ddab0b0f5470fc9ed5aa5d29a99339f` on branch `imp-004-engineering-baseline` from verified `main` at `89ae65b4ac532403addbae0dab76bca975d1f934`;
 - scaffolded the approved `DEC-023` stack exactly as pinned: Node.js engines `24.19.0` (`.nvmrc`), Next.js `16.3.1` App Router, TypeScript `6.0.3` strict, npm with committed `package-lock.json`, Drizzle ORM `0.45.2`/Drizzle Kit `0.31.10` and pg-boss `12.27.0` present as declared dependencies only — no schema, migration, queue, or database connection was created;
 - added ESLint (`eslint-config-next` flat config), Prettier (scoped to application/config files; approved documentation under `docs/`, `product/`, `project/`, `CLAUDE.md`, `README.md`, `.env.example` is explicitly excluded from reformatting), and Vitest;
 - added `GET /api/health`: a shallow, non-sensitive liveness check returning `200` with `{status, service, time}` and no secrets, environment values, or dependency detail, per `docs/12_DEPLOYMENT.md` section 3; covered by an automated test that also asserts no secret-shaped keys appear in the response;
@@ -353,12 +353,13 @@ This gate does not authorize production deployment, customer launch, provider co
 - verification loop run from a clean `npm ci` (reproducible install from the committed lockfile): `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm test` (8/8 passed), `npm run build` all passed; additionally smoke-tested by running the production build (`npm run start`) and confirming `GET /` and `GET /api/health` respond correctly over HTTP;
 - inspected the diff and `git status` for secrets, generated artifacts, and unrelated changes before committing; none found;
 - known limitation: the local development machine's installed Node.js is `24.14.0`, not the exact approved `24.19.0`; `engines` in `package.json` and `.nvmrc` record the approved version, `npm ci`/`npm install` are not blocked (no `engine-strict`), and this is recorded as a deferred item, not a defect in the committed baseline;
-- `IMP-005` and all later implementation tasks were not performed and remain `BLOCKED`.
+- final repository-side audit result: `PASS WITH NON-BLOCKING FOLLOW-UP`; PR #1 merged to `main` by normal merge commit `1ae399202fb34ac7c760321c0b8831527c62b968`, preserving implementation commit `da9c8b7a1ddab0b0f5470fc9ed5aa5d29a99339f`;
+- `IMP-005` was not performed. Its sole dependency, `IMP-004`, is now verified on `main`, so `IMP-005` is `READY`; every later implementation task remains `BLOCKED`.
 
 ### IMP-005 — Establish CI quality gates
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** READY  
 **Dependencies:** IMP-004  
 **Outcome:** run repeatable checks on every proposed change.
 
@@ -860,6 +861,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.8.  
-**Approved date:** 2026-08-20.  
+**Approved version:** 1.9.  
+**Approved date:** 2026-08-21.  
 **Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` recorded `VERIFIED` with evidence under Decision 10.

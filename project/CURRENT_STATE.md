@@ -3,8 +3,8 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.3  
-**Snapshot date:** 2026-08-17  
+**Version:** 1.4  
+**Snapshot date:** 2026-08-20  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
 **Claude Package version:** 1.0  
@@ -48,7 +48,7 @@ The documentation package and handoff declaration are complete. The next eligibl
 **Implementation state:** Not started; authorization not granted  
 **Production state:** No production application exists  
 **Customer availability:** Not launched  
-**Next action:** Await owner instruction before performing `IMP-001 — Inspect repository baseline`.
+**Next action:** Await owner instruction before performing `IMP-002 — Research current technical candidates`.
 
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. No implementation-preparation task should be performed without the owner's next instruction.
 
@@ -127,7 +127,9 @@ No planned package file remains to be created.
 
 The final audit corrections and handoff reconciliation were committed and verified in `fae0e60850ce12834f549a39c056a14ff92e6741`, `5b516c1593ae039a44dd03034185306e8285e83f`, and `222c5f7c5e2c935ca74a6ee2f4a81172808d2650`. `DOC-001` through `DOC-010` are verified.
 
-The next eligible task is the read-only implementation-preparation task `IMP-001 — Inspect repository baseline`. Eligibility is not execution: this task must not be performed until the owner instructs the assistant or Claude Code to proceed.
+The bounded read-only repository-baseline inspection `IMP-001` completed with `PASS` against commit `a81b217468cb8979d9933f7bc27740afca2d06c7` and is `VERIFIED`. The repository remains documentation/configuration only: it contains the 28 approved Claude Package v1.0 files and no application source, scaffolding, dependencies, database, migration, infrastructure, or provider configuration. No existing user application work requires preservation beyond the approved package.
+
+The next eligible task is `IMP-002 — Research current technical candidates`, now `READY` under the existing dependency rules. Eligibility is not execution: `IMP-002` must not be performed until the owner explicitly instructs the assistant or Claude Code to proceed.
 
 No application implementation is authorized by this handoff state.
 
@@ -361,7 +363,7 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ### 19.2 Implementation-start blockers
 
-- implementation-preparation baseline and current technical/provider research have not been completed;
+- current technical/provider research has not been completed; `IMP-002` is ready but has not been performed;
 - exact implementation-time versions and unresolved providers remain subject to their approved gates;
 - Claude Code Plan Mode readiness review has not occurred;
 - the owner has not explicitly authorized application implementation.
@@ -381,9 +383,9 @@ None. The planned package, final audit, correction commit, and handoff records a
 ## 20. Immediate next actions
 
 1. Wait for the owner's next instruction.
-2. When explicitly instructed, perform only `IMP-001 — Inspect repository baseline` as read-only implementation preparation.
-3. Continue through current official technical/provider research and stack approval in dependency order.
-4. Configure the local environment and Claude Code only when the applicable preparation task is authorized.
+2. When explicitly instructed, perform only `IMP-002 — Research current technical candidates` as implementation preparation.
+3. Do not select a stack or provider during `IMP-002`; record evidence and alternatives for later owner approval.
+4. Continue through stack approval and environment configuration only in dependency order under separately authorized preparation tasks.
 5. Obtain separate explicit owner authorization before any application implementation begins.
 
 ---
@@ -498,6 +500,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.3.  
-**Snapshot date:** 2026-08-17.  
+**Approved version:** 1.4.  
+**Snapshot date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

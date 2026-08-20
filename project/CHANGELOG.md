@@ -3,8 +3,8 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.3  
-**Approved date:** 2026-08-17  
+**Version:** 1.4  
+**Approved date:** 2026-08-20  
 **Current phase:** Implementation preparation — implementation not authorized  
 **Application release status:** No application release exists
 
@@ -151,12 +151,20 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - Completed the final cross-document audit; after the approved corrections were committed and verified, all Critical, High and Medium findings were closed and the audit passed.
 - Committed the approved correction cycle in `fae0e60850ce12834f549a39c056a14ff92e6741`, `5b516c1593ae039a44dd03034185306e8285e83f`, and `222c5f7c5e2c935ca74a6ee2f4a81172808d2650`.
 - Verified the corrected repository copies and confirmed that no unrelated file, application code or infrastructure was created.
-- Verified `DOC-001` through `DOC-010`; only the read-only implementation-preparation task `IMP-001` is `READY`.
+- At the Package v1.0 declaration, `DOC-001` through `DOC-010` were `VERIFIED` and the read-only implementation-preparation task `IMP-001` was the only `READY` task.
 - Formally declared Claude Package v1.0 with package status `Implementation Preparation Ready`.
+
+### Implementation-preparation milestone — `IMP-001`
+
+- Completed `IMP-001 — Inspect repository baseline` under explicitly bounded, read-only authorization; Claude Code reported `IMP-001 RESULT: PASS`.
+- Verified `main` and `origin/main` at baseline commit `a81b217468cb8979d9933f7bc27740afca2d06c7`, with a clean working tree and no conflicting local artifacts, branches, tags, or stashes.
+- Confirmed the repository remained documentation/configuration only, containing exactly the 28 approved package files and no application code, dependencies, infrastructure, database, migration, scaffolding, or provider configuration.
+- Recorded `IMP-001` as `VERIFIED` and made only its directly dependent preparation task, `IMP-002`, `READY`.
+- This milestone is not application implementation and creates no application release.
 
 ### Pending owner instruction
 
-- Decide when to perform `IMP-001`; readiness does not authorize automatic execution.
+- Decide when to perform `IMP-002`; readiness does not authorize automatic execution.
 - Application implementation requires a separate later owner authorization.
 
 ### Not authorized
@@ -374,6 +382,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.3.  
-**Approved date:** 2026-08-17.  
+**Approved version:** 1.4.  
+**Approved date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

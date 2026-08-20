@@ -3,8 +3,8 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.3  
-**Approved date:** 2026-08-17  
+**Version:** 1.4  
+**Approved date:** 2026-08-20  
 **Current phase:** Implementation preparation — implementation not authorized  
 **Implementation:** Not authorized; only the explicitly ready preparation task may proceed after handoff verification
 
@@ -253,7 +253,7 @@ Passing the documentation gate authorizes implementation preparation, not produc
 ### IMP-001 — Inspect repository baseline
 
 **Priority:** P0  
-**State:** READY  
+**State:** VERIFIED  
 **Dependencies:** DOC-010  
 **Outcome:** determine actual repository contents and preserve existing user work.
 
@@ -264,10 +264,19 @@ Passing the documentation gate authorizes implementation preparation, not produc
 - contradictions with `CURRENT_STATE.md` reported;
 - baseline evidence recorded.
 
+**Verification evidence — 2026-08-20:**
+
+- Claude Code reported `IMP-001 RESULT: PASS` under bounded read-only authorization;
+- inspected baseline commit: `a81b217468cb8979d9933f7bc27740afca2d06c7` on `main`, matching `origin/main`;
+- working tree clean; no uncommitted, untracked, ignored-project-artifact, stash, branch, or tag conflicts found;
+- repository contained exactly the 28 approved Claude Package v1.0 files and no application source, scaffolding, dependencies, database, migration, infrastructure, or provider configuration;
+- repository state matched `project/CURRENT_STATE.md`, no baseline contradiction was found, and no existing user application work required preservation;
+- inspection made no repository changes and did not perform `IMP-002`.
+
 ### IMP-002 — Research current technical candidates
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** READY  
 **Dependencies:** IMP-001  
 **Outcome:** evaluate current framework/runtime/database/auth/storage/queue/hosting/observability candidates using official sources.
 
@@ -814,6 +823,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.3.  
-**Approved date:** 2026-08-17.  
+**Approved version:** 1.4.  
+**Approved date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

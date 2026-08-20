@@ -5,13 +5,13 @@ An AI-assisted digital invitation platform for creating, personalizing, publishi
 **Claude Package version:** 1.0  
 **Package status:** Implementation Preparation Ready  
 **Repository status:** Documentation package complete; final audit passed and corrections verified  
-**Application status:** Not yet implemented or released  
+**Application status:** Engineering baseline implemented (`IMP-004`); no product feature is implemented and no application release exists  
 **Initial operating market:** Mauritius  
 **Availability vision:** Global  
 **MVP event type:** Weddings only  
 **Document status:** Approved — Owner Approved  
-**Version:** 1.3  
-**Approved date:** 2026-08-17
+**Version:** 1.4  
+**Approved date:** 2026-08-20
 
 ---
 
@@ -27,11 +27,9 @@ Mauritius is the first operating and validation market, but the service is inten
 
 ## Current repository purpose
 
-This repository currently contains the owner-approved Claude Code development package that will govern later implementation.
+This repository contains the owner-approved Claude Code development package that governs implementation, plus a minimal engineering baseline (`IMP-004`): a Next.js application scaffold, developer tooling and a non-sensitive health endpoint. No product feature is implemented and no application has been released.
 
-It is not yet an application codebase.
-
-The package is being created sequentially:
+The documentation package was created sequentially:
 
 1. one document is drafted;
 2. the owner challenges and reviews it;
@@ -184,23 +182,55 @@ See `product/GUEST_RULES.md`.
 
 ## Technology status
 
-The architecture is intentionally provider-neutral.
+The architecture remains intentionally provider-neutral.
 
-Final choices remain pending for:
+The owner has approved an initial engineering stack (`DEC-023`, established through `IMP-003`) for the TypeScript modular monolith described in `docs/05_SYSTEM_ARCHITECTURE.md`:
 
-- application framework and runtime;
-- database;
-- authentication and identity;
-- storage and media delivery;
+- Node.js 24.19.0 LTS;
+- Next.js 16.3.1 with the App Router;
+- TypeScript 6.0.3 (strict);
+- npm with a committed `package-lock.json`;
+- Drizzle ORM 0.45.2 and Drizzle Kit 0.31.10 (not yet used for schema or migrations);
+- PostgreSQL 18 as the authoritative datastore (no database is provisioned yet);
+- pg-boss 12.27.0, backed by PostgreSQL, as the durable-job mechanism — this supersedes the earlier provisional Render Key Value/BullMQ direction; no separate Redis/Valkey service is part of the baseline.
+
+This is an initial baseline decision, not final production activation. Final choices remain pending for:
+
+- production database provisioning and plan;
+- authentication and identity provider;
+- object storage and media delivery provider;
 - AI providers and models;
 - payment provider and acquiring bank;
-- transactional email;
-- hosting;
-- observability and analytics.
+- transactional email provider;
+- production hosting activation;
+- observability and analytics providers.
 
-Names that appear in historical ideas—such as Next.js, Supabase, Clerk, Replicate, JouJouPay, Cloudinary, Vercel or Sentry—are examples, not approved selections.
+Render Singapore, Render PostgreSQL and Amazon S3 Singapore remain provisional production baselines only, subject to their existing confirmation gates. Names such as Supabase, Clerk, JouJouPay, Cloudinary or Vercel that appear in historical ideas are examples, not approved selections.
 
-Every selection must be evaluated through current official sources, credible alternatives, security, privacy, cost, migration and operational trade-offs before owner approval.
+Every remaining selection must be evaluated through current official sources, credible alternatives, security, privacy, cost, migration and operational trade-offs before owner approval.
+
+---
+
+## Getting started (engineering baseline)
+
+These commands were run and verified while implementing `IMP-004`. They operate the empty scaffold only — no product feature exists yet.
+
+```bash
+# requires Node.js 24.19.0 (see .nvmrc) and npm
+npm ci # reproducible clean install from package-lock.json
+npm run dev # start the Next.js dev server
+npm run build # production build
+npm run start # run the production build locally
+npm run lint # ESLint
+npm run typecheck # strict TypeScript, no emit
+npm run format:check # Prettier check (application/config files only)
+npm run format # Prettier write
+npm test # Vitest unit tests
+```
+
+`GET /api/health` returns a safe, deterministic `200 OK` for liveness checks and reveals no secrets, environment values or dependency detail.
+
+No `.env` file is required to run these commands: unset baseline variables fall back to safe defaults, and provider/secret configuration is intentionally out of scope until `IMP-010`. Never put real credentials in `.env.example` or commit a populated `.env` file.
 
 ---
 
@@ -212,6 +242,19 @@ Every selection must be evaluated through current official sources, credible alt
 ├── README.md
 ├── .gitignore
 ├── .env.example
+├── .nvmrc
+├── package.json
+├── package-lock.json
+├── tsconfig.json
+├── next.config.ts
+├── eslint.config.mjs
+├── .prettierrc.json
+├── vitest.config.mts
+├── src/
+│   ├── app/            # Next.js App Router (pages, layout, /api/health)
+│   └── lib/            # server-only baseline (environment validation)
+├── worker/
+│   └── src/            # separately deployable worker (structural placeholder)
 ├── docs/
 │   ├── 00_CLAUDE_RULES.md
 │   ├── 01_PROJECT_VISION.md
@@ -284,24 +327,20 @@ The appearance of a planned root file in this map does not mean it has already b
 
 ## Working with this repository
 
-### Documentation phase
+### Always
 
-During the current phase:
-
-- do not implement the application;
-- do not install a framework or production dependency;
-- do not select providers from historical examples;
+- do not select, install or configure a provider outside an approved decision (`project/DECISIONS.md`);
 - do not publish prices or payment-method claims;
 - do not treat backlog items as approved scope;
 - do not commit a draft as authoritative;
-- follow the sequential owner-approval workflow.
+- do not deploy to production or activate a production provider without separate explicit authorization.
 
-### Future implementation phase
+### Task-controlled implementation phase
 
-When implementation is explicitly authorized:
+Application implementation is authorized only through eligible tasks in `project/TASKS.md`. For every task:
 
 1. read `CLAUDE.md` and the mandatory source set;
-2. select one authorized task from `project/TASKS.md`;
+2. select one task explicitly `READY` (or otherwise authorized) in `project/TASKS.md`;
 3. read every specification constraining that task;
 4. resolve blockers before writing code;
 5. implement the smallest coherent change;
@@ -309,7 +348,7 @@ When implementation is explicitly authorized:
 7. update project records truthfully;
 8. report the evidence and stop before the next task.
 
-Do not begin application setup from this README. The approved task and future stack decision will define the actual setup commands.
+A `BLOCKED` task is never authorized merely because implementation has begun elsewhere. See `CLAUDE.md` section 2 for the task-controlled gate.
 
 ---
 
@@ -337,18 +376,16 @@ Public contribution rules, licensing and external support channels have not yet 
 
 ## Current next steps
 
-Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. The planned documentation package is complete, the final cross-document audit passed after all approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Application implementation has not started, no application release exists, and owner authorization for application implementation has not been granted.
+Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. `DOC-001` through `DOC-010` are verified, and `IMP-001` through `IMP-004` are complete: repository baseline inspected, technical research recorded, the initial engineering stack approved (`DEC-023`), and the minimal application scaffold and developer tooling established. No product feature is implemented, no database or provider is configured, and no application release exists.
 
 Current sequence:
 
-1. wait for the owner's next instruction;
-2. when instructed, perform only `IMP-001 — Inspect repository baseline` as read-only implementation preparation;
-3. conduct current official technical/provider research and approve the implementation stack through the task ledger;
-4. configure the local environment and Claude Code under an authorized preparation task;
-5. run Claude Code Plan Mode readiness review;
-6. obtain separate explicit owner authorization before any application implementation.
+1. the owner reviews and decides whether to authorize `IMP-005 — Establish CI quality gates`;
+2. later tasks (`IMP-010` onward: configuration, authentication, database schema, host product, AI, payments, publication, guests, localization, operations, verification) remain `BLOCKED` in `project/TASKS.md` until their dependencies and owner decisions are satisfied;
+3. each task requires separate explicit owner authorization before Claude Code performs it;
+4. production deployment, customer launch and production provider activation remain unauthorized regardless of implementation progress.
 
-GitHub `main` is the permanent source of truth. Claude Code must enter through `CLAUDE.md`, which preserves the implementation hard stop.
+GitHub `main` is the permanent source of truth. Claude Code must enter through `CLAUDE.md`, which preserves the task-controlled implementation gate.
 
 ---
 
@@ -399,6 +436,6 @@ GitHub `main` is the permanent source of truth. Claude Code must enter through `
 ## Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.3.  
-**Approved date:** 2026-08-17.  
-**Owner decisions:** Decisions 1–10 approved as proposed.
+**Approved version:** 1.4.  
+**Approved date:** 2026-08-20.  
+**Owner decisions:** Decisions 1–10 approved as proposed; Decision 10 fulfilled by the verified `IMP-004` engineering baseline.

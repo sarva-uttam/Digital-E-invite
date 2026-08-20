@@ -1,0 +1,15 @@
+node_modules
+.next
+coverage
+package-lock.json
+next-env.d.ts
+
+# Approved documentation and project-control files predate the engineering
+# baseline and use their own reviewed formatting; IMP-004 must not reformat
+# owner-approved content outside the application scaffold.
+docs/
+product/
+project/
+CLAUDE.md
+README.md
+.env.example

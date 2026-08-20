@@ -3,10 +3,10 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.7  
+**Version:** 1.8  
 **Approved date:** 2026-08-20  
 **Current phase:** Application implementation — authorized and task-controlled  
-**Application release status:** No application release exists
+**Application release status:** No application release exists (engineering baseline implemented on an unmerged feature branch)
 
 ---
 
@@ -203,6 +203,22 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - no dependency installation;
 - no infrastructure or provider configuration;
 - no database or migration creation.
+
+### Engineering-baseline milestone — `IMP-004`
+
+**Track:** APPLICATION  
+**Application version:** 0.1.0 (unreleased)  
+**Status:** DRAFT — implemented on feature branch `imp-004-engineering-baseline`, not merged to `main`, not deployed  
+**Application release:** None
+
+- Implemented the minimal Next.js `16.3.1` App Router scaffold, strict TypeScript `6.0.3`, ESLint (`eslint-config-next`), Prettier, and Vitest, exactly matching the `DEC-023` approved stack; `package-lock.json` committed for reproducible `npm ci`.
+- Added `GET /api/health`: a shallow, non-sensitive liveness endpoint returning `200` with `{status, service, time}` and no secrets, environment values, or dependency detail; covered by automated tests.
+- Added a minimal server-only environment-validation baseline for non-secret baseline variables (`APP_ENV`, `LOG_LEVEL`, `DEFAULT_LOCALE`, `DEFAULT_CURRENCY`, `APP_TIMEZONE`) with safe defaults and fail-safe rejection of invalid values; provider/secret configuration remains out of scope pending `IMP-010`.
+- Added a `worker/` structural placeholder establishing the web/worker boundary from `docs/05_SYSTEM_ARCHITECTURE.md`, with no job processing or business logic.
+- Declared Drizzle ORM `0.45.2`, Drizzle Kit `0.31.10`, and pg-boss `12.27.0` as dependencies only; created no schema, migration, queue, or database connection.
+- Verified from a clean `npm ci`: `format:check`, `lint`, `typecheck`, `test` (8/8 passing), and `build` all passed; smoke-tested the production build over HTTP.
+- Recorded `IMP-004` as `VERIFIED` in `project/TASKS.md`; `IMP-005` and every later task remain `BLOCKED` and were not performed.
+- **Migration/action required:** None. **Compatibility/customer impact:** None — not merged, not deployed, no customer-visible change.
 
 ---
 
@@ -408,6 +424,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.7.  
+**Approved version:** 1.8.  
 **Approved date:** 2026-08-20.  
-**Owner decisions:** Decisions 1–10 approved as proposed.
+**Owner decisions:** Decisions 1–10 approved as proposed; the `IMP-004` engineering-baseline entry recorded under Decision 8 (release truth: `DRAFT`, unmerged, undeployed).

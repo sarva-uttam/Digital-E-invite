@@ -3,7 +3,7 @@
 **Project:** AI Digital Invitation Platform  
 **File:** `CLAUDE.md`  
 **Status:** Approved — Owner Approved  
-**Version:** 1.2  
+**Version:** 1.3  
 **Approved date:** 2026-08-20  
 **Current phase:** Application implementation — authorized and task-controlled  
 **Application implementation authorization:** GRANTED — task-controlled
@@ -394,6 +394,21 @@ Do not delete, skip or weaken tests merely to make a change pass. A flaky or obs
 
 No production launch may proceed with unresolved release-blocking failures defined by the approved testing and security documents.
 
+### 12.1 Verified engineering-baseline commands (`IMP-004`)
+
+These commands were executed against the committed `IMP-004` scaffold and passed. They operate the empty baseline only; they do not by themselves verify any later product feature.
+
+```bash
+npm ci
+npm run format:check
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+Do not add a command to this list without first running it successfully against the current committed state.
+
 ---
 
 ## 13. Dependency and configuration rules
@@ -544,6 +559,6 @@ Never report a feature as released unless it has been deployed and verified in t
 ## 19. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.2.  
+**Approved version:** 1.3.  
 **Approved date:** 2026-08-20.  
-**Owner decisions:** Decisions 1–10 approved as proposed.
+**Owner decisions:** Decisions 1–10 approved as proposed; section 12.1 records `IMP-004` verified commands as a factual documentation update within existing Decision 8 (evidence-based completion).

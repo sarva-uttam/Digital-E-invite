@@ -3,7 +3,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.7  
+**Version:** 1.8  
 **Snapshot date:** 2026-08-20  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -35,9 +35,9 @@ As of **2026-08-20**, the project has entered the **task-controlled application 
 
 The product, domain, architecture, security, testing, deployment, roadmap, pricing, entitlement, AI-usage, guest, and localization rules have been documented and approved.
 
-Application implementation has **not** started. There is no approved production application, infrastructure deployment, database instance, payment integration, AI-provider integration, or customer launch.
+The engineering baseline (`IMP-004`) is implemented and verified: a minimal Next.js application scaffold and developer tooling exist. No product feature, database, migration, provider configuration, infrastructure deployment, payment integration, or AI-provider integration exists, and there is no customer launch.
 
-The documentation package, handoff declaration, and implementation-preparation tasks `IMP-001` through `IMP-003` are complete and verified. Application implementation is now owner-authorized, but only through eligible tasks in `project/TASKS.md`.
+The documentation package, handoff declaration, and implementation-preparation tasks `IMP-001` through `IMP-004` are complete and verified. Application implementation is owner-authorized, but only through eligible tasks in `project/TASKS.md`; `IMP-005` and every later task remain `BLOCKED`.
 
 ---
 
@@ -45,10 +45,10 @@ The documentation package, handoff declaration, and implementation-preparation t
 
 **Phase:** Application implementation — authorized and task-controlled  
 **Phase state:** Owner authorization granted; task-ledger dependencies and gates remain binding  
-**Implementation state:** Not started; `IMP-004` is the only `READY` implementation task  
+**Implementation state:** `IMP-004` (engineering baseline) verified; no product feature implemented; `IMP-005` and all later tasks `BLOCKED`  
 **Production state:** No production application exists; production deployment is unauthorized  
 **Customer availability:** Not launched  
-**Next action:** Execute `IMP-004 — Establish repository engineering baseline` through Claude Code.
+**Next action:** Await owner instruction on whether to authorize `IMP-005 — Establish CI quality gates`.
 
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Owner decision `DEC-024` grants task-controlled application implementation authorization; only `READY` tasks may be performed.
 
@@ -133,9 +133,9 @@ The two-pass technical-candidate research for `IMP-002` completed on 2026-08-20 
 
 Owner-approved `IMP-003` is `VERIFIED`. The initial engineering baseline is Node.js 24.19.0 LTS, Next.js 16.3.1 App Router, TypeScript 6.0.3, npm with a committed `package-lock.json`, Drizzle ORM 0.45.2, Drizzle Kit 0.31.10, PostgreSQL 18, and pg-boss 12.27.0. pg-boss supersedes the provisional Render Key Value/BullMQ queue direction; no separate Redis/Valkey service is part of the initial baseline.
 
-Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore remain provisional production baselines. Authentication, observability, transactional email, exact AI models, payment/acquiring, analytics and other unresolved specialist providers remain unselected and gated. `IMP-004 — Establish repository engineering baseline` is the only `READY` task and is the first task eligible under the task-controlled implementation authorization.
+Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore remain provisional production baselines. Authentication, observability, transactional email, exact AI models, payment/acquiring, analytics and other unresolved specialist providers remain unselected and gated.
 
-Application implementation is authorized by owner decision `DEC-024` only through eligible tasks in `project/TASKS.md`. `IMP-004` has not yet been performed; every later task remains governed by its existing dependencies and gates.
+Application implementation is authorized by owner decision `DEC-024` only through eligible tasks in `project/TASKS.md`. `IMP-004 — Establish repository engineering baseline` is `VERIFIED`: a Next.js `16.3.1` App Router scaffold, strict TypeScript `6.0.3`, ESLint, Prettier, Vitest, a committed `package-lock.json`, a minimal server-only environment-validation baseline, a non-sensitive `GET /api/health` liveness endpoint, and a structural `worker/` placeholder exist. Drizzle ORM/Kit and pg-boss are present as declared, unused dependencies only — no schema, migration, queue, or database connection exists. `IMP-005` and every later task remain governed by their existing dependencies and gates and were not performed.
 
 ---
 
@@ -264,26 +264,31 @@ Translation resources, glossaries, native reviews, and localized legal copy have
 
 ## 14. Technical implementation state
 
-The following have not been created or selected for production:
+Implemented (`IMP-004`, on branch `imp-004-engineering-baseline`, not merged to `main`):
 
-- application codebase/scaffold;
-- package manager and locked dependencies;
-- exact web framework/version;
-- exact database/authentication/storage/queue/hosting/observability vendors;
-- database migrations;
-- API/server actions;
-- background workers;
-- UI components/pages;
-- tests and fixtures;
-- CI/CD pipelines;
-- runtime environments;
+- minimal application codebase/scaffold (Next.js `16.3.1` App Router, `src/app`, `src/lib`, `worker/src`);
+- package manager and locked dependencies (npm, committed `package-lock.json`, reproducible `npm ci`);
+- exact web framework/runtime versions per `DEC-023` (Next.js `16.3.1`, TypeScript `6.0.3` strict, Node.js engines `24.19.0`);
+- developer tooling: ESLint, Prettier, Vitest, deterministic npm scripts (`dev`, `build`, `start`, `lint`, `typecheck`, `format`, `format:check`, `test`);
+- one non-sensitive route (`GET /api/health`) and automated tests (8/8 passing);
+- a minimal server-only environment-validation baseline for non-secret baseline variables only.
+
+Still not created or selected for production:
+
+- exact database/authentication/storage/queue/hosting/observability vendor activation;
+- database schema and migrations;
+- API/server actions beyond the health check;
+- worker job processing (pg-boss wiring);
+- UI components/pages beyond the placeholder homepage;
+- CI/CD pipelines (`IMP-005`, not yet authorized);
+- runtime environments beyond local development;
 - DNS/domain/certificates;
 - production secrets;
 - monitoring dashboards/alerts;
 - backups/restore evidence;
 - release artifacts.
 
-Approved architecture documents define evaluation criteria and boundaries. Claude Code must verify current official documentation and versions before locking implementation choices.
+Approved architecture documents define evaluation criteria and boundaries. Claude Code must verify current official documentation and versions before locking further implementation choices.
 
 ---
 
@@ -367,11 +372,11 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ### 19.2 Implementation-start blockers
 
-- `IMP-003` is verified, but `IMP-004` engineering-baseline work is ready and has not been performed;
-- the pg-boss/Drizzle/PostgreSQL transaction compatibility test remains required before critical ORM-adapter reliance;
+- `IMP-004` is verified, but `IMP-005 — Establish CI quality gates` and every later task remain `BLOCKED` pending explicit owner authorization;
+- the pg-boss/Drizzle/PostgreSQL transaction compatibility test remains required before critical ORM-adapter reliance (not yet performed; no schema or queue exists);
 - unresolved specialist providers, provider plans, pricing, contracts, production limits, and applicable legal/privacy obligations remain subject to their approved gates;
 - Claude Code Plan Mode readiness review has not occurred;
-- the owner has not explicitly authorized application implementation.
+- the local development machine's installed Node.js (`24.14.0`) does not match the approved exact version (`24.19.0`); recorded as a deferred item, not a defect in the committed baseline.
 
 ### 19.3 Production-launch blockers
 
@@ -388,10 +393,10 @@ None. The planned package, final audit, correction commit, and handoff records a
 ## 20. Immediate next actions
 
 1. Wait for the owner's next instruction.
-2. When explicitly instructed, perform only `IMP-004 — Establish repository engineering baseline`.
+2. The owner reviews the `IMP-004` evidence and, separately, decides whether to authorize `IMP-005 — Establish CI quality gates`.
 3. Preserve the approved exact versions and environment separation; do not configure unresolved providers or production resources.
 4. Satisfy compatibility and specialist-provider gates in their existing task order.
-5. Obtain separate explicit owner authorization before any application implementation begins.
+5. Obtain separate explicit owner authorization before any further application implementation task begins.
 
 ---
 
@@ -505,6 +510,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.7.  
+**Approved version:** 1.8.  
 **Snapshot date:** 2026-08-20.  
-**Owner decisions:** Decisions 1–10 approved as proposed.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` recorded `VERIFIED` under Decision 5/6.

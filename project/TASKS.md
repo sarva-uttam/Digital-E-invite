@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.9  
+**Version:** 1.10  
 **Approved date:** 2026-08-21  
 **Current phase:** Application implementation — authorized and task-controlled  
 **Application implementation authorization:** GRANTED — task-controlled; only `READY` tasks may be performed
@@ -359,7 +359,7 @@ This gate does not authorize production deployment, customer launch, provider co
 ### IMP-005 — Establish CI quality gates
 
 **Priority:** P0  
-**State:** READY  
+**State:** IMPLEMENTED  
 **Dependencies:** IMP-004  
 **Outcome:** run repeatable checks on every proposed change.
 
@@ -369,6 +369,22 @@ This gate does not authorize production deployment, customer launch, provider co
 - dependency/security/secret checks enabled where selected tooling supports them;
 - failures block merge according to approved policy;
 - branch/protection limitations documented if repository plan prevents enforcement.
+
+**Implementation evidence — 2026-08-21:**
+
+- implemented on branch `imp-005-ci-quality-gates` from verified `main` at `ea0033212d007c487aea32828db5b24f684f8a21`;
+- added `.github/workflows/ci.yml` — a single `CI` workflow with one `quality-gate` job on `ubuntu-latest`, triggered only by `pull_request` targeting `main` and `push` to `main` (no `pull_request_target`; the baseline requires no repository secret);
+- workflow permissions are explicit least privilege (`contents: read` at workflow and job level); no write, deploy, release, or provider-configuration capability exists in the workflow;
+- external actions are pinned to full-length immutable commit SHAs with a human-readable version comment, verified on 2026-08-21 directly against the GitHub REST API (`api.github.com/repos/actions/checkout/commits/v7.0.1` and `api.github.com/repos/actions/setup-node/commits/v7.0.0`, cross-checked against the `/tags` listing): `actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1` (`v7.0.1`) and `actions/setup-node@820762786026740c76f36085b0efc47a31fe5020` (`v7.0.0`); GitHub's official hardening guidance confirms full-SHA pinning is the only immutable way to reference an action;
+- the job pins `node-version: 24.19.0` (the exact `DEC-023` baseline, verified present at `nodejs.org/dist/v24.19.0/`, released 2026-08-03) and adds an explicit runtime-verification step that fails the job unless `node --version` reports exactly `v24.19.0`; this closes the `IMP-004` follow-up recorded in `project/CHANGELOG.md`;
+- the clean path runs, in order: `npm ci`, `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build` — the repository's existing scripts, unmodified;
+- dependency-security check: `npm audit` runs in full (non-blocking, reported for visibility), then the merge gate runs `npm audit --audit-level=high`, failing the job only on high/critical severity findings; the committed dependency graph currently has 4 pre-existing moderate-severity findings only (`esbuild` via `drizzle-kit`'s transitive `@esbuild-kit` dependency, `GHSA-67mh-4wv8-2f99`, dev-tooling only), so the merge gate passes without silently changing the `DEC-023`-approved `drizzle-kit` version; this finding is carried forward for awareness, not treated as an `IMP-005` defect;
+- secret check: GitHub-native secret scanning was verified as unavailable for this private repository without a paid GitHub Secret Protection plan (Team/Enterprise), confirmed 2026-08-21 against GitHub's own documentation; no plan upgrade was made. `scripts/secret-scan.sh` was added instead — a narrow, locally reproducible, dependency-free scan of git-tracked files for a fixed set of known secret-shaped patterns (PEM private-key headers, AWS/Google/Stripe/Slack/GitHub token shapes). It documents its own limitation (best-effort, not a proof of absence) and never prints matched content into logs;
+- local validation from a clean `npm ci` on this machine: `format:check`, `lint`, `typecheck`, `test` (8/8 passing), `build`, and `scripts/secret-scan.sh` all passed; `npm audit --audit-level=high` exits `0` (only the 4 known moderate findings present); the local machine's checked-out working tree shows spurious `format:check` differences on 15 pre-existing files due to this machine's `core.autocrlf=true` Git setting converting the working copy to CRLF — the committed blobs (`git show HEAD:<path>`) are confirmed LF, so this is a local-checkout artifact, not a repository defect, and no pre-existing file was modified;
+- branch protection / required status checks: verified 2026-08-21 against current GitHub documentation that required status checks and branch-protection rules are not available for private repositories on GitHub Free — a paid plan (Pro or higher) is required. No plan upgrade or repository-setting change was made. Interim policy: no pull request may be merged into `main` unless the `CI` workflow's `quality-gate` check has succeeded; technical enforcement of this policy is not currently active and requires an eligible GitHub plan or a future repository-policy change;
+- **evidence gap — why this task is `IMPLEMENTED` and not `VERIFIED`:** this environment has no `gh` CLI installed and no `GITHUB_TOKEN`/`GH_TOKEN` available; an attempt to read the token already held by the local Git credential manager (to call the GitHub API read-only) was correctly blocked by the operating permission classifier and was not worked around. Pushing the feature branch alone does not trigger the workflow (the `push` trigger is scoped to `main` only, by design, to keep the trigger set minimal). A `pull_request` targeting `main` must be opened for the `pull_request` trigger to produce an actual GitHub-hosted run. Nothing in this evidence entry should be read as confirmation of a passing GitHub Actions run — that confirmation does not yet exist;
+- **required to reach `VERIFIED`:** either (a) the owner opens a pull request from `imp-005-ci-quality-gates` into `main` and shares the resulting `CI` / `quality-gate` run result, or (b) the owner authorizes and provides a way for Claude Code to open the PR and read the run (e.g. installing `gh` and authenticating it, or supplying a scoped `GITHUB_TOKEN`) so the actual runner OS, `node --version`, `npm --version`, and each step's pass/fail result can be recorded as evidence;
+- no later task was implemented; `IMP-010` and every task after it remain `BLOCKED`.
 
 ---
 
@@ -861,6 +877,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.9.  
+**Approved version:** 1.10.  
 **Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` recorded `VERIFIED` with evidence under Decision 10.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` recorded `VERIFIED` with evidence under Decision 10; `IMP-005` recorded `IMPLEMENTED` with evidence under Decision 10, pending owner-provided GitHub-hosted Actions run evidence before it can become `VERIFIED`.

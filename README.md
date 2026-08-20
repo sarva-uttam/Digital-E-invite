@@ -5,13 +5,13 @@ An AI-assisted digital invitation platform for creating, personalizing, publishi
 **Claude Package version:** 1.0  
 **Package status:** Implementation Preparation Ready  
 **Repository status:** Documentation package complete; final audit passed and corrections verified  
-**Application status:** Engineering baseline implemented (`IMP-004`); no product feature is implemented and no application release exists  
+**Application status:** Engineering baseline implemented (`IMP-004`, verified); CI quality gates implemented (`IMP-005`, pending GitHub-hosted run evidence); no product feature is implemented and no application release exists  
 **Initial operating market:** Mauritius  
 **Availability vision:** Global  
 **MVP event type:** Weddings only  
 **Document status:** Approved — Owner Approved  
-**Version:** 1.4  
-**Approved date:** 2026-08-20
+**Version:** 1.5  
+**Approved date:** 2026-08-21
 
 ---
 
@@ -376,11 +376,11 @@ Public contribution rules, licensing and external support channels have not yet 
 
 ## Current next steps
 
-Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. `DOC-001` through `DOC-010` are verified, and `IMP-001` through `IMP-004` are complete: repository baseline inspected, technical research recorded, the initial engineering stack approved (`DEC-023`), and the minimal application scaffold and developer tooling established. No product feature is implemented, no database or provider is configured, and no application release exists.
+Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. `DOC-001` through `DOC-010` are verified, and `IMP-001` through `IMP-004` are complete: repository baseline inspected, technical research recorded, the initial engineering stack approved (`DEC-023`), and the minimal application scaffold and developer tooling established. `IMP-005 — Establish CI quality gates` is implemented on branch `imp-005-ci-quality-gates` (a GitHub Actions `CI` workflow and a narrow secret-check script) and locally validated, but not yet `VERIFIED` — no actual GitHub-hosted Actions run evidence has been obtained yet. No product feature is implemented, no database or provider is configured, and no application release exists.
 
 Current sequence:
 
-1. the owner reviews and decides whether to authorize `IMP-005 — Establish CI quality gates`;
+1. the owner opens a pull request from `imp-005-ci-quality-gates` into `main` (or provides `gh`/GitHub API access) so the `CI` workflow's `quality-gate` run can execute and be recorded as evidence, completing `IMP-005`;
 2. later tasks (`IMP-010` onward: configuration, authentication, database schema, host product, AI, payments, publication, guests, localization, operations, verification) remain `BLOCKED` in `project/TASKS.md` until their dependencies and owner decisions are satisfied;
 3. each task requires separate explicit owner authorization before Claude Code performs it;
 4. production deployment, customer launch and production provider activation remain unauthorized regardless of implementation progress.
@@ -436,6 +436,6 @@ GitHub `main` is the permanent source of truth. Claude Code must enter through `
 ## Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.4.  
-**Approved date:** 2026-08-20.  
-**Owner decisions:** Decisions 1–10 approved as proposed; Decision 10 fulfilled by the verified `IMP-004` engineering baseline.
+**Approved version:** 1.5.  
+**Approved date:** 2026-08-21.  
+**Owner decisions:** Decisions 1–10 approved as proposed; Decision 10 fulfilled by the verified `IMP-004` engineering baseline; `IMP-005` implemented and locally validated, pending GitHub-hosted Actions run evidence.

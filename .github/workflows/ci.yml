@@ -1,0 +1,81 @@
+name: CI
+
+# IMP-005 — Establish CI quality gates.
+# Smallest safe trigger set: pull requests targeting main, and pushes to main.
+# Intentionally not pull_request_target — this workflow never needs secrets
+# and must not run with elevated context against untrusted PR code.
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+# Least privilege: read-only by default. No job in this workflow needs to
+# write repository contents, create/approve pull requests, push commits,
+# create releases, or deploy.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gate:
+    name: quality-gate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+          cache: npm
+
+      - name: Verify exact Node.js runtime version
+        run: |
+          set -euo pipefail
+          actual_node="$(node --version)"
+          actual_npm="$(npm --version)"
+          echo "Effective node --version: $actual_node"
+          echo "Effective npm --version: $actual_npm"
+          if [ "$actual_node" != "v24.19.0" ]; then
+            echo "::error::Expected exact Node.js v24.19.0 (DEC-023 baseline) but the runner reports $actual_node"
+            exit 1
+          fi
+
+      - name: Install dependencies (npm ci)
+        run: npm ci
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Dependency vulnerability check (npm audit)
+        run: |
+          set -euo pipefail
+          echo "Full npm audit report (all severities, reported for visibility only):"
+          npm audit || true
+          echo ""
+          echo "Enforcing merge-gate policy: fail on high or critical severity vulnerabilities in the committed dependency graph."
+          npm audit --audit-level=high
+
+      - name: Secret scan (narrow, best-effort)
+        run: bash scripts/secret-scan.sh

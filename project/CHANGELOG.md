@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.4  
+**Version:** 1.5  
 **Approved date:** 2026-08-20  
 **Current phase:** Implementation preparation — implementation not authorized  
 **Application release status:** No application release exists
@@ -162,9 +162,17 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - Recorded `IMP-001` as `VERIFIED` and made only its directly dependent preparation task, `IMP-002`, `READY`.
 - This milestone is not application implementation and creates no application release.
 
+### Implementation-preparation research milestone — `IMP-002`
+
+- Completed and independently reviewed the original and supplementary `IMP-002` research passes dated 2026-08-20; final result: `PASS — research requirements satisfied`.
+- Used current official/primary sources wherever available and explicitly carried unresolved implementation-time, commercial, legal and privacy facts forward as `IMP-003` gates.
+- Preserved existing approved architecture and provisional Render Singapore/S3 Singapore baselines; research recommendations remain recommendations only and no stack or provider was selected.
+- Recorded `IMP-002` as `VERIFIED`; `IMP-003` remains `BLOCKED` pending explicit owner approval, and every later implementation task remains `BLOCKED`.
+- No application implementation, provider configuration, production-readiness declaration, or application release occurred.
+
 ### Pending owner instruction
 
-- Decide when to perform `IMP-002`; readiness does not authorize automatic execution.
+- Decide whether to authorize `IMP-003` for owner-controlled stack approval; `IMP-002` evidence approval does not authorize it.
 - Application implementation requires a separate later owner authorization.
 
 ### Not authorized
@@ -382,6 +390,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.4.  
+**Approved version:** 1.5.  
 **Approved date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

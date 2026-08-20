@@ -3,7 +3,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.4  
+**Version:** 1.5  
 **Snapshot date:** 2026-08-20  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -48,7 +48,7 @@ The documentation package and handoff declaration are complete. The next eligibl
 **Implementation state:** Not started; authorization not granted  
 **Production state:** No production application exists  
 **Customer availability:** Not launched  
-**Next action:** Await owner instruction before performing `IMP-002 — Research current technical candidates`.
+**Next action:** Await explicit owner review/authorization of `IMP-003 — Approve initial implementation stack`.
 
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. No implementation-preparation task should be performed without the owner's next instruction.
 
@@ -129,7 +129,9 @@ The final audit corrections and handoff reconciliation were committed and verifi
 
 The bounded read-only repository-baseline inspection `IMP-001` completed with `PASS` against commit `a81b217468cb8979d9933f7bc27740afca2d06c7` and is `VERIFIED`. The repository remains documentation/configuration only: it contains the 28 approved Claude Package v1.0 files and no application source, scaffolding, dependencies, database, migration, infrastructure, or provider configuration. No existing user application work requires preservation beyond the approved package.
 
-The next eligible task is `IMP-002 — Research current technical candidates`, now `READY` under the existing dependency rules. Eligibility is not execution: `IMP-002` must not be performed until the owner explicitly instructs the assistant or Claude Code to proceed.
+The two-pass technical-candidate research for `IMP-002` completed on 2026-08-20 using current official/primary sources wherever available and is `VERIFIED`. Its reviewed result is `PASS — research requirements satisfied`. Remaining implementation-time, commercial, legal and privacy uncertainties are explicitly carried forward as selection gates rather than guessed.
+
+No stack or provider recommendation from `IMP-002` has been approved as a final selection. Existing approved architecture remains authoritative, while provisional Render Singapore and S3 Singapore baselines remain provisional. `IMP-003 — Approve initial implementation stack` remains `BLOCKED` pending explicit owner approval; no task is made ready by this evidence-recording action.
 
 No application implementation is authorized by this handoff state.
 
@@ -363,8 +365,8 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ### 19.2 Implementation-start blockers
 
-- current technical/provider research has not been completed; `IMP-002` is ready but has not been performed;
-- exact implementation-time versions and unresolved providers remain subject to their approved gates;
+- `IMP-002` research is verified, but `IMP-003` stack approval remains blocked pending explicit owner approval;
+- exact dependency versions, unresolved providers, provider plans, pricing, contracts, production limits, and applicable legal/privacy obligations remain subject to their approved gates;
 - Claude Code Plan Mode readiness review has not occurred;
 - the owner has not explicitly authorized application implementation.
 
@@ -382,10 +384,10 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ## 20. Immediate next actions
 
-1. Wait for the owner's next instruction.
-2. When explicitly instructed, perform only `IMP-002 — Research current technical candidates` as implementation preparation.
-3. Do not select a stack or provider during `IMP-002`; record evidence and alternatives for later owner approval.
-4. Continue through stack approval and environment configuration only in dependency order under separately authorized preparation tasks.
+1. Wait for explicit owner review and authorization of `IMP-003 — Approve initial implementation stack`.
+2. Do not treat `IMP-002` recommendations as selected technologies or providers before that approval.
+3. If `IMP-003` is later authorized, reconcile exact versions, compatibility, privacy, commercial and legal gates before recording final selections.
+4. Continue to later preparation tasks only in dependency order under separate authorization.
 5. Obtain separate explicit owner authorization before any application implementation begins.
 
 ---
@@ -500,6 +502,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.4.  
+**Approved version:** 1.5.  
 **Snapshot date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

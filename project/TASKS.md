@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.4  
+**Version:** 1.5  
 **Approved date:** 2026-08-20  
 **Current phase:** Implementation preparation — implementation not authorized  
 **Implementation:** Not authorized; only the explicitly ready preparation task may proceed after handoff verification
@@ -276,7 +276,7 @@ Passing the documentation gate authorizes implementation preparation, not produc
 ### IMP-002 — Research current technical candidates
 
 **Priority:** P0  
-**State:** READY  
+**State:** VERIFIED  
 **Dependencies:** IMP-001  
 **Outcome:** evaluate current framework/runtime/database/auth/storage/queue/hosting/observability candidates using official sources.
 
@@ -286,6 +286,16 @@ Passing the documentation gate authorizes implementation preparation, not produc
 - alternatives and rejection reasons documented;
 - no selection relies on the original idea alone;
 - unresolved commercial/legal facts marked blockers.
+
+**Verification evidence — 2026-08-20:**
+
+- result: `PASS — research requirements satisfied` through the original research pass and supplementary verification pass, using current official/primary sources wherever available;
+- unresolved implementation-time and commercial/legal facts were classified and carried forward as gates for `IMP-003`, not treated as unresolved `IMP-002` defects;
+- approved architecture remains unchanged: modular monolith, TypeScript, Next.js App Router, Node.js, PostgreSQL, Drizzle ORM, separately deployable worker, durable background processing, transactional outbox/equivalent, provider-adapter boundaries, and no Kubernetes for MVP;
+- existing Render Singapore and S3 Singapore hosting/storage directions remain provisional baselines, not final provider selections;
+- research recommendations for future owner consideration under `IMP-003` only: TypeScript 6.x rather than TypeScript 7 for the initial baseline while current typescript-eslint support remains below 6.1; stable Drizzle ORM/Drizzle Kit rather than the 1.0 RC line; pg-boss as leading queue candidate with Graphile Worker fallback; Render Postgres as recommended continuation of the provisional database-hosting baseline; Sentry for observability; WorkOS AuthKit for authentication subject to privacy/data-residency review; and Postmark for transactional email;
+- research gates carried forward: recheck and pin exact dependency versions at stack approval; validate the pg-boss Drizzle transactional adapter before critical reliance because of recent fixes; require a compatibility spike before any BullMQ + Render Valkey selection because no explicit cross-vendor guarantee exists; explicitly review WorkOS AuthKit US data-processing/storage-transfer implications; and resolve provider plans, pricing, contracts, production limits, and applicable Mauritius legal/privacy obligations at their approved gates;
+- no recommendation in this evidence is a final stack/provider selection, and no provider was configured or activated.
 
 ### IMP-003 — Approve initial implementation stack
 
@@ -823,6 +833,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.4.  
+**Approved version:** 1.5.  
 **Approved date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

@@ -3,7 +3,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.6  
+**Version:** 1.7  
 **Snapshot date:** 2026-08-20  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -31,28 +31,28 @@ This is a status document, not a substitute for the approved specifications. If 
 
 ## 2. Snapshot summary
 
-As of **2026-08-17**, the project is in the **Claude Code development-package preparation phase**.
+As of **2026-08-20**, the project has entered the **task-controlled application implementation phase**.
 
 The product, domain, architecture, security, testing, deployment, roadmap, pricing, entitlement, AI-usage, guest, and localization rules have been documented and approved.
 
 Application implementation has **not** started. There is no approved production application, infrastructure deployment, database instance, payment integration, AI-provider integration, or customer launch.
 
-The documentation package and handoff declaration are complete. The next eligible work is the explicitly authorized implementation-preparation sequence; application implementation remains prohibited.
+The documentation package, handoff declaration, and implementation-preparation tasks `IMP-001` through `IMP-003` are complete and verified. Application implementation is now owner-authorized, but only through eligible tasks in `project/TASKS.md`.
 
 ---
 
 ## 3. Current phase
 
-**Phase:** Implementation preparation — implementation not authorized  
-**Phase state:** Implementation-preparation ready; application implementation not authorized  
-**Implementation state:** Not started; authorization not granted  
-**Production state:** No production application exists  
+**Phase:** Application implementation — authorized and task-controlled  
+**Phase state:** Owner authorization granted; task-ledger dependencies and gates remain binding  
+**Implementation state:** Not started; `IMP-004` is the only `READY` implementation task  
+**Production state:** No production application exists; production deployment is unauthorized  
 **Customer availability:** Not launched  
-**Next action:** Await owner instruction before performing `IMP-004 — Establish repository engineering baseline`.
+**Next action:** Execute `IMP-004 — Establish repository engineering baseline` through Claude Code.
 
-All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. No implementation-preparation task should be performed without the owner's next instruction.
+All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Owner decision `DEC-024` grants task-controlled application implementation authorization; only `READY` tasks may be performed.
 
-Claude Code must not infer authorization to scaffold or implement the application from the completeness of this package.
+Claude Code must use `project/TASKS.md` as the execution gate and must not infer authorization for any `BLOCKED` task from the completeness of this package or the general implementation authorization.
 
 ---
 
@@ -133,9 +133,9 @@ The two-pass technical-candidate research for `IMP-002` completed on 2026-08-20 
 
 Owner-approved `IMP-003` is `VERIFIED`. The initial engineering baseline is Node.js 24.19.0 LTS, Next.js 16.3.1 App Router, TypeScript 6.0.3, npm with a committed `package-lock.json`, Drizzle ORM 0.45.2, Drizzle Kit 0.31.10, PostgreSQL 18, and pg-boss 12.27.0. pg-boss supersedes the provisional Render Key Value/BullMQ queue direction; no separate Redis/Valkey service is part of the initial baseline.
 
-Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore remain provisional production baselines. Authentication, observability, transactional email, exact AI models, payment/acquiring, analytics and other unresolved specialist providers remain unselected and gated. `IMP-004 — Establish repository engineering baseline` is now the only `READY` task; readiness is not execution or application-implementation authorization.
+Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore remain provisional production baselines. Authentication, observability, transactional email, exact AI models, payment/acquiring, analytics and other unresolved specialist providers remain unselected and gated. `IMP-004 — Establish repository engineering baseline` is the only `READY` task and is the first task eligible under the task-controlled implementation authorization.
 
-No application implementation is authorized by this handoff state.
+Application implementation is authorized by owner decision `DEC-024` only through eligible tasks in `project/TASKS.md`. `IMP-004` has not yet been performed; every later task remains governed by its existing dependencies and gates.
 
 ---
 
@@ -505,6 +505,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.6.  
+**Approved version:** 1.7.  
 **Snapshot date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

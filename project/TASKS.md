@@ -3,10 +3,10 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.6  
+**Version:** 1.7  
 **Approved date:** 2026-08-20  
-**Current phase:** Implementation preparation — implementation not authorized  
-**Implementation:** Not authorized; only the explicitly ready preparation task may proceed after handoff verification
+**Current phase:** Application implementation — authorized and task-controlled  
+**Application implementation authorization:** GRANTED — task-controlled; only `READY` tasks may be performed
 
 ---
 
@@ -82,7 +82,7 @@ A task is not verified because code compiles. Verification requires the acceptan
 
 ## 6. Current documentation-package tasks
 
-These are the only tasks currently authorized to proceed.
+These completed tasks established the documentation-package handoff.
 
 ### DOC-001 — Approve and commit `project/TASKS.md`
 
@@ -244,7 +244,9 @@ These are the only tasks currently authorized to proceed.
 
 All tasks from Section 8 onward are `BLOCKED` until DOC-010 is verified.
 
-Passing the documentation gate authorizes implementation preparation, not production deployment, customer launch, provider contracting, spending, or use of production credentials.
+The documentation gate is complete. Owner decision `DEC-024` grants task-controlled application implementation authorization: only tasks that are `READY` under this ledger may be performed.
+
+This gate does not authorize production deployment, customer launch, provider contracting, spending, use of production credentials, or execution of any `BLOCKED` task.
 
 ---
 
@@ -844,6 +846,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.6.  
+**Approved version:** 1.7.  
 **Approved date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

@@ -3,9 +3,9 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.6  
+**Version:** 1.7  
 **Approved date:** 2026-08-20  
-**Current phase:** Implementation preparation — implementation not authorized  
+**Current phase:** Application implementation — authorized and task-controlled  
 **Application release status:** No application release exists
 
 ---
@@ -142,7 +142,7 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 **Track:** PACKAGE  
 **Package version:** 1.0  
-**Status:** IMPLEMENTATION PREPARATION READY — APPLICATION IMPLEMENTATION NOT AUTHORIZED  
+**Status:** IMPLEMENTATION PREPARATION READY — APPLICATION IMPLEMENTATION AUTHORIZED, TASK-CONTROLLED  
 **Application release:** None
 
 ### Completed
@@ -179,21 +179,30 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - Recorded `IMP-003` as `VERIFIED` and made only `IMP-004` `READY`; `IMP-004` was not performed.
 - No application code, dependency installation, infrastructure, database, migration, provider configuration, production deployment or application release occurred.
 
-### Pending owner instruction
+### Implementation-authorization handoff
 
-- Decide when to perform `IMP-004`; readiness does not authorize automatic execution or application implementation.
-- Application implementation requires a separate later owner authorization.
+- Owner granted application implementation authorization on 2026-08-20 through immutable decision `DEC-024`.
+- Authorization is task-controlled: only tasks eligible in `project/TASKS.md` may be performed, and dependencies and separate owner/provider/security/production gates remain binding.
+- `IMP-004` remains the only `READY` task and was not performed by this handoff.
+- Application source implementation has not started, and no application release exists.
 
-### Not authorized
+### Still not authorized
 
-- application implementation or scaffolding;
-- dependency installation;
+- execution of any `BLOCKED` task;
 - production deployment or customer launch;
-- provider onboarding or new provider selection;
+- production provider activation or production credentials/data;
+- unresolved provider selection outside its approved task and owner gate;
 - final pricing publication;
 - activation or advertisement of payment methods;
 - production tax behavior;
 - international checkout activation.
+
+### No implementation performed by this handoff
+
+- no application code or scaffolding;
+- no dependency installation;
+- no infrastructure or provider configuration;
+- no database or migration creation.
 
 ---
 
@@ -399,6 +408,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.6.  
+**Approved version:** 1.7.  
 **Approved date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

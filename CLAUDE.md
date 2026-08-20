@@ -3,10 +3,10 @@
 **Project:** AI Digital Invitation Platform  
 **File:** `CLAUDE.md`  
 **Status:** Approved — Owner Approved  
-**Version:** 1.1  
-**Approved date:** 2026-08-17  
-**Current phase:** Implementation preparation — implementation not authorized  
-**Implementation authorization:** Not granted
+**Version:** 1.2  
+**Approved date:** 2026-08-20  
+**Current phase:** Application implementation — authorized and task-controlled  
+**Application implementation authorization:** GRANTED — task-controlled
 
 ---
 
@@ -28,20 +28,21 @@ This file does not replace the approved specifications. It routes Claude Code to
 
 ---
 
-## 2. Current hard stop
+## 2. Task-controlled implementation gate
 
-Do not implement the application yet.
+Application implementation is authorized to begin only through tasks that are explicitly eligible in `project/TASKS.md`.
 
-Implementation remains blocked until all of the following are true:
+Before implementation, confirm that:
 
-1. the full planned repository package is present and owner-approved;
-2. the final cross-document consistency audit is complete;
-3. contradictions, orphaned proposals and premature vendor assumptions are resolved;
-4. `project/CURRENT_STATE.md` explicitly records implementation readiness;
-5. `project/TASKS.md` contains a specific authorized implementation task;
-6. the owner has explicitly approved implementation to begin.
+1. the task is `READY` or otherwise explicitly authorized under the task ledger;
+2. every dependency and owner-decision gate is satisfied;
+3. the task's governing specifications and accepted decisions are current and internally consistent;
+4. the work remains inside the task's scope and acceptance criteria;
+5. unresolved provider, security, privacy, payment, AI, legal and production gates remain respected.
 
-Until then, permitted work is limited to explicitly requested documentation review, research, consistency checking and package maintenance.
+`BLOCKED` tasks are not authorized. General implementation authorization does not make all tasks eligible, allow Claude Code to bypass dependencies, or permit Claude Code to self-approve an owner decision.
+
+Production deployment, customer launch, production provider activation, production credentials and production data remain separately gated and are not authorized by this implementation handoff.
 
 Never interpret a roadmap item, backlog entry, draft, example, provider name or test scenario as authorization to build.
 
@@ -192,7 +193,7 @@ Unless superseded through an approved decision:
 - silent cross-provider AI failover is prohibited;
 - provider-hosted or provider-controlled checkout is required;
 - Kubernetes is excluded from MVP;
-- final technology and commercial providers remain pending.
+- the initial engineering stack is approved by `DEC-023`; provisional production platforms and unresolved specialist/commercial providers remain gated.
 
 Do not abbreviate or reinterpret these facts in ways that weaken their source documents.
 
@@ -202,8 +203,8 @@ Do not abbreviate or reinterpret these facts in ways that weaken their source do
 
 Do not select, install, configure or encode a production dependency for any of the following without an approved task and decision:
 
-- application framework and runtime versions;
-- database provider;
+- framework, runtime or database version changes beyond the approved `DEC-023` baseline;
+- final production database-provider activation and plan;
 - authentication/identity provider;
 - object/media storage provider;
 - AI providers, models, regions and retention terms;
@@ -271,7 +272,7 @@ Execute one coherent authorized task at a time. Do not opportunistically impleme
 
 ## 10. Implementation workflow
 
-When implementation is eventually authorized:
+For each authorized implementation task:
 
 1. restate the task, scope and acceptance criteria;
 2. inspect the current repository state and relevant tests;
@@ -452,7 +453,7 @@ Do not update documentation after the fact merely to justify an implementation t
 
 Stop and ask for direction when:
 
-- implementation is not explicitly authorized;
+- the task is not `READY` or otherwise explicitly authorized under `project/TASKS.md`;
 - an approved source conflicts with another approved source;
 - the requested work exceeds the authorized task;
 - a material owner decision is missing;
@@ -502,9 +503,9 @@ Never report a feature as released unless it has been deployed and verified in t
 
 **Approved:** Use root `CLAUDE.md` as Claude Code's mandatory operational entry point while keeping `docs/00_CLAUDE_RULES.md` the highest project-level engineering constitution.
 
-### Decision 2 — Current implementation hard stop
+### Decision 2 — Implementation authorization gate
 
-**Approved:** Keep implementation prohibited until the package is complete, the final consistency audit passes, project state/tasks record readiness and the owner explicitly authorizes implementation.
+**Approved:** Keep implementation prohibited until the package is complete, the final consistency audit passes, project state/tasks record readiness and the owner explicitly authorizes implementation. After those conditions are satisfied, permit implementation only through eligible tasks in `project/TASKS.md`; production remains separately gated.
 
 ### Decision 3 — Mandatory read set
 
@@ -543,6 +544,6 @@ Never report a feature as released unless it has been deployed and verified in t
 ## 19. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.1.  
-**Approved date:** 2026-08-17.  
+**Approved version:** 1.2.  
+**Approved date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

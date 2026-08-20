@@ -3,7 +3,7 @@
 **File:** `project/DECISIONS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.2  
+**Version:** 1.3  
 **Approved date:** 2026-08-20  
 **Current MVP focus:** Weddings only
 
@@ -408,6 +408,24 @@ The architecture remains a TypeScript modular monolith in one repository, with a
 
 ---
 
+### DEC-024 — Task-controlled application implementation authorization
+
+**State:** ACCEPTED  
+**Decision date:** 2026-08-20  
+**Authority:** Explicit owner implementation authorization
+
+**Context:** Claude Package v1.0 is complete and verified; the final audit and corrections passed; `IMP-001` through `IMP-003` are verified; and `IMP-004 — Establish repository engineering baseline` is the only `READY` task. Application source implementation has not yet started.
+
+**Decision:** Application implementation is authorized to begin, governed exclusively by `project/TASKS.md`. Claude Code may perform only tasks that are `READY` or otherwise explicitly authorized under the ledger. Task dependencies, acceptance criteria, owner-decision gates, approved architecture, and security, privacy, payment, AI and provider controls remain binding. Claude Code may not self-approve owner gates or treat general authorization as permission to perform `BLOCKED` work.
+
+**Current boundary:** `IMP-004` remains `READY` and has not been performed. No later task becomes `READY` merely because general implementation authorization is granted.
+
+**Production non-authorization:** This decision does not authorize production deployment, customer launch, production credentials/data, production provider activation, payment-provider selection, unresolved AI/authentication/observability/email/provider selection, or bypass of any professional, security, legal, privacy, commercial or production gate.
+
+**Sources:** Explicit owner authorization dated 2026-08-20; `CLAUDE.md`; `project/TASKS.md`; `project/CURRENT_STATE.md`; `DEC-023`.
+
+---
+
 ## 6. Explicitly rejected directions
 
 The following remain rejected unless a later accepted decision reopens them with new evidence and safeguards:
@@ -513,6 +531,6 @@ Do not rewrite history to make a changed decision appear as though it was always
 ## 10. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.2.  
+**Approved version:** 1.3.  
 **Approved date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

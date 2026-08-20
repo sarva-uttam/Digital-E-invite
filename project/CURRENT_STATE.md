@@ -3,7 +3,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.9  
+**Version:** 1.10  
 **Snapshot date:** 2026-08-21  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -37,7 +37,7 @@ The product, domain, architecture, security, testing, deployment, roadmap, prici
 
 The engineering baseline (`IMP-004`) is implemented and verified: a minimal Next.js application scaffold and developer tooling exist. No product feature, database, migration, provider configuration, infrastructure deployment, payment integration, or AI-provider integration exists, and there is no customer launch.
 
-The documentation package, handoff declaration, and implementation-preparation tasks `IMP-001` through `IMP-004` are complete and verified. Application implementation is owner-authorized, but only through eligible tasks in `project/TASKS.md`; `IMP-005` is now `READY` and every later task remains `BLOCKED`.
+The documentation package, handoff declaration, and implementation-preparation tasks `IMP-001` through `IMP-004` are complete and verified. Application implementation is owner-authorized, but only through eligible tasks in `project/TASKS.md`. `IMP-005 — Establish CI quality gates` is implemented on branch `imp-005-ci-quality-gates` and locally validated, but not yet `VERIFIED`: no actual GitHub-hosted Actions run evidence has been obtained (this environment has no `gh` CLI or GitHub API token). Every later task remains `BLOCKED`.
 
 ---
 
@@ -45,10 +45,10 @@ The documentation package, handoff declaration, and implementation-preparation t
 
 **Phase:** Application implementation — authorized and task-controlled  
 **Phase state:** Owner authorization granted; task-ledger dependencies and gates remain binding  
-**Implementation state:** `IMP-004` verified and merged; no product feature implemented; `IMP-005` `READY` but not started; all later tasks `BLOCKED`  
+**Implementation state:** `IMP-004` verified and merged; `IMP-005` implemented on branch `imp-005-ci-quality-gates`, locally validated, pending GitHub-hosted Actions run evidence; no product feature implemented; all later tasks `BLOCKED`  
 **Production state:** No production application exists; production deployment is unauthorized  
 **Customer availability:** Not launched  
-**Next action:** Execute `IMP-005 — Establish CI quality gates` only under a separate task execution; it has not started.
+**Next action:** Owner opens a pull request from `imp-005-ci-quality-gates` into `main` (or provides `gh`/API access) so the `CI` workflow's `quality-gate` run can be observed and `IMP-005` recorded `VERIFIED`.
 
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Owner decision `DEC-024` grants task-controlled application implementation authorization; only `READY` tasks may be performed.
 
@@ -135,7 +135,7 @@ Owner-approved `IMP-003` is `VERIFIED`. The initial engineering baseline is Node
 
 Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore remain provisional production baselines. Authentication, observability, transactional email, exact AI models, payment/acquiring, analytics and other unresolved specialist providers remain unselected and gated.
 
-Application implementation is authorized by owner decision `DEC-024` only through eligible tasks in `project/TASKS.md`. `IMP-004 — Establish repository engineering baseline` is `VERIFIED` and was merged through PR #1 by normal merge commit `1ae399202fb34ac7c760321c0b8831527c62b968`, preserving implementation commit `da9c8b7a1ddab0b0f5470fc9ed5aa5d29a99339f`. The baseline contains a Next.js `16.3.1` App Router scaffold, strict TypeScript `6.0.3`, ESLint, Prettier, Vitest, a committed `package-lock.json`, minimal server-only environment validation, a non-sensitive `GET /api/health` liveness endpoint, and a structural `worker/` placeholder. Drizzle ORM/Kit and pg-boss remain declared, unused dependencies only — no schema, migration, queue, or database connection exists. `IMP-005` is `READY` because its `IMP-004` dependency is satisfied, but it has not started; every later task remains `BLOCKED`.
+Application implementation is authorized by owner decision `DEC-024` only through eligible tasks in `project/TASKS.md`. `IMP-004 — Establish repository engineering baseline` is `VERIFIED` and was merged through PR #1 by normal merge commit `1ae399202fb34ac7c760321c0b8831527c62b968`, preserving implementation commit `da9c8b7a1ddab0b0f5470fc9ed5aa5d29a99339f`. The baseline contains a Next.js `16.3.1` App Router scaffold, strict TypeScript `6.0.3`, ESLint, Prettier, Vitest, a committed `package-lock.json`, minimal server-only environment validation, a non-sensitive `GET /api/health` liveness endpoint, and a structural `worker/` placeholder. Drizzle ORM/Kit and pg-boss remain declared, unused dependencies only — no schema, migration, queue, or database connection exists. `IMP-005 — Establish CI quality gates` is `IMPLEMENTED` on branch `imp-005-ci-quality-gates` (`.github/workflows/ci.yml`, `scripts/secret-scan.sh`), locally validated, but not yet `VERIFIED` pending an actual GitHub-hosted Actions run; every later task remains `BLOCKED`.
 
 ---
 
@@ -273,6 +273,12 @@ Implemented and verified on `main` through PR #1 (`IMP-004`):
 - one non-sensitive route (`GET /api/health`) and automated tests (8/8 passing);
 - a minimal server-only environment-validation baseline for non-secret baseline variables only.
 
+Implemented on branch `imp-005-ci-quality-gates`, locally validated, pending GitHub-hosted Actions evidence (`IMP-005`, not yet `VERIFIED`):
+
+- `.github/workflows/ci.yml` — a single `CI`/`quality-gate` workflow triggered on `pull_request` to `main` and `push` to `main`, least-privilege `contents: read` permissions, SHA-pinned `actions/checkout`/`actions/setup-node`, exact Node.js `v24.19.0` runtime verification, and the clean-environment `npm ci` → `format:check` → `lint` → `typecheck` → `test` → `build` sequence;
+- an `npm audit --audit-level=high` merge gate (4 pre-existing moderate-severity `esbuild`/`drizzle-kit` dev-tooling findings do not block it);
+- `scripts/secret-scan.sh` — a narrow, dependency-free, best-effort scan of tracked files for known secret-shaped patterns, used because GitHub-native secret scanning is unavailable on this private repository's plan.
+
 Still not created or selected for production:
 
 - exact database/authentication/storage/queue/hosting/observability vendor activation;
@@ -280,7 +286,6 @@ Still not created or selected for production:
 - API/server actions beyond the health check;
 - worker job processing (pg-boss wiring);
 - UI components/pages beyond the placeholder homepage;
-- CI/CD pipelines (`IMP-005`, not yet authorized);
 - runtime environments beyond local development;
 - DNS/domain/certificates;
 - production secrets;
@@ -372,7 +377,7 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ### 19.2 Implementation-start blockers
 
-- `IMP-004` is verified on `main`; `IMP-005 — Establish CI quality gates` is `READY` but has not started, and every later task remains `BLOCKED`;
+- `IMP-004` is verified on `main`; `IMP-005 — Establish CI quality gates` is `IMPLEMENTED` on branch `imp-005-ci-quality-gates` but not yet `VERIFIED` because no GitHub-hosted Actions run evidence has been obtained (this environment has no `gh` CLI or GitHub API token; an owner-opened pull request or granted API/CLI access is required to complete verification); every later task remains `BLOCKED`;
 - the pg-boss/Drizzle/PostgreSQL transaction compatibility test remains required before critical ORM-adapter reliance (not yet performed; no schema or queue exists);
 - unresolved specialist providers, provider plans, pricing, contracts, production limits, and applicable legal/privacy obligations remain subject to their approved gates;
 - Claude Code Plan Mode readiness review has not occurred;
@@ -392,11 +397,11 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ## 20. Immediate next actions
 
-1. Wait for the owner's next instruction.
-2. Perform `IMP-005 — Establish CI quality gates` only when separately instructed; readiness is not execution.
+1. Owner opens a pull request from `imp-005-ci-quality-gates` into `main` (or provides `gh`/GitHub API access) so the `CI` workflow's `quality-gate` run executes and its evidence can be recorded.
+2. Once GitHub-hosted run evidence is obtained and passes, record `IMP-005` as `VERIFIED`.
 3. Preserve the approved exact versions and environment separation; do not configure unresolved providers or production resources.
 4. Satisfy compatibility and specialist-provider gates in their existing task order.
-5. Obtain separate explicit owner authorization before any further application implementation task begins.
+5. Obtain separate explicit owner authorization before any further application implementation task (`IMP-010` onward) begins.
 
 ---
 
@@ -510,6 +515,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.9.  
+**Approved version:** 1.10.  
 **Snapshot date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` recorded `VERIFIED` under Decision 5/6.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` recorded `VERIFIED` under Decision 5/6; `IMP-005` recorded `IMPLEMENTED`, pending GitHub-hosted Actions run evidence before `VERIFIED` under Decision 5/6/9.

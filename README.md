@@ -5,12 +5,12 @@ An AI-assisted digital invitation platform for creating, personalizing, publishi
 **Claude Package version:** 1.0  
 **Package status:** Implementation Preparation Ready  
 **Repository status:** Documentation package complete; final audit passed and corrections verified  
-**Application status:** Engineering baseline implemented (`IMP-004`, verified); CI quality gates implemented (`IMP-005`, pending GitHub-hosted run evidence); no product feature is implemented and no application release exists  
+**Application status:** Engineering baseline and CI quality gates verified (`IMP-004`–`IMP-005`); `IMP-010` is `READY` but not started; no product feature is implemented and no application release exists  
 **Initial operating market:** Mauritius  
 **Availability vision:** Global  
 **MVP event type:** Weddings only  
 **Document status:** Approved — Owner Approved  
-**Version:** 1.5  
+**Version:** 1.6  
 **Approved date:** 2026-08-21
 
 ---
@@ -39,7 +39,7 @@ The documentation package was created sequentially:
 6. the commit is verified;
 7. only then does work proceed to the next document.
 
-Implementation remains blocked until the complete package is approved, a final cross-document consistency audit passes and the owner explicitly authorizes an implementation task.
+Implementation is authorized only through tasks that are `READY` in `project/TASKS.md`; production deployment and customer launch remain separately unauthorized.
 
 ---
 
@@ -376,14 +376,14 @@ Public contribution rules, licensing and external support channels have not yet 
 
 ## Current next steps
 
-Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. `DOC-001` through `DOC-010` are verified, and `IMP-001` through `IMP-004` are complete: repository baseline inspected, technical research recorded, the initial engineering stack approved (`DEC-023`), and the minimal application scaffold and developer tooling established. `IMP-005 — Establish CI quality gates` is implemented on branch `imp-005-ci-quality-gates` (a GitHub Actions `CI` workflow and a narrow secret-check script) and locally validated, but not yet `VERIFIED` — no actual GitHub-hosted Actions run evidence has been obtained yet. No product feature is implemented, no database or provider is configured, and no application release exists.
+Claude Package v1.0 remains `Implementation Preparation Ready`. `DOC-001` through `DOC-010` and `IMP-001` through `IMP-005` are verified. PR #2 merged the CI quality gates after successful GitHub-hosted pull-request CI, and the immediate push-to-`main` CI run also passed. Exact Node.js `v24.19.0`, npm `11.17.0`, clean install, format, lint, typecheck, 8/8 tests, build, high/critical dependency audit gate, and the narrow best-effort secret scan were verified.
 
 Current sequence:
 
-1. the owner opens a pull request from `imp-005-ci-quality-gates` into `main` (or provides `gh`/GitHub API access) so the `CI` workflow's `quality-gate` run can execute and be recorded as evidence, completing `IMP-005`;
-2. later tasks (`IMP-010` onward: configuration, authentication, database schema, host product, AI, payments, publication, guests, localization, operations, verification) remain `BLOCKED` in `project/TASKS.md` until their dependencies and owner decisions are satisfied;
-3. each task requires separate explicit owner authorization before Claude Code performs it;
-4. production deployment, customer launch and production provider activation remain unauthorized regardless of implementation progress.
+1. `IMP-010 — Implement configuration and environment boundaries` is the only next `READY` task; it has not started and was not performed by this reconciliation.
+2. `IMP-011` and later tasks remain blocked until their own dependencies and owner/provider decisions are satisfied.
+3. No product feature, database, migration, provider configuration, infrastructure, deployment, production resource, or application release exists.
+4. Production deployment, customer launch and production provider activation remain unauthorized.
 
 GitHub `main` is the permanent source of truth. Claude Code must enter through `CLAUDE.md`, which preserves the task-controlled implementation gate.
 

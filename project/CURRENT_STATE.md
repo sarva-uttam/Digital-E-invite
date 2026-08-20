@@ -3,7 +3,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.10  
+**Version:** 1.11  
 **Snapshot date:** 2026-08-21  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -37,7 +37,7 @@ The product, domain, architecture, security, testing, deployment, roadmap, prici
 
 The engineering baseline (`IMP-004`) is implemented and verified: a minimal Next.js application scaffold and developer tooling exist. No product feature, database, migration, provider configuration, infrastructure deployment, payment integration, or AI-provider integration exists, and there is no customer launch.
 
-The documentation package, handoff declaration, and implementation-preparation tasks `IMP-001` through `IMP-004` are complete and verified. Application implementation is owner-authorized, but only through eligible tasks in `project/TASKS.md`. `IMP-005 — Establish CI quality gates` is implemented on branch `imp-005-ci-quality-gates` and locally validated, but not yet `VERIFIED`: no actual GitHub-hosted Actions run evidence has been obtained (this environment has no `gh` CLI or GitHub API token). Every later task remains `BLOCKED`.
+The documentation package, handoff declaration, and implementation-preparation tasks `IMP-001` through `IMP-004` are complete and verified. Application implementation is owner-authorized, but only through eligible tasks in `project/TASKS.md`. `IMP-005 — Establish CI quality gates` is `VERIFIED`: PR #2 passed its GitHub-hosted quality gate, merged normally as `47cfb630ae85f639f2ec1106496a42c52fd7a4de`, and the immediate push-to-`main` CI run also passed. `IMP-010` is the only next `READY` task; it has not started, and later tasks remain governed by their existing dependencies.
 
 ---
 
@@ -45,10 +45,10 @@ The documentation package, handoff declaration, and implementation-preparation t
 
 **Phase:** Application implementation — authorized and task-controlled  
 **Phase state:** Owner authorization granted; task-ledger dependencies and gates remain binding  
-**Implementation state:** `IMP-004` verified and merged; `IMP-005` implemented on branch `imp-005-ci-quality-gates`, locally validated, pending GitHub-hosted Actions run evidence; no product feature implemented; all later tasks `BLOCKED`  
+**Implementation state:** `IMP-004` and `IMP-005` verified and merged; `IMP-010` is `READY` but not started; no product feature implemented; later tasks remain blocked by their existing dependencies  
 **Production state:** No production application exists; production deployment is unauthorized  
 **Customer availability:** Not launched  
-**Next action:** Owner opens a pull request from `imp-005-ci-quality-gates` into `main` (or provides `gh`/API access) so the `CI` workflow's `quality-gate` run can be observed and `IMP-005` recorded `VERIFIED`.
+**Next action:** Perform only `IMP-010 — Implement configuration and environment boundaries` under its existing task scope; do not begin `IMP-011` or later work.
 
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Owner decision `DEC-024` grants task-controlled application implementation authorization; only `READY` tasks may be performed.
 
@@ -273,7 +273,7 @@ Implemented and verified on `main` through PR #1 (`IMP-004`):
 - one non-sensitive route (`GET /api/health`) and automated tests (8/8 passing);
 - a minimal server-only environment-validation baseline for non-secret baseline variables only.
 
-Implemented on branch `imp-005-ci-quality-gates`, locally validated, pending GitHub-hosted Actions evidence (`IMP-005`, not yet `VERIFIED`):
+Implemented and verified on `main` through PR #2 (`IMP-005`):
 
 - `.github/workflows/ci.yml` — a single `CI`/`quality-gate` workflow triggered on `pull_request` to `main` and `push` to `main`, least-privilege `contents: read` permissions, SHA-pinned `actions/checkout`/`actions/setup-node`, exact Node.js `v24.19.0` runtime verification, and the clean-environment `npm ci` → `format:check` → `lint` → `typecheck` → `test` → `build` sequence;
 - an `npm audit --audit-level=high` merge gate (4 pre-existing moderate-severity `esbuild`/`drizzle-kit` dev-tooling findings do not block it);
@@ -338,7 +338,7 @@ Current facts:
 - no production system exists to attack or certify;
 - no production secrets should exist in the repository;
 - no penetration test has occurred;
-- no dependency scan, SAST, DAST, or infrastructure scan has occurred because implementation has not started;
+- CI dependency auditing is active; no SAST, DAST, or infrastructure scan has yet occurred;
 - no backup/restore or incident-response drill has occurred;
 - no payment or AI sandbox integration has been tested.
 
@@ -377,7 +377,7 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ### 19.2 Implementation-start blockers
 
-- `IMP-004` is verified on `main`; `IMP-005 — Establish CI quality gates` is `IMPLEMENTED` on branch `imp-005-ci-quality-gates` but not yet `VERIFIED` because no GitHub-hosted Actions run evidence has been obtained (this environment has no `gh` CLI or GitHub API token; an owner-opened pull request or granted API/CLI access is required to complete verification); every later task remains `BLOCKED`;
+- `IMP-004` and `IMP-005` are verified on `main`; `IMP-010` is `READY` but has not started, and later tasks remain blocked by their existing dependencies;
 - the pg-boss/Drizzle/PostgreSQL transaction compatibility test remains required before critical ORM-adapter reliance (not yet performed; no schema or queue exists);
 - unresolved specialist providers, provider plans, pricing, contracts, production limits, and applicable legal/privacy obligations remain subject to their approved gates;
 - Claude Code Plan Mode readiness review has not occurred;
@@ -397,11 +397,10 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ## 20. Immediate next actions
 
-1. Owner opens a pull request from `imp-005-ci-quality-gates` into `main` (or provides `gh`/GitHub API access) so the `CI` workflow's `quality-gate` run executes and its evidence can be recorded.
-2. Once GitHub-hosted run evidence is obtained and passes, record `IMP-005` as `VERIFIED`.
-3. Preserve the approved exact versions and environment separation; do not configure unresolved providers or production resources.
-4. Satisfy compatibility and specialist-provider gates in their existing task order.
-5. Obtain separate explicit owner authorization before any further application implementation task (`IMP-010` onward) begins.
+1. Execute only the `READY` task `IMP-010 — Implement configuration and environment boundaries`; this reconciliation does not perform it.
+2. Preserve the approved exact versions and environment separation; do not configure unresolved providers or production resources.
+3. Satisfy compatibility and specialist-provider gates in their existing task order.
+4. Keep `IMP-011` and later tasks blocked until their own dependencies and decisions are satisfied.
 
 ---
 

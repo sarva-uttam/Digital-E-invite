@@ -359,7 +359,7 @@ This gate does not authorize production deployment, customer launch, provider co
 ### IMP-005 — Establish CI quality gates
 
 **Priority:** P0  
-**State:** IMPLEMENTED  
+**State:** VERIFIED  
 **Dependencies:** IMP-004  
 **Outcome:** run repeatable checks on every proposed change.
 
@@ -382,9 +382,11 @@ This gate does not authorize production deployment, customer launch, provider co
 - secret check: GitHub-native secret scanning was verified as unavailable for this private repository without a paid GitHub Secret Protection plan (Team/Enterprise), confirmed 2026-08-21 against GitHub's own documentation; no plan upgrade was made. `scripts/secret-scan.sh` was added instead — a narrow, locally reproducible, dependency-free scan of git-tracked files for a fixed set of known secret-shaped patterns (PEM private-key headers, AWS/Google/Stripe/Slack/GitHub token shapes). It documents its own limitation (best-effort, not a proof of absence) and never prints matched content into logs;
 - local validation from a clean `npm ci` on this machine: `format:check`, `lint`, `typecheck`, `test` (8/8 passing), `build`, and `scripts/secret-scan.sh` all passed; `npm audit --audit-level=high` exits `0` (only the 4 known moderate findings present); the local machine's checked-out working tree shows spurious `format:check` differences on 15 pre-existing files due to this machine's `core.autocrlf=true` Git setting converting the working copy to CRLF — the committed blobs (`git show HEAD:<path>`) are confirmed LF, so this is a local-checkout artifact, not a repository defect, and no pre-existing file was modified;
 - branch protection / required status checks: verified 2026-08-21 against current GitHub documentation that required status checks and branch-protection rules are not available for private repositories on GitHub Free — a paid plan (Pro or higher) is required. No plan upgrade or repository-setting change was made. Interim policy: no pull request may be merged into `main` unless the `CI` workflow's `quality-gate` check has succeeded; technical enforcement of this policy is not currently active and requires an eligible GitHub plan or a future repository-policy change;
-- **evidence gap — why this task is `IMPLEMENTED` and not `VERIFIED`:** this environment has no `gh` CLI installed and no `GITHUB_TOKEN`/`GH_TOKEN` available; an attempt to read the token already held by the local Git credential manager (to call the GitHub API read-only) was correctly blocked by the operating permission classifier and was not worked around. Pushing the feature branch alone does not trigger the workflow (the `push` trigger is scoped to `main` only, by design, to keep the trigger set minimal). A `pull_request` targeting `main` must be opened for the `pull_request` trigger to produce an actual GitHub-hosted run. Nothing in this evidence entry should be read as confirmation of a passing GitHub Actions run — that confirmation does not yet exist;
-- **required to reach `VERIFIED`:** either (a) the owner opens a pull request from `imp-005-ci-quality-gates` into `main` and shares the resulting `CI` / `quality-gate` run result, or (b) the owner authorizes and provides a way for Claude Code to open the PR and read the run (e.g. installing `gh` and authenticating it, or supplying a scoped `GITHUB_TOKEN`) so the actual runner OS, `node --version`, `npm --version`, and each step's pass/fail result can be recorded as evidence;
-- no later task was implemented; `IMP-010` and every task after it remain `BLOCKED`.
+- **Verification evidence — 2026-08-21:** final audit verdict `PASS WITH NON-BLOCKING FOLLOW-UP`; PR #2 passed GitHub-hosted `CI / quality-gate` run `32420895244` at implementation commit `839b176e6370d944a8a29bc83cab8c6ee4e3dac0`, then merged normally as `47cfb630ae85f639f2ec1106496a42c52fd7a4de`, preserving the implementation commit in history. The immediate `push` run on `main`, `32421454608`, also completed successfully.
+- Both GitHub-hosted runs used exact Node.js `v24.19.0` and npm `11.17.0`; `npm ci`, format, lint, typecheck, unit tests (3/3 files, 8/8 tests), build, `npm audit --audit-level=high`, and the narrow best-effort tracked-file secret scan all passed.
+- The dependency audit reports only the 4 recorded moderate-severity `esbuild`/`drizzle-kit` development-tooling findings; no approved dependency version was changed. The secret scan reported no known patterns and remains explicitly non-comprehensive.
+- Technical branch-protection/required-status-check enforcement remains unavailable for this private repository on its current plan. Interim policy remains: no pull request may be merged into `main` unless `CI / quality-gate` succeeds; PR #2 complied.
+- No product feature, provider configuration, database, migration, infrastructure, deployment, production resource, or application release was created. `IMP-010` was not performed.
 
 ---
 
@@ -393,7 +395,7 @@ This gate does not authorize production deployment, customer launch, provider co
 ### IMP-010 — Implement configuration and environment boundaries
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** READY  
 **Dependencies:** IMP-005  
 **Acceptance criteria:** typed startup validation; server/public separation; environment-specific credentials; safe errors; tests.
 

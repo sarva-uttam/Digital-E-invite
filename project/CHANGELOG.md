@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.10  
+**Version:** 1.11  
 **Approved date:** 2026-08-21  
 **Current phase:** Application implementation — authorized and task-controlled  
 **Application release status:** No application release exists
@@ -226,19 +226,17 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 **Track:** OPERATIONS  
 **Application version:** 0.1.0 (unreleased)  
-**Status:** IMPLEMENTED — not yet `VERIFIED`; not merged; not deployed  
+**Status:** VERIFIED — merged; not deployed  
 **Application release:** None
 
-- Implemented on branch `imp-005-ci-quality-gates` from verified `main` at `ea0033212d007c487aea32828db5b24f684f8a21`: a single GitHub Actions `CI` workflow (`.github/workflows/ci.yml`) with one `quality-gate` job, triggered only by `pull_request` targeting `main` and `push` to `main` (no `pull_request_target`, no repository secret required).
-- Workflow permissions are explicit least privilege (`contents: read` at workflow and job level); the workflow cannot write repository contents, deploy, publish, create releases, or configure providers.
-- External actions are pinned to full-length immutable commit SHAs verified 2026-08-21 directly against the GitHub REST API, with a human-readable version comment: `actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1` (`v7.0.1`) and `actions/setup-node@820762786026740c76f36085b0efc47a31fe5020` (`v7.0.0`).
-- Pins `node-version: 24.19.0` (the exact `DEC-023` baseline) and adds an explicit step that fails the job unless `node --version` reports exactly `v24.19.0`, closing the exact-runtime follow-up recorded in the `IMP-004` entry above.
-- The clean-environment path runs the repository's existing scripts unmodified: `npm ci` → `format:check` → `lint` → `typecheck` → `test` → `build`.
-- Added an `npm audit --audit-level=high` merge gate (fails only on high/critical severity); 4 pre-existing moderate-severity `esbuild`/`drizzle-kit` dev-tooling findings (`GHSA-67mh-4wv8-2f99`) do not block it and were not silently "fixed" by changing the `DEC-023`-approved `drizzle-kit` version.
-- Added `scripts/secret-scan.sh` — a narrow, dependency-free, best-effort scan of git-tracked files for known secret-shaped patterns, adopted because GitHub-native secret scanning was verified 2026-08-21 to require a paid GitHub Secret Protection plan (Team/Enterprise) unavailable on this private repository's current plan; no plan upgrade was made.
-- Verified 2026-08-21 that required status checks/branch protection are unavailable for private repositories on GitHub Free; no plan upgrade or repository-setting change was made. Interim policy: no pull request may be merged into `main` unless the `CI` workflow's `quality-gate` check has succeeded; this is not yet technically enforced.
-- **Not yet obtained:** an actual GitHub-hosted Actions run. This environment has no `gh` CLI and no `GITHUB_TOKEN`/`GH_TOKEN`; an attempt to read the local Git credential manager's stored token to call the GitHub API read-only was correctly blocked by the operating permission classifier and was not worked around. Local validation (clean `npm ci`; `format:check`, `lint`, `typecheck`, `test` 8/8, `build`, `npm audit --audit-level=high`, `secret-scan.sh` all passing) is recorded as local evidence only, not GitHub-hosted evidence.
-- **Migration/action required:** Owner opens a pull request from `imp-005-ci-quality-gates` into `main` (or provides `gh`/API access) so the `quality-gate` run executes; only after that evidence is recorded can `IMP-005` become `VERIFIED`. **Compatibility/customer impact:** None — not merged, not deployed, no customer-visible change, `Application release: None`.
+- Final audit verdict: `PASS WITH NON-BLOCKING FOLLOW-UP`.
+- PR #2 passed GitHub-hosted `CI / quality-gate` run `32420895244` at implementation commit `839b176e6370d944a8a29bc83cab8c6ee4e3dac0` and was merged normally as `47cfb630ae85f639f2ec1106496a42c52fd7a4de`, preserving the implementation commit.
+- The immediate push-to-`main` run `32421454608` also passed. Both runs verified exact Node.js `v24.19.0`, npm `11.17.0`, clean `npm ci`, format, lint, typecheck, 3/3 test files and 8/8 tests, build, `npm audit --audit-level=high`, and the narrow best-effort tracked-file secret scan.
+- The dependency audit retains 4 non-blocking moderate-severity `esbuild`/`drizzle-kit` development-tooling findings. No approved dependency version was changed.
+- Technical required-status-check enforcement remains unavailable for this private repository on its current plan. The interim policy remains that `CI / quality-gate` must succeed before merge; PR #2 complied.
+- Recorded `IMP-005` as `VERIFIED`. Its sole dependent gate is satisfied, so `IMP-010` is `READY` but was not performed; `IMP-011` and later tasks remain blocked by their own dependencies.
+- No product feature, provider configuration, database, migration, infrastructure, deployment, production resource, or customer launch occurred.
+- **Migration/action required:** None. **Compatibility/customer impact:** None — merged but not deployed; `Application release: None`.
 
 ---
 

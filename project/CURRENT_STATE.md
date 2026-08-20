@@ -3,7 +3,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.5  
+**Version:** 1.6  
 **Snapshot date:** 2026-08-20  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -48,7 +48,7 @@ The documentation package and handoff declaration are complete. The next eligibl
 **Implementation state:** Not started; authorization not granted  
 **Production state:** No production application exists  
 **Customer availability:** Not launched  
-**Next action:** Await explicit owner review/authorization of `IMP-003 — Approve initial implementation stack`.
+**Next action:** Await owner instruction before performing `IMP-004 — Establish repository engineering baseline`.
 
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. No implementation-preparation task should be performed without the owner's next instruction.
 
@@ -131,7 +131,9 @@ The bounded read-only repository-baseline inspection `IMP-001` completed with `P
 
 The two-pass technical-candidate research for `IMP-002` completed on 2026-08-20 using current official/primary sources wherever available and is `VERIFIED`. Its reviewed result is `PASS — research requirements satisfied`. Remaining implementation-time, commercial, legal and privacy uncertainties are explicitly carried forward as selection gates rather than guessed.
 
-No stack or provider recommendation from `IMP-002` has been approved as a final selection. Existing approved architecture remains authoritative, while provisional Render Singapore and S3 Singapore baselines remain provisional. `IMP-003 — Approve initial implementation stack` remains `BLOCKED` pending explicit owner approval; no task is made ready by this evidence-recording action.
+Owner-approved `IMP-003` is `VERIFIED`. The initial engineering baseline is Node.js 24.19.0 LTS, Next.js 16.3.1 App Router, TypeScript 6.0.3, npm with a committed `package-lock.json`, Drizzle ORM 0.45.2, Drizzle Kit 0.31.10, PostgreSQL 18, and pg-boss 12.27.0. pg-boss supersedes the provisional Render Key Value/BullMQ queue direction; no separate Redis/Valkey service is part of the initial baseline.
+
+Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore remain provisional production baselines. Authentication, observability, transactional email, exact AI models, payment/acquiring, analytics and other unresolved specialist providers remain unselected and gated. `IMP-004 — Establish repository engineering baseline` is now the only `READY` task; readiness is not execution or application-implementation authorization.
 
 No application implementation is authorized by this handoff state.
 
@@ -365,8 +367,9 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ### 19.2 Implementation-start blockers
 
-- `IMP-002` research is verified, but `IMP-003` stack approval remains blocked pending explicit owner approval;
-- exact dependency versions, unresolved providers, provider plans, pricing, contracts, production limits, and applicable legal/privacy obligations remain subject to their approved gates;
+- `IMP-003` is verified, but `IMP-004` engineering-baseline work is ready and has not been performed;
+- the pg-boss/Drizzle/PostgreSQL transaction compatibility test remains required before critical ORM-adapter reliance;
+- unresolved specialist providers, provider plans, pricing, contracts, production limits, and applicable legal/privacy obligations remain subject to their approved gates;
 - Claude Code Plan Mode readiness review has not occurred;
 - the owner has not explicitly authorized application implementation.
 
@@ -384,10 +387,10 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ## 20. Immediate next actions
 
-1. Wait for explicit owner review and authorization of `IMP-003 — Approve initial implementation stack`.
-2. Do not treat `IMP-002` recommendations as selected technologies or providers before that approval.
-3. If `IMP-003` is later authorized, reconcile exact versions, compatibility, privacy, commercial and legal gates before recording final selections.
-4. Continue to later preparation tasks only in dependency order under separate authorization.
+1. Wait for the owner's next instruction.
+2. When explicitly instructed, perform only `IMP-004 — Establish repository engineering baseline`.
+3. Preserve the approved exact versions and environment separation; do not configure unresolved providers or production resources.
+4. Satisfy compatibility and specialist-provider gates in their existing task order.
 5. Obtain separate explicit owner authorization before any application implementation begins.
 
 ---
@@ -502,6 +505,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.5.  
+**Approved version:** 1.6.  
 **Snapshot date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

@@ -3,8 +3,8 @@
 **File:** `docs/12_DEPLOYMENT.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
-**Approved date:** 2026-08-17  
+**Version:** 1.1  
+**Approved date:** 2026-08-20  
 **Depends on:** `docs/00_CLAUDE_RULES.md` through `docs/11_TESTING_STRATEGY.md`
 
 ---
@@ -44,8 +44,7 @@ Use **Render in its Singapore region** as the provisional primary application pl
 
 - one paid Node.js web service for the Next.js application;
 - one paid Node.js background worker for durable asynchronous work;
-- one paid managed PostgreSQL database;
-- one paid persistent Render Key Value instance for BullMQ-compatible delivery;
+- one paid managed PostgreSQL 18 database, also backing pg-boss durable jobs;
 - scheduled jobs only for bounded maintenance and reconciliation;
 - Render private networking between same-region services;
 - a version-controlled Render Blueprint (`render.yaml`) as infrastructure-as-code.
@@ -56,7 +55,7 @@ Use managed DNS with DNSSEC support. Render-managed TLS terminates HTTPS at the 
 
 ### 3.2 Why one primary platform
 
-Keeping the web service, worker, PostgreSQL, and queue in one region and private network reduces:
+Keeping the web service, worker, and PostgreSQL/pg-boss datastore in one region and private network reduces:
 
 - cross-provider credentials and public network paths;
 - deployment coordination;
@@ -64,7 +63,7 @@ Keeping the web service, worker, PostgreSQL, and queue in one region and private
 - incident ambiguity;
 - operational burden for an MVP team.
 
-This is a pragmatic starting point, not permanent vendor lock-in. Application code remains portable Node.js/TypeScript, PostgreSQL remains ordinary PostgreSQL, provider integrations use adapters, and assets use a portable object-storage interface.
+This is a pragmatic starting point, not permanent vendor lock-in. Application code remains portable Node.js/TypeScript, PostgreSQL remains ordinary PostgreSQL, provider integrations use adapters, and assets use a portable object-storage interface. Drizzle remains an application-layer ORM rather than a database-host lock; pg-boss removes the need for a second Redis/Valkey stateful service; S3 stays behind an object-storage adapter; provider SDKs remain confined to adapters. The Render-specific `render.yaml` must be rewritten if hosting changes. Production pricing must be verified against actual plans; no precise monthly production bill is approved.
 
 ### 3.3 Production confirmation gate
 
@@ -75,24 +74,25 @@ Render Singapore is not approved for production merely because it is proposed he
 - service availability and support terms for the selected plans;
 - actual monthly cost at forecast load and safety margin;
 - PostgreSQL version, HA, PITR window, connection limits, maintenance behavior, and restore test;
-- Key Value persistence, memory, connection limits, and recovery behavior;
+- pg-boss 12.27.0 and PostgreSQL 18 capacity, worker concurrency, retry/scheduling behavior, recovery, and the approved Drizzle transaction-adapter compatibility test;
 - object-storage region, versioning, encryption, lifecycle, CORS, and signed-URL behavior;
 - payment/auth/AI provider connectivity from the region;
 - operational access, MFA, audit, billing, and incident contacts.
 
-If any mandatory requirement fails, evaluate **AWS Africa (Cape Town)** as the preferred controlled alternative using ECS/Fargate, RDS PostgreSQL, ElastiCache or an approved durable queue, S3, and managed edge/security services. AWS is a fallback because it offers a closer African region and deeper controls but materially increases infrastructure and operational complexity.
+If any mandatory requirement fails, evaluate **AWS Africa (Cape Town)** as the preferred controlled alternative using ECS/Fargate, RDS PostgreSQL with pg-boss or another later-approved durable queue, S3, and managed edge/security services. AWS is a fallback because it offers a closer African region and deeper controls but materially increases infrastructure and operational complexity.
 
 ---
 
 ## 4. Runtime baseline
 
-- **Application framework:** approved Next.js 16 App Router baseline.
-- **Runtime:** Node.js 24 LTS, pinned to an exact supported patch in source configuration and deployment images.
-- **Language:** strict TypeScript.
-- **Package manager:** one repository-pinned manager and lockfile; proposed `pnpm` with Corepack after compatibility validation.
-- **Application shape:** modular monolith, one web process, one separately scaled worker process.
-- **Database:** PostgreSQL 18 if the selected managed plan and all required drivers/tooling support the exact version; otherwise PostgreSQL 17 as a documented temporary baseline with an upgrade plan.
-- **Queue:** BullMQ-compatible Redis/Valkey interface, with PostgreSQL business state and outbox remaining authoritative.
+- **Application framework:** Next.js 16.3.1 with App Router.
+- **Runtime:** Node.js 24.19.0 LTS, pinned in source configuration and deployment images.
+- **Language:** strict TypeScript 6.0.3; TypeScript 7 is intentionally excluded from the initial baseline.
+- **Package manager:** npm with committed `package-lock.json` and reproducible clean installs.
+- **ORM/migrations:** Drizzle ORM 0.45.2 and Drizzle Kit 0.31.10; do not use the Drizzle 1.0 RC line without a later accepted decision.
+- **Application shape:** TypeScript modular monolith in one repository, one web process, and one separately deployable/scaled worker process; no microservices or Kubernetes for MVP.
+- **Database:** PostgreSQL 18 as the authoritative transactional datastore. Production activation is blocked until the selected plan, drivers, Drizzle, extensions, backup tooling and operational features support this baseline; do not silently downgrade the approved major version.
+- **Durable jobs:** pg-boss 12.27.0 using PostgreSQL, with authoritative business state and transactional outbox/equivalent. No separate Redis/Valkey service is part of the initial baseline.
 - **Build output:** production Node deployment using a reproducible container or platform-native Node build. Evaluate Next.js standalone output during implementation.
 
 Only Active LTS or Maintenance LTS Node releases may run in production. Runtime/framework upgrades require tests, staging, migration assessment, dependency review, and rollback evidence.
@@ -108,13 +108,11 @@ flowchart TD
     TLS --> WEB[Next.js web service]
 
     WEB --> AUTH[Managed authentication provider]
-    WEB --> PG[(Managed PostgreSQL)]
-    WEB --> KV[(Persistent Key Value / queue)]
+    WEB --> PG[(Render PostgreSQL / pg-boss)]
     WEB --> OBJ[(S3-compatible object storage)]
     WEB --> PAY[Payment provider]
 
-    KV --> WRK[Background worker]
-    WRK --> PG
+    WRK[Background worker] --> PG
     WRK --> OBJ
     WRK --> AI[Approved AI providers]
     WRK --> MAIL[Approved email provider]
@@ -177,7 +175,7 @@ Application service filesystems are ephemeral. Do not store uploads, generated i
 
 Mauritius is the initial launch market; the product is not geographically restricted.
 
-The MVP begins with one write region to preserve operational simplicity and transactional correctness. Web, worker, PostgreSQL, and Key Value must be co-located in the same Render region. No active-active database writes or cross-region queue are introduced.
+The MVP begins with one write region to preserve operational simplicity and transactional correctness. Web and worker must use the same Render Singapore PostgreSQL/pg-boss deployment over private networking where supported. No active-active database writes or cross-region queue are introduced.
 
 Region selection is based on measured complete journeys—not geographic intuition alone. Test:
 
@@ -199,24 +197,25 @@ If a future region migration is required, it is a planned data migration with DN
 
 ### 8.1 Local development
 
-- local/ephemeral services;
-- disposable PostgreSQL matching production major version;
-- provider fakes by default;
-- no production credentials or data.
+- Node.js 24.19.0, npm, and reproducible installs from the committed `package-lock.json`;
+- controlled local PostgreSQL 18 environment;
+- local/test credentials only, with no production secrets or data;
+- external providers mocked, sandboxed, or disabled where their specialist decisions remain unresolved.
 
 ### 8.2 Pull-request CI
 
-- isolated databases and test resources;
-- synthetic data;
-- provider fakes;
+- clean reproducible npm install from the committed lockfile;
+- isolated PostgreSQL 18 test environment and synthetic data;
+- no production credentials or production data;
+- provider adapters mocked/faked unless a specific sandbox integration test is required;
 - no durable public environment unless a controlled preview is needed;
 - automatic expiry of preview resources.
 
 ### 8.3 Staging
 
-- separate Render environment/resources, database, Key Value, object bucket/prefix, domains, credentials, webhooks, and provider sandboxes;
+- separate non-production Render environment/resources, PostgreSQL/pg-boss database, object bucket/prefix, domains, credentials, webhooks, and sandbox/test provider accounts;
 - production-like service topology and configuration shape;
-- synthetic data only;
+- no production customer data by default;
 - access restricted where practical;
 - used for migrations, release-candidate tests, provider contracts, recovery, and rollback drills.
 
@@ -317,7 +316,7 @@ Migrations do not run implicitly on every web/worker startup. Only one authorize
 
 ### 12.1 Version
 
-Propose PostgreSQL 18 because it is the current supported major and Render documents in-place upgrades to it. Before provisioning, verify Drizzle, drivers, extensions, backup tooling, provider plan, and production features. If any critical dependency lacks support, use PostgreSQL 17 temporarily and record the upgrade trigger.
+PostgreSQL 18 is the owner-approved initial engineering baseline. Before provisioning any managed instance, verify Render plan support, Drizzle ORM 0.45.2, Drizzle Kit 0.31.10, drivers, extensions, backup tooling, HA/PITR, restore behavior and production features. A compatibility or provider-plan failure blocks provisioning or requires a later accepted decision; do not silently downgrade the approved major version.
 
 ### 12.2 Connectivity
 
@@ -337,21 +336,15 @@ Production requires a paid database. Enable provider high availability when the 
 
 ---
 
-## 13. Queue deployment
+## 13. Durable-job deployment
 
-Use a paid Key Value instance in the same region with:
+Use pg-boss 12.27.0 in PostgreSQL 18 as the initial durable-job mechanism. The web process creates jobs through a narrow queue boundary; the separately deployable Node.js worker claims and processes jobs with bounded concurrency, retries, scheduling, delayed execution, idempotency and graceful shutdown. PostgreSQL business state and the transactional outbox/equivalent remain authoritative.
 
-- internal authentication enabled;
-- TLS/authenticated URL as supported;
-- `noeviction` for job-queue correctness;
-- Journal + Snapshot persistence;
-- memory and connection alerts;
-- separate namespaces/prefixes by environment;
-- queue depth, oldest-job age, failure, retry, stall, and dead-letter monitoring.
+Monitor queue depth, oldest-job age, failures, retries, stalls, dead-letter/archive behavior, worker health, PostgreSQL connections, locks and storage growth. Keep payloads identifier-based and minimized. Separate environments through separate databases/credentials; never share production job state with development, CI, preview or staging.
 
-Render documents that Journal + Snapshot persistence writes the append-only journal approximately once per second, so up to roughly one second of queue writes may be lost during a failure. The transactional PostgreSQL outbox and authoritative job records must detect and re-enqueue missing work. Queue payloads contain identifiers and minimized data only.
+Before critical workflows rely on the pg-boss Drizzle transactional adapter, run a bounded compatibility/integration test using pg-boss 12.27.0, Drizzle ORM 0.45.2, PostgreSQL 18, actual transaction behavior, and representative scalar and array-parameter job operations where relevant. Package documentation alone is insufficient evidence.
 
-The queue is not the source of truth for payment success, entitlement, publication, RSVP, or AI usage.
+The durable-job subsystem is not the source of truth for payment success, entitlement, publication, RSVP or AI usage. The queue abstraction must remain narrow enough for later replacement.
 
 ---
 
@@ -550,7 +543,7 @@ Document and exercise:
 - compromised application or provider credential;
 - destructive administrator/repository action;
 - Render regional/platform outage;
-- PostgreSQL or Key Value failure;
+- PostgreSQL/pg-boss failure;
 - object-storage deletion/exposure;
 - DNS/domain compromise;
 - payment, AI, auth, or email provider outage;
@@ -586,9 +579,9 @@ Feature flags/kill switches are containment tools, not a substitute for revertin
 Scale from measured bottlenecks:
 
 1. optimize queries, indexes, payloads, images, and cache policy;
-2. vertically size the web, worker, database, and queue within safe limits;
+2. vertically size the web, worker, and PostgreSQL/pg-boss datastore within safe limits;
 3. adjust worker concurrency per provider/database limits;
-4. add web/worker instances only after idempotency, graceful shutdown, connection pools, Next.js cache coordination, and queue concurrency are tested;
+4. add web/worker instances only after idempotency, graceful shutdown, connection pools, Next.js cache coordination, and pg-boss concurrency are tested;
 5. add database HA/read replicas only for established reliability/read needs;
 6. consider platform migration or additional regions only after evidence.
 
@@ -600,7 +593,7 @@ Autoscaling must respect payment/AI provider limits and cost ceilings. Kubernete
 
 Before production, create a monthly cost model for:
 
-- Render workspace, web, worker, cron, PostgreSQL, HA/PITR, Key Value, build minutes, bandwidth, and support;
+- Render workspace, web, worker, cron, PostgreSQL/pg-boss, HA/PITR, build minutes, bandwidth, and support;
 - object storage, requests, egress, versioning, lifecycle, and backups;
 - DNS/domain, monitoring, error tracking, email, auth, payment, and AI;
 - staging minimums and recovery tests;
@@ -608,7 +601,7 @@ Before production, create a monthly cost model for:
 
 Use tagged/named resources and provider budgets where available. Alert at proposed 50%, 75%, 90%, and 100% of the owner-approved monthly operating budget. Cost alerts do not automatically shut down payment verification, RSVP, or other critical state-changing workflows. AI generation and other discretionary cost centers have explicit quotas/kill switches.
 
-Free tiers are not acceptable for production database, queue, web, worker, backup, or monitoring dependencies when they sleep, lack recovery, have unsuitable limits, or provide no operational assurance.
+Free tiers are not acceptable for production database/durable jobs, web, worker, backup, or monitoring dependencies when they sleep, lack recovery, have unsuitable limits, or provide no operational assurance.
 
 ---
 
@@ -658,7 +651,7 @@ Production launch is blocked until:
 - microservices/service mesh;
 - multi-region active-active writes;
 - automatic cross-cloud failover claims;
-- self-managed PostgreSQL, Redis/Valkey, object storage, or TLS;
+- self-managed PostgreSQL, object storage, or TLS;
 - production services on sleeping/free tiers;
 - direct internet exposure of PostgreSQL or queue;
 - stateful application disks as authoritative storage;
@@ -678,7 +671,6 @@ Official/current sources reviewed on 2026-08-17:
 - Render regions: <https://render.com/docs/regions>
 - Render background workers: <https://render.com/docs/background-workers>
 - Render private networking: <https://render.com/docs/private-network>
-- Render Key Value persistence and queue policy: <https://render.com/docs/key-value>
 - Render PostgreSQL backups and PITR: <https://render.com/docs/postgresql-backups>
 - Render PostgreSQL upgrades: <https://render.com/docs/postgresql-upgrading>
 - Render health checks: <https://render.com/docs/health-checks>
@@ -699,7 +691,7 @@ Provider features, regions, versions, pricing, plan limits, availability commitm
 
 ### Decision 1 — Primary MVP platform
 
-**Approved:** Use Render as the provisional managed platform for the Next.js web service, continuous worker, PostgreSQL, Key Value queue, and scheduled jobs, subject to the production confirmation gate.
+**Approved — reconciled by IMP-003:** Use Render as the provisional managed platform for the Next.js web service, continuous worker, PostgreSQL/pg-boss durable jobs, and scheduled maintenance, subject to the production confirmation gate. No separate Render Key Value/Redis/Valkey service is part of the initial baseline.
 
 ### Decision 2 — Primary region
 
@@ -715,11 +707,11 @@ Provider features, regions, versions, pricing, plan limits, availability commitm
 
 ### Decision 5 — Database version
 
-**Approved:** Use PostgreSQL 18 if the selected Render plan, Drizzle, drivers, extensions, and backup tooling pass compatibility tests; otherwise use PostgreSQL 17 temporarily with a recorded upgrade plan.
+**Approved — reconciled by IMP-003:** Use PostgreSQL 18. The selected Render plan, Drizzle ORM 0.45.2, Drizzle Kit 0.31.10, drivers, extensions, HA/PITR and backup/restore tooling must pass their gates before production; any incompatibility requires a later accepted decision rather than an unrecorded downgrade.
 
-### Decision 6 — Queue durability
+### Decision 6 — Queue durability — partially superseded
 
-**Approved:** Use a paid same-region Render Key Value instance with internal authentication, `noeviction`, and Journal + Snapshot persistence. Treat PostgreSQL outbox/job records as recovery authority for possible queue loss.
+**Superseded portion (2026-08-20, IMP-003 / DEC-023):** The earlier required Render Key Value/BullMQ direction is replaced by pg-boss 12.27.0 backed by PostgreSQL 18. No separate Redis/Valkey service is part of the approved initial baseline. PostgreSQL business state and transactional outbox/equivalent remain authoritative; the queue adapter remains narrow and replaceable, and the approved pg-boss/Drizzle/PostgreSQL compatibility test is mandatory before critical transaction-adapter reliance.
 
 ### Decision 7 — Deployment control
 
@@ -731,7 +723,7 @@ Provider features, regions, versions, pricing, plan limits, availability commitm
 
 ### Decision 9 — Runtime
 
-**Approved:** Use Node.js 24 LTS pinned to an exact supported patch and one locked package manager. Upgrade only through tested, staged, reversible changes.
+**Approved — reconciled by IMP-003:** Use Node.js 24.19.0 LTS, Next.js 16.3.1 App Router, TypeScript 6.0.3, and npm with committed `package-lock.json`. Upgrade only through tested, staged, reversible accepted changes.
 
 ### Decision 10 — Recovery objectives
 
@@ -747,7 +739,7 @@ Provider features, regions, versions, pricing, plan limits, availability commitm
 
 ### Decision 13 — Observability
 
-**Approved:** Combine Render telemetry, a privacy-reviewed Sentry deployment or equivalent, an independent uptime/synthetic monitor, and authoritative business/reconciliation dashboards. Do not place sensitive payloads in telemetry.
+**Approved — selection gate preserved:** Combine Render telemetry with a separately approved privacy-reviewed observability provider, an independent uptime/synthetic monitor, and authoritative business/reconciliation dashboards. Sentry remains the leading candidate but is not selected by IMP-003; complete the required observability decision before `IMP-011`. Do not place sensitive payloads in telemetry.
 
 ### Decision 14 — CDN/WAF
 
@@ -774,6 +766,6 @@ Provider features, regions, versions, pricing, plan limits, availability commitm
 ## 32. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
-**Approved date:** 2026-08-17.  
-**Owner decisions:** Decisions 1–18 approved as proposed.
+**Approved version:** 1.1.  
+**Approved date:** 2026-08-20.  
+**Owner decisions:** Decisions 1–18 remain approved; Decisions 1, 5, 6, 9 and 13 reconciled by owner-approved `IMP-003` / `DEC-023`.

@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.5  
+**Version:** 1.6  
 **Approved date:** 2026-08-20  
 **Current phase:** Implementation preparation — implementation not authorized  
 **Implementation:** Not authorized; only the explicitly ready preparation task may proceed after handoff verification
@@ -300,7 +300,7 @@ Passing the documentation gate authorizes implementation preparation, not produc
 ### IMP-003 — Approve initial implementation stack
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** VERIFIED  
 **Dependencies:** IMP-002; owner approval  
 **Outcome:** select the smallest viable initial stack and versions.
 
@@ -312,10 +312,21 @@ Passing the documentation gate authorizes implementation preparation, not produc
 - local, test, preview, and production environment approach documented;
 - costs and migration/exit considerations recorded.
 
+**Verification evidence — 2026-08-20:**
+
+- owner explicitly authorized and approved `IMP-003` as a repository decision/documentation action only;
+- immutable decision `DEC-023` records the initial engineering stack: Node.js 24.19.0 LTS, Next.js 16.3.1 App Router, TypeScript 6.0.3, npm with committed `package-lock.json`, Drizzle ORM 0.45.2, Drizzle Kit 0.31.10, PostgreSQL 18, and pg-boss 12.27.0;
+- the approved TypeScript modular-monolith, one-repository, web-plus-worker, PostgreSQL, transactional-outbox/equivalent, object-storage, provider-adapter, no-Kubernetes and no-microservices architecture remains authoritative;
+- pg-boss supersedes only the provisional Render Key Value/BullMQ queue direction; its queue boundary remains replaceable and its Drizzle transaction adapter requires the approved bounded compatibility/integration test before critical reliance;
+- Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore remain provisional production baselines subject to all latency, privacy, legal, pricing, plan, HA/PITR/restore, security, operations, backup and production-approval gates;
+- WorkOS AuthKit, Sentry, Postmark, exact AI model identifiers, payment/acquiring, analytics and other unresolved providers remain outside this decision and subject to their specialist tasks;
+- local, CI/test, preview/staging and production separation, portability consequences and production-cost verification are recorded; no precise production bill is asserted;
+- no dependency installation, scaffold, source code, infrastructure, database, migration, provider configuration, production deployment or application implementation occurred.
+
 ### IMP-004 — Establish repository engineering baseline
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** READY  
 **Dependencies:** IMP-003  
 **Outcome:** create the minimal application scaffold and developer tooling.
 
@@ -833,6 +844,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.5.  
+**Approved version:** 1.6.  
 **Approved date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

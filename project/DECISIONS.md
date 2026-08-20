@@ -3,8 +3,8 @@
 **File:** `project/DECISIONS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.1  
-**Approved date:** 2026-08-17  
+**Version:** 1.2  
+**Approved date:** 2026-08-20  
 **Current MVP focus:** Weddings only
 
 ---
@@ -258,7 +258,7 @@ First publication must occur within 180 days of purchase unless an approved exce
 
 - Next.js 16 App Router, strict TypeScript, Node.js 24 LTS subject to exact-patch compatibility verification, PostgreSQL, a modular monolith, a separate Worker, durable jobs, object storage, and a transactional outbox/equivalent are approved architectural choices under `docs/05_SYSTEM_ARCHITECTURE.md`;
 - OpenAI Responses API is the approved initial text adapter and Replicate official models are the approved initial image adapter under `docs/07_AI_ARCHITECTURE.md`; exact production model identifiers remain gated by implementation-time evaluation;
-- Render Singapore, Amazon S3 Singapore, Render PostgreSQL/Key Value, and the related deployment topology are provisional approved baselines under `docs/12_DEPLOYMENT.md`, not unconditional production activation.
+- Render Singapore, Amazon S3 Singapore, Render PostgreSQL/Key Value, and the related deployment topology were provisional approved baselines under `docs/12_DEPLOYMENT.md`; `DEC-023` supersedes only the Render Key Value/BullMQ portion while retaining Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore as provisional production baselines.
 
 Authentication, payment/acquiring, email, analytics, and any provider not explicitly selected by its governing specialist document remain unresolved. Exact patches, AI model snapshots, accounts, plans, contracts, pricing, legal/privacy acceptance, regional/latency evidence, and production provider activation remain subject to their documented implementation or production gates.
 
@@ -370,6 +370,42 @@ Authentication, payment/acquiring, email, analytics, and any provider not explic
 
 **Sources:** `docs/04_DOMAIN_MODEL.md`; `docs/06_DATABASE_DESIGN.md`; `docs/08_PAYMENT_ARCHITECTURE.md`; `product/ENTITLEMENTS.md`.
 
+### DEC-023 — Initial MVP engineering stack and PostgreSQL-backed durable jobs
+
+**State:** ACCEPTED  
+**Decision date:** 2026-08-20  
+**Authority:** Owner-approved `IMP-003`
+
+**Context:** `IMP-002` verified current technical candidates while preserving approved architecture and separating provisional provider baselines from final engineering choices. The initial MVP needs exact reproducible engineering versions, a controlled environment strategy, and the smallest durable-job topology consistent with PostgreSQL authority.
+
+**Decision — final initial engineering choices:**
+
+- Node.js 24.19.0 LTS;
+- Next.js 16.3.1 with App Router;
+- TypeScript 6.0.3; TypeScript 7 is intentionally not selected for the initial baseline because the reviewed tooling ecosystem was not sufficiently mature for this project;
+- npm with a committed `package-lock.json` and reproducible clean installs;
+- Drizzle ORM 0.45.2 and Drizzle Kit 0.31.10; the Drizzle 1.0 RC line is excluded unless a later accepted decision supersedes this choice;
+- PostgreSQL 18 as the authoritative transactional datastore;
+- pg-boss 12.27.0 backed by the approved PostgreSQL datastore as the initial durable-job mechanism.
+
+The architecture remains a TypeScript modular monolith in one repository, with a Next.js web process, separately deployable Node.js worker, PostgreSQL, transactional outbox/equivalent, narrow provider/queue adapters, object storage, no Kubernetes for MVP, and no microservices for MVP.
+
+**Partial supersession:** This decision supersedes only the provisional Render Key Value/BullMQ queue portion of `DEC-014` and `docs/12_DEPLOYMENT.md`. No separate Redis/Valkey service is part of the approved initial baseline. pg-boss reduces stateful infrastructure and recovery surface while supporting worker processing, retries, scheduling, delayed jobs and transactional job creation. The queue abstraction must remain narrow and replaceable.
+
+**Compatibility gate:** Before critical workflows rely on the pg-boss Drizzle transactional adapter, implementation must pass a bounded integration test covering pg-boss 12.27.0, Drizzle ORM 0.45.2, PostgreSQL 18, transaction behavior, and representative scalar/array-parameter job operations where relevant. Package documentation alone is insufficient evidence for critical transaction behavior.
+
+**Environment approach:** Local development uses the approved runtime/npm/PostgreSQL baseline with local/test credentials only and providers mocked, sandboxed or disabled where unresolved. CI uses clean lockfile installs, isolated PostgreSQL, no production data/credentials, and mocked/fake adapters except explicit sandbox tests. Preview/staging uses separate non-production credentials, database and sandbox providers with no production customer data by default. Production uses fully separated secrets, database and provider configuration and remains blocked by existing production gates.
+
+**Provisional production providers:** Render Singapore remains the provisional application platform; Render PostgreSQL in Singapore remains the provisional managed-database direction; Amazon S3 Singapore remains the provisional object-storage baseline. They are not production-authorized and remain subject to latency, terms, privacy/subprocessor/data-transfer, pricing, plan-limit, PostgreSQL HA/PITR/restore, security, operations, backup and owner production-approval gates.
+
+**Unresolved specialist providers:** WorkOS AuthKit remains an authentication candidate subject to `IMP-012` and privacy/legal review of US processing/transfers. Sentry remains an observability candidate subject to the pre-`IMP-011` gate. Postmark remains a transactional-email recommendation only. Existing AI provider directions remain governed by `docs/07_AI_ARCHITECTURE.md`, with exact models gated by `IMP-040`. Payment/acquiring remains governed by `IMP-051`. Analytics and other unresolved providers remain unselected.
+
+**Cost and portability consequences:** pg-boss removes a second Redis/Valkey stateful service. Render remains replaceable; PostgreSQL remains portable PostgreSQL; Drizzle is an application-layer ORM; S3 remains behind an object-storage adapter; provider SDKs remain confined to adapters. Render-specific `render.yaml` configuration must be rewritten if hosting changes. Actual production plan pricing must be verified before launch; no precise monthly bill is approved here.
+
+**Non-authorization:** This decision does not install dependencies, scaffold code, create infrastructure or databases, configure providers, deploy production, perform `IMP-004`, or authorize application implementation.
+
+**Sources:** Owner-approved `IMP-003`; `IMP-002` evidence; `docs/05_SYSTEM_ARCHITECTURE.md`; `docs/12_DEPLOYMENT.md`; `project/TASKS.md`.
+
 ---
 
 ## 6. Explicitly rejected directions
@@ -397,8 +433,8 @@ Rejected feature details and reconsideration gates are maintained in `project/BA
 
 The following are not approved merely because they are required before implementation or launch:
 
-1. final application framework and runtime versions;
-2. final database, identity, storage and hosting providers;
+1. future framework/runtime/database version changes beyond `DEC-023` and exact compatibility revalidation at implementation time;
+2. final production activation/plans for provisional database, storage and hosting providers, plus the unresolved identity provider;
 3. final AI providers, models, regions, retention terms and production pricing;
 4. final payment provider/acquirer and verified production payment methods;
 5. final transactional email and observability providers;
@@ -477,6 +513,6 @@ Do not rewrite history to make a changed decision appear as though it was always
 ## 10. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.1.  
-**Approved date:** 2026-08-17.  
+**Approved version:** 1.2.  
+**Approved date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

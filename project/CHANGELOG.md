@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.5  
+**Version:** 1.6  
 **Approved date:** 2026-08-20  
 **Current phase:** Implementation preparation — implementation not authorized  
 **Application release status:** No application release exists
@@ -170,9 +170,18 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - Recorded `IMP-002` as `VERIFIED`; `IMP-003` remains `BLOCKED` pending explicit owner approval, and every later implementation task remains `BLOCKED`.
 - No application implementation, provider configuration, production-readiness declaration, or application release occurred.
 
+### Implementation-preparation decision milestone — `IMP-003`
+
+- Owner approved the initial engineering stack through `IMP-003` and immutable `DEC-023`: Node.js 24.19.0 LTS, Next.js 16.3.1 App Router, TypeScript 6.0.3, npm/committed `package-lock.json`, Drizzle ORM 0.45.2, Drizzle Kit 0.31.10, PostgreSQL 18, and pg-boss 12.27.0.
+- Superseded only the provisional Render Key Value/BullMQ queue direction; the initial baseline uses pg-boss/PostgreSQL and no separate Redis/Valkey service.
+- Retained Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore as provisional production baselines subject to all existing confirmation gates.
+- Preserved WorkOS AuthKit, Sentry, Postmark, exact AI models, payment/acquiring, analytics and other specialist providers as unresolved under their existing tasks.
+- Recorded `IMP-003` as `VERIFIED` and made only `IMP-004` `READY`; `IMP-004` was not performed.
+- No application code, dependency installation, infrastructure, database, migration, provider configuration, production deployment or application release occurred.
+
 ### Pending owner instruction
 
-- Decide whether to authorize `IMP-003` for owner-controlled stack approval; `IMP-002` evidence approval does not authorize it.
+- Decide when to perform `IMP-004`; readiness does not authorize automatic execution or application implementation.
 - Application implementation requires a separate later owner authorization.
 
 ### Not authorized
@@ -390,6 +399,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.5.  
+**Approved version:** 1.6.  
 **Approved date:** 2026-08-20.  
 **Owner decisions:** Decisions 1–10 approved as proposed.

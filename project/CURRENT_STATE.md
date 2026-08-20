@@ -3,7 +3,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.11  
+**Version:** 1.12  
 **Snapshot date:** 2026-08-21  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -53,6 +53,8 @@ The documentation package, handoff declaration, and implementation-preparation t
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Owner decision `DEC-024` grants task-controlled application implementation authorization; only `READY` tasks may be performed.
 
 Claude Code must use `project/TASKS.md` as the execution gate and must not infer authorization for any `BLOCKED` task from the completeness of this package or the general implementation authorization.
+
+**Repository visibility reconciliation — 2026-08-21:** During final `IMP-005` verification, GitHub was observed reporting the repository as public. This contradicted the intended and recorded private, owner-controlled state. The owner restored the repository to private; GitHub now reports `private: true`, `visibility: private`, default branch `main`, on the connected owner's GitHub Free plan. `main` is not protected, and technical required-status-check enforcement is not active. No paid plan upgrade was authorized. Interim policy remains: no pull request may be merged into `main` unless `CI / quality-gate` succeeds.
 
 ---
 
@@ -135,7 +137,7 @@ Owner-approved `IMP-003` is `VERIFIED`. The initial engineering baseline is Node
 
 Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore remain provisional production baselines. Authentication, observability, transactional email, exact AI models, payment/acquiring, analytics and other unresolved specialist providers remain unselected and gated.
 
-Application implementation is authorized by owner decision `DEC-024` only through eligible tasks in `project/TASKS.md`. `IMP-004 — Establish repository engineering baseline` is `VERIFIED` and was merged through PR #1 by normal merge commit `1ae399202fb34ac7c760321c0b8831527c62b968`, preserving implementation commit `da9c8b7a1ddab0b0f5470fc9ed5aa5d29a99339f`. The baseline contains a Next.js `16.3.1` App Router scaffold, strict TypeScript `6.0.3`, ESLint, Prettier, Vitest, a committed `package-lock.json`, minimal server-only environment validation, a non-sensitive `GET /api/health` liveness endpoint, and a structural `worker/` placeholder. Drizzle ORM/Kit and pg-boss remain declared, unused dependencies only — no schema, migration, queue, or database connection exists. `IMP-005 — Establish CI quality gates` is `IMPLEMENTED` on branch `imp-005-ci-quality-gates` (`.github/workflows/ci.yml`, `scripts/secret-scan.sh`), locally validated, but not yet `VERIFIED` pending an actual GitHub-hosted Actions run; every later task remains `BLOCKED`.
+Application implementation is authorized by owner decision `DEC-024` only through eligible tasks in `project/TASKS.md`. `IMP-004 — Establish repository engineering baseline` and `IMP-005 — Establish CI quality gates` are `VERIFIED` and merged. PR #2 preserved implementation commit `839b176e6370d944a8a29bc83cab8c6ee4e3dac0` through merge commit `47cfb630ae85f639f2ec1106496a42c52fd7a4de`; GitHub-hosted PR run `32420895244` and post-merge `main` run `32421454608` succeeded. `IMP-010` is `READY` but has not started, and later tasks remain governed by their existing dependencies. No product feature, database, migration, provider configuration, infrastructure deployment or application release exists.
 
 ---
 
@@ -336,7 +338,7 @@ Security architecture is approved as a design baseline. No implementation securi
 Current facts:
 
 - no production system exists to attack or certify;
-- no production secrets should exist in the repository;
+- the current reviewed repository tree contains no known real secrets according to the existing checks; the narrow tracked-file scanner is best-effort, does not prove the absence of secrets, and does not prove that no historical/public exposure occurred;
 - no penetration test has occurred;
 - CI dependency auditing is active; no SAST, DAST, or infrastructure scan has yet occurred;
 - no backup/restore or incident-response drill has occurred;
@@ -516,4 +518,4 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 **Status:** Approved — Owner Approved.  
 **Approved version:** 1.10.  
 **Snapshot date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` recorded `VERIFIED` under Decision 5/6; `IMP-005` recorded `IMPLEMENTED`, pending GitHub-hosted Actions run evidence before `VERIFIED` under Decision 5/6/9.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` under Decisions 5/6/9; `IMP-010` is `READY` but not started.

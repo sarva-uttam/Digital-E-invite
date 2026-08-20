@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.11  
+**Version:** 1.12  
 **Approved date:** 2026-08-21  
 **Current phase:** Application implementation — authorized and task-controlled  
 **Application release status:** No application release exists
@@ -237,6 +237,20 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - Recorded `IMP-005` as `VERIFIED`. Its sole dependent gate is satisfied, so `IMP-010` is `READY` but was not performed; `IMP-011` and later tasks remain blocked by their own dependencies.
 - No product feature, provider configuration, database, migration, infrastructure, deployment, production resource, or customer launch occurred.
 - **Migration/action required:** None. **Compatibility/customer impact:** None — merged but not deployed; `Application release: None`.
+
+### Repository-visibility reconciliation
+
+**Track:** SECURITY  
+**Status:** VERIFIED — repository restored to private  
+**Application release:** None
+
+- During final `IMP-005` verification, GitHub was observed reporting the repository as public, contradicting the owner-controlled/private intent and existing project records.
+- The owner restored the repository to private. Direct GitHub verification now reports `private: true`, `visibility: private` and default branch `main`; the connected owner account remains on GitHub Free.
+- `main` remains unprotected. Required-status-check technical enforcement is not active for this private repository on the current plan, and no paid plan upgrade was authorized. Interim policy remains: no pull request may be merged into `main` unless `CI / quality-gate` succeeds.
+- The current reviewed tree contains no known real secrets according to the existing CI checks. The narrow tracked-file secret scanner is best-effort: it does not prove the absence of secrets and does not establish that no historical/public access occurred.
+- This record does not claim that restoring private visibility retroactively removes possible prior public access, and it does not claim that a data breach occurred.
+- No application source, dependency, CI behavior, provider, database, migration, infrastructure, deployment, production credential, customer launch or application release changed through this correction.
+
 
 ---
 

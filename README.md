@@ -4,13 +4,13 @@ An AI-assisted digital invitation platform for creating, personalizing, publishi
 
 **Claude Package version:** 1.0  
 **Package status:** Implementation Preparation Ready  
-**Repository status:** Documentation package complete; final audit passed and corrections verified  
+**Repository status:** Private, owner-controlled repository; documentation package complete; final audit passed and corrections verified  
 **Application status:** Engineering baseline and CI quality gates verified (`IMP-004`–`IMP-005`); `IMP-010` is `READY` but not started; no product feature is implemented and no application release exists  
 **Initial operating market:** Mauritius  
 **Availability vision:** Global  
 **MVP event type:** Weddings only  
 **Document status:** Approved — Owner Approved  
-**Version:** 1.6  
+**Version:** 1.7  
 **Approved date:** 2026-08-21
 
 ---
@@ -28,6 +28,8 @@ Mauritius is the first operating and validation market, but the service is inten
 ## Current repository purpose
 
 This repository contains the owner-approved Claude Code development package that governs implementation, plus a minimal engineering baseline (`IMP-004`): a Next.js application scaffold, developer tooling and a non-sensitive health endpoint. No product feature is implemented and no application has been released.
+
+During final `IMP-005` verification, GitHub was observed reporting this repository as public, contrary to the owner-controlled private-repository intent and project records. The owner restored it to private, and GitHub now confirms `private: true` and `visibility: private`. This correction does not assert that private visibility retroactively removes any possible prior public access, and no data breach is claimed.
 
 The documentation package was created sequentially:
 
@@ -438,4 +440,4 @@ GitHub `main` is the permanent source of truth. Claude Code must enter through `
 **Status:** Approved — Owner Approved.  
 **Approved version:** 1.5.  
 **Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; Decision 10 fulfilled by the verified `IMP-004` engineering baseline; `IMP-005` implemented and locally validated, pending GitHub-hosted Actions run evidence.
+**Owner decisions:** Decisions 1–10 approved as proposed; Decision 10 fulfilled by the verified `IMP-004` engineering baseline; `IMP-005` is `VERIFIED` from successful GitHub-hosted pull-request and post-merge CI evidence.

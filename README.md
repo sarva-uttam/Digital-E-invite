@@ -5,12 +5,12 @@ An AI-assisted digital invitation platform for creating, personalizing, publishi
 **Claude Package version:** 1.0  
 **Package status:** Implementation Preparation Ready  
 **Repository status:** Private, owner-controlled repository; documentation package complete; final audit passed and corrections verified  
-**Application status:** Engineering baseline and CI quality gates verified (`IMP-004`–`IMP-005`); configuration/environment boundaries implemented (`IMP-010`, pending GitHub-hosted run evidence); no product feature is implemented and no application release exists  
+**Application status:** Engineering baseline, CI quality gates, and configuration/environment boundaries are verified (`IMP-004`, `IMP-005`, `IMP-010`); no product feature is implemented and no application release exists  
 **Initial operating market:** Mauritius  
 **Availability vision:** Global  
 **MVP event type:** Weddings only  
 **Document status:** Approved — Owner Approved  
-**Version:** 1.10  
+**Version:** 1.11  
 **Approved date:** 2026-08-21
 
 ---
@@ -378,16 +378,17 @@ Public contribution rules, licensing and external support channels have not yet 
 
 ## Current next steps
 
-Claude Package v1.0 remains `Implementation Preparation Ready`. `DOC-001` through `DOC-010` and `IMP-001` through `IMP-005` are verified. PR #2 merged the CI quality gates after successful GitHub-hosted pull-request CI, and the immediate push-to-`main` CI run also passed. `IMP-010 — Implement configuration and environment boundaries` is implemented on branch `imp-010-config-boundaries` (a typed, framework-agnostic configuration boundary reused by both the web app and the future worker, real Next.js startup validation, and a narrow explicit public/server-only separation), hardened by two independent-review correction passes (the shared parser now requires an explicit source and can no longer read the real environment even if imported directly; application/origin URLs reject non-web schemes and embedded credentials without ever echoing the raw credential-bearing value, regardless of which validation rule fails first; and payment-mode/checkout-flag environment safety rules were added), and locally validated — but not yet `VERIFIED`, since no actual GitHub-hosted Actions run evidence has been obtained yet.
+Claude Package v1.0 remains `Implementation Preparation Ready`. `DOC-001` through `DOC-010` and `IMP-001` through `IMP-005` are verified. `IMP-010 — Implement configuration and environment boundaries` is also `VERIFIED`: PR #3 passed GitHub-hosted pull-request CI, merged normally as `075f6df030484de914e6ef70a8ca412e18c83ec4`, and the immediate push-to-`main` CI run passed.
 
-Current sequence:
+Current task state:
 
-1. the owner opens a pull request from `imp-010-config-boundaries` into `main` (or provides `gh`/GitHub API access) so the `CI` workflow's `quality-gate` run can execute and be recorded as evidence, completing `IMP-010`;
-2. `IMP-011` and later tasks remain blocked until their own dependencies and owner/provider decisions are satisfied;
-3. no product feature, database, migration, provider configuration, infrastructure, deployment, production resource, or application release exists;
-4. production deployment, customer launch and production provider activation remain unauthorized.
+1. `IMP-020 — Create migration system and base schema` is `READY` because its complete dependencies (`IMP-003`, `IMP-010`) are verified; it has not started.
+2. `IMP-011` remains `BLOCKED` by the unresolved observability decision.
+3. `IMP-012` remains `BLOCKED` by the unresolved authentication decision.
+4. `IMP-041` remains `BLOCKED` by `IMP-040`; every other later task remains governed by its recorded dependencies.
+5. No provider, database schema, migration, queue, infrastructure, deployment, production resource, product feature, customer launch, or application release was created by this reconciliation.
 
-GitHub `main` is the permanent source of truth. Claude Code must enter through `CLAUDE.md`, which preserves the task-controlled implementation gate.
+GitHub `main` is the permanent source of truth. The repository remains private. Claude Code must enter through `CLAUDE.md`, which preserves the task-controlled implementation gate. Production deployment and customer launch remain unauthorized.
 
 ---
 
@@ -440,4 +441,4 @@ GitHub `main` is the permanent source of truth. Claude Code must enter through `
 **Status:** Approved — Owner Approved.  
 **Approved version:** 1.10.  
 **Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; Decision 10 fulfilled by the verified `IMP-004` engineering baseline; `IMP-005` is `VERIFIED` from successful GitHub-hosted pull-request and post-merge CI evidence; `IMP-010` is implemented, hardened by two independent-review correction passes, and locally validated, pending GitHub-hosted Actions run evidence.
+**Owner decisions:** Decisions 1–10 approved as proposed; Decision 10 fulfilled by the verified `IMP-004` engineering baseline; `IMP-005` and `IMP-010` are `VERIFIED` from successful GitHub-hosted pull-request and post-merge CI evidence; `IMP-020` is `READY` by dependency reconciliation only and has not started.

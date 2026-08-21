@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.15  
+**Version:** 1.16  
 **Approved date:** 2026-08-21  
 **Current phase:** Application implementation — authorized and task-controlled  
 **Application release status:** No application release exists
@@ -255,25 +255,19 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 **Track:** APPLICATION  
 **Application version:** 0.1.0 (unreleased)  
-**Status:** IMPLEMENTED — not yet `VERIFIED`; not merged; not deployed  
+**Status:** VERIFIED — merged; not deployed  
 **Application release:** None
 
-- Implemented on branch `imp-010-config-boundaries` from verified `main` at `fd606f53ed24e5769c002d34652ff52d0cea0e0e`; no dependency was added.
-- Restructured the `IMP-004` configuration baseline into a framework-agnostic module (`src/lib/config.ts`, no `server-only` import) reused by a thin Next.js-facing barrel (`src/lib/env.ts`, unchanged `server-only` guard) and a worker-facing re-export (`worker/src/config.ts`), so the boundary is safely importable by the future worker without triggering the `server-only` package's Client Component throw guard outside a Next.js build.
-- Added `src/instrumentation.ts`, the current official Next.js 16.3.1 startup hook (`register()`, verified 2026-08-21 against `nextjs.org/docs/app/guides/instrumentation`), scoped to the Node.js runtime, that validates configuration once per server instance and fails startup before the server accepts requests. Verified live with `npm run start`: valid configuration boots and serves `GET /api/health` normally; an invalid `APP_ENV` makes every request return `500` with the configuration error logged, proving startup validation is genuinely wired in.
-- Extended typed validation to the provider-neutral fields already defined in `.env.example`: application URL/public URL/timezone/currency, allowed origins, trusted-proxy count, payment mode/base currency/supported currencies, the 8 `ENABLE_*` feature flags (strict boolean), generic app secrets (minimum-length-if-present, never echoed on error), and database connection URL/SSL mode/pool bounds. Production/preview now require an explicit `APP_URL`, `PUBLIC_APP_URL`, and non-empty `ALLOWED_ORIGINS`, per `docs/09_SECURITY_ARCHITECTURE.md` and `docs/12_DEPLOYMENT.md`; development/test keep safe defaults.
-- Demonstrated feature-gated fail-closed validation with two provider-neutral examples (`ENABLE_PAYMENTS` requires `PUBLIC_APP_URL`; `ENABLE_EUR_CHECKOUT`/`ENABLE_USD_CHECKOUT` require the matching currency code) without selecting, contacting, or initializing any provider.
-- Provider-specific fields with no current consumer (authentication, storage, AI, payment-provider, email, cache/queue, observability) remain an opaque, server-only, blank-normalized bag; their exact shape is deferred to the task that selects each provider.
-- Added `toPublicConfig()`: a 4-field explicit allow-list (`defaultLocale`, `defaultCurrency`, `appTimezone`, `publicAppUrl`) that never spreads the server configuration object; no `NEXT_PUBLIC_*` variable was introduced. `GET /api/health` is unchanged.
-- Test count grew from 8 to 56 across 6 files, including canary-secret non-disclosure tests, blank-value "not configured" semantics, and a public-config allow-list regression test.
-- Verified from a clean `npm ci`: `typecheck`, `lint`, `test` (56/56), `build` all passed; `npm audit --audit-level=high` exits `0` (same 4 pre-existing moderate `esbuild`/`drizzle-kit` findings recorded under `IMP-005`, no dependency changed); `scripts/secret-scan.sh` passed; `.env.example` was not modified.
-- **Not yet obtained:** an actual GitHub-hosted Actions run, for the same reason recorded under `IMP-005` — this environment has no `gh` CLI and no `GITHUB_TOKEN`/`GH_TOKEN`, and pushing a feature branch alone does not trigger `CI` (the `push` trigger is scoped to `main`).
-- No provider was selected/configured; no database, migration, or queue work occurred; no observability/auth/payment/AI/product-feature work occurred; no production deployment, resource, or credential was created. `IMP-011` and later tasks remain `BLOCKED` and were not performed.
-- **Correction (2026-08-21, independent review, same branch, new commit):** the parser is renamed `parseServerEnv(source)` with its `= process.env` default removed, so the framework-agnostic module can no longer read the real environment even if imported directly — zero `process.env` references remain, enforced by static-source, arity, and `@ts-expect-error` compile-time regression tests; `src/lib/env.ts`/`worker/src/config.ts` each gained their own `process.env`-defaulting wrapper (`loadServerEnv`/`loadWorkerEnv`); `src/instrumentation.ts` now imports the protected `./lib/env` entry point instead of `./lib/config` directly (confirmed live via the compiled `src_lib_env_ts_*` chunk). `APP_URL`/`PUBLIC_APP_URL`/each `ALLOWED_ORIGINS` entry now reject non-http(s) schemes and embedded credentials (never echoed). `PAYMENT_MODE=live` is now rejected unless `APP_ENV=production`. `ENABLE_EUR_CHECKOUT`/`ENABLE_USD_CHECKOUT` now additionally require `ENABLE_PAYMENTS=true`. No HTTPS-only restriction and no `PAYMENT_BASE_CURRENCY`-must-be-supported rule were added, because no approved document was found requiring either. Test count grew from 56 to 84. No dependency, `.env.example`, or provider change. `IMP-010` remains `IMPLEMENTED`, not `VERIFIED`.
-- **Correction 2 (2026-08-21, final independent review, same branch, new commit):** fixed a residual redaction gap: `readOptionalWebUrl` (`APP_URL`/`PUBLIC_APP_URL`) and `readOrigins` (`ALLOWED_ORIGINS`) still interpolated the raw value/entry into the "malformed" and "must use http: or https:" errors, so a credential-bearing URL failing the scheme check (or failing inside the `URL` constructor itself) before reaching the credentials check could still leak an embedded username/password — e.g. `ftp://user:secret@example.test` previously echoed `user:secret@example.test`. Removed every raw-value interpolation from all four throw sites in both functions; directly reproduced and re-verified the exact `ftp://user:secret@...` case via a standalone check, confirming no username/password/raw-URL leak. Added 7 regression tests. Test count grew from 84 to 91. No other behavior, dependency, `.env.example`, or provider change.
-- **Migration/action required:** Owner opens a pull request from `imp-010-config-boundaries` into `main` (or provides `gh`/API access) so the `quality-gate` run executes; only after that evidence is recorded can `IMP-010` become `VERIFIED`. **Compatibility/customer impact:** None — not merged, not deployed, no customer-visible change, `Application release: None`.
-
----
+- Final audit verdict: `PASS WITH NON-BLOCKING FOLLOW-UP`.
+- Implemented through commits `f282fa3f3c883d306782b7f42d49d11bd079736a`, `f68768570e41efa636dcccca4650f609ee33d3b3`, and `8a64a6d18ecd88073510f933728b0cc7b0c5b26b`.
+- PR #3 passed GitHub-hosted `CI / quality-gate` run `32505567479` and merged normally as `075f6df030484de914e6ef70a8ca412e18c83ec4`, preserving all three implementation commits.
+- Immediate push-to-`main` run `32506567512` passed. Both runs verified Node.js `v24.19.0`, npm `11.17.0`, clean `npm ci`, format, lint, typecheck, 6/6 test files and 91/91 tests, build, `npm audit --audit-level=high`, and the best-effort tracked-file secret scan.
+- The dependency audit retains the same 4 non-blocking moderate `esbuild`/`drizzle-kit` development-tooling findings; no dependency changed.
+- Verified typed startup validation; pure shared parser and separate Next.js/worker runtime wrappers; explicit four-field public allow-list; environment-specific fail-closed invariants; and URL/origin/secret redaction coverage.
+- Recorded `IMP-010` as `VERIFIED`. `IMP-020` became `READY` because its complete dependencies (`IMP-003`, `IMP-010`) are verified; it was not performed. `IMP-011`, `IMP-012`, `IMP-041`, and later tasks remain governed by unresolved dependencies and specialist gates.
+- No provider selection/activation, database schema, migration, queue, infrastructure, deployment, production credential, product feature, or customer launch occurred.
+- Technical required-status-check enforcement remains unavailable on the current private-repository plan; the successful CI-before-merge manual policy was followed.
+- **Migration/action required:** None. **Compatibility/customer impact:** None — merged but not deployed; `Application release: None`.
 
 ## 9. 2026-08-17 — Documentation foundation
 
@@ -479,4 +473,4 @@ Customer release notes must never claim a capability that is merely documented, 
 **Status:** Approved — Owner Approved.  
 **Approved version:** 1.15.  
 **Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; the `IMP-004` and `IMP-005` entries recorded under Decision 8 (release truth: `VERIFIED`, merged, undeployed); the `IMP-010` entry recorded under Decision 8 as `IMPLEMENTED` and hardened by two independent-review correction passes, pending GitHub-hosted Actions run evidence before `VERIFIED`.
+**Owner decisions:** Decisions 1–10 approved as proposed; the `IMP-004`, `IMP-005`, and `IMP-010` entries recorded under Decision 8 as `VERIFIED`, merged, and undeployed. `IMP-020` is `READY` by dependency reconciliation only and has not started.

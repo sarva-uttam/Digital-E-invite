@@ -3,7 +3,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.13  
+**Version:** 1.14  
 **Snapshot date:** 2026-08-21  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -283,12 +283,12 @@ Implemented and verified on `main` through PR #2 (`IMP-005`):
 
 Implemented on branch `imp-010-config-boundaries`, locally validated, pending GitHub-hosted Actions evidence (`IMP-010`, not yet `VERIFIED`):
 
-- `src/lib/config.ts` — framework-agnostic typed configuration boundary (no `server-only` import) reused by `src/lib/env.ts` (Next.js, `server-only`-guarded) and `worker/src/config.ts` (relative import, no `server-only`);
-- `src/instrumentation.ts` — the current official Next.js startup hook (`register()`), scoped to the Node.js runtime, that validates configuration once per server instance and fails startup on invalid configuration (verified live: invalid `APP_ENV` makes every request return `500` until corrected);
-- typed, validated fields: `APP_NAME`, `APP_URL`/`PUBLIC_APP_URL`, `APP_TIMEZONE` (real IANA zone), `DEFAULT_CURRENCY`/`PAYMENT_BASE_CURRENCY`/`PAYMENT_SUPPORTED_CURRENCIES`, `ALLOWED_ORIGINS`, `TRUSTED_PROXY_COUNT`, `PAYMENT_MODE`, `DATABASE_URL`/`DATABASE_DIRECT_URL`/`DATABASE_SSL_MODE`/`DATABASE_POOL_MIN`/`MAX`, the 8 `ENABLE_*` feature flags, `APP_SECRET`/`ENCRYPTION_KEY`/`TOKEN_HASH_KEY`, `TEST_DATABASE_URL`/`E2E_BASE_URL`; production/preview require `APP_URL`/`PUBLIC_APP_URL`/`ALLOWED_ORIGINS`; `ENABLE_PAYMENTS`/`ENABLE_EUR_CHECKOUT`/`ENABLE_USD_CHECKOUT` fail closed without their generic (non-provider) prerequisite;
+- `src/lib/config.ts` — framework-agnostic typed configuration boundary. Its parser, `parseServerEnv(source)`, takes no default and reads no real environment on its own (enforced by a static source-text test, an arity test, and a `@ts-expect-error` compile-time test), so an accidental direct import cannot read server secrets. `src/lib/env.ts` (Next.js, `server-only`-guarded) and `worker/src/config.ts` (relative import, no `server-only`) each expose their own `process.env`-defaulting wrapper (`loadServerEnv`/`loadWorkerEnv`) that delegates to it;
+- `src/instrumentation.ts` — the current official Next.js startup hook (`register()`), scoped to the Node.js runtime, importing from `./lib/env` (not `./lib/config` directly) so real configuration loading always goes through the protected boundary; validates configuration once per server instance and fails startup on invalid configuration (verified live: invalid `APP_ENV` and invalid `PAYMENT_MODE` each make every request return `500` until corrected, with the `src_lib_env_ts_*` compiled chunk confirming the protected import path);
+- typed, validated fields: `APP_NAME`, `APP_URL`/`PUBLIC_APP_URL` (http/https only, no embedded credentials), `APP_TIMEZONE` (real IANA zone), `DEFAULT_CURRENCY`/`PAYMENT_BASE_CURRENCY`/`PAYMENT_SUPPORTED_CURRENCIES`, `ALLOWED_ORIGINS` (http/https only, no embedded credentials), `TRUSTED_PROXY_COUNT`, `PAYMENT_MODE` (rejects `live` unless `APP_ENV=production`), `DATABASE_URL`/`DATABASE_DIRECT_URL`/`DATABASE_SSL_MODE`/`DATABASE_POOL_MIN`/`MAX`, the 8 `ENABLE_*` feature flags, `APP_SECRET`/`ENCRYPTION_KEY`/`TOKEN_HASH_KEY`, `TEST_DATABASE_URL`/`E2E_BASE_URL`; production/preview require `APP_URL`/`PUBLIC_APP_URL`/`ALLOWED_ORIGINS`; `ENABLE_PAYMENTS`/`ENABLE_EUR_CHECKOUT`/`ENABLE_USD_CHECKOUT` fail closed without their generic (non-provider) prerequisite, and `ENABLE_EUR_CHECKOUT`/`ENABLE_USD_CHECKOUT` additionally require `ENABLE_PAYMENTS=true`;
 - provider-specific fields (auth/storage/AI/payment-provider/email/cache/queue/observability) remain an opaque, server-only, blank-normalized bag — no provider selected, contacted, or initialized;
 - `toPublicConfig()` — a 4-field explicit allow-list (`defaultLocale`, `defaultCurrency`, `appTimezone`, `publicAppUrl`); no `NEXT_PUBLIC_*` variable was introduced; `GET /api/health` is unchanged;
-- test count grew from 8 to 56 across 6 files, including canary-secret non-disclosure and public-config allow-list tests.
+- test count grew from 8 to 84 across 6 files (56 at first implementation, +28 from an independent-review correction pass), including canary-secret non-disclosure, embedded-credential non-disclosure, and public-config allow-list tests.
 
 Still not created or selected for production:
 
@@ -526,6 +526,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.13.  
+**Approved version:** 1.14.  
 **Snapshot date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` under Decisions 5/6/9; `IMP-010` recorded `IMPLEMENTED`, pending GitHub-hosted Actions run evidence before `VERIFIED`.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` under Decisions 5/6/9; `IMP-010` recorded `IMPLEMENTED` and hardened by an independent-review correction pass, pending GitHub-hosted Actions run evidence before `VERIFIED`.

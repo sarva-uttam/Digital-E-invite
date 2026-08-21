@@ -13,10 +13,14 @@
  * Next.js calls `register` in every runtime (Node.js and Edge). Node.js
  * configuration validation is scoped to the Node.js runtime only, per the
  * official guidance on importing runtime-specific code.
+ *
+ * Imports from "./lib/env" (the "server-only"-guarded entry point), not
+ * "./lib/config" (the pure, framework-agnostic parser), so real
+ * configuration loading always goes through the protected boundary.
  */
 export async function register(): Promise<void> {
   if (process.env.NEXT_RUNTIME === "nodejs") {
-    const { loadServerEnv } = await import("./lib/config");
+    const { loadServerEnv } = await import("./lib/env");
     loadServerEnv();
   }
 }

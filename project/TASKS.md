@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.11  
+**Version:** 1.12  
 **Approved date:** 2026-08-21  
 **Current phase:** Application implementation — authorized and task-controlled  
 **Application implementation authorization:** GRANTED — task-controlled; only `READY` tasks may be performed
@@ -416,6 +416,16 @@ This gate does not authorize production deployment, customer launch, provider co
 - **evidence gap — why this task is `IMPLEMENTED` and not `VERIFIED`:** as with `IMP-005`, this environment has no `gh` CLI and no `GITHUB_TOKEN`/`GH_TOKEN`; pushing the feature branch alone does not trigger `CI` (the `push` trigger is scoped to `main` only). A `pull_request` targeting `main` must be opened for the authoritative GitHub-hosted `quality-gate` run to execute;
 - **required to reach `VERIFIED`:** the owner opens a pull request from `imp-010-config-boundaries` into `main` (or provides `gh`/API access) and the `CI` / `quality-gate` run succeeds;
 - no later task was implemented; no provider was selected/configured; no database, migration, or queue work occurred; no observability/auth/payment/AI/product-feature work occurred; no production deployment, resource, or credential was created. `IMP-011` and every later task remain `BLOCKED`.
+
+**Correction — 2026-08-21 (independent review):** an independent review accepted the overall approach but required hardening before PR creation. Applied on the same branch as a new commit (no amend/rebase/force-push):
+
+- **server/public boundary fix:** `src/lib/config.ts`'s parser is renamed `parseServerEnv(source: EnvSource)` with the `= process.env` default removed entirely, so the framework-agnostic module can no longer read the real environment even if imported directly by mistake — it now requires an explicit source and contains zero references to `process.env` (a static source-text regression test enforces this, plus `parseServerEnv.length === 1` and a `// @ts-expect-error` compile-time check that a no-argument call must not type-check). `src/lib/env.ts` gains its own `loadServerEnv(source = process.env)` wrapper (still `import "server-only"` guarded) that delegates to `parseServerEnv`; `worker/src/config.ts` gains the equivalent `loadWorkerEnv(source = process.env)` wrapper (still no `server-only`). `src/instrumentation.ts` now imports from `./lib/env` (the protected entry point) instead of `./lib/config` directly — verified live via `npm run start` that the compiled instrumentation chunk is `src_lib_env_ts_*`, not `src_lib_config_ts_*`;
+- **URL/origin hardening:** `APP_URL`/`PUBLIC_APP_URL` (new `readOptionalWebUrl`) and each `ALLOWED_ORIGINS` entry now reject any scheme other than `http:`/`https:` and reject embedded `user:pass@` credentials (rejected without ever echoing the credential-bearing value, verified by canary tests); malformed-URL rejection is preserved; `http://localhost` remains valid in every environment. Reviewed `docs/09_SECURITY_ARCHITECTURE.md` and `docs/12_DEPLOYMENT.md` for an explicit HTTPS-only mandate on these fields: found only infrastructure-level TLS behavior (Render-managed TLS/HTTP→HTTPS redirect, docs/12 §15) and general "TLS in transit"/"encrypt traffic" principles, no explicit rule requiring this parser to reject `http:` in production/preview — so no HTTPS-only restriction was added, per the review's instruction not to invent one;
+- **PAYMENT_MODE environment safety:** `PAYMENT_MODE=live` is now rejected unless `APP_ENV=production` (matches `.env.example`'s "use sandbox credentials outside production"); `sandbox` remains valid everywhere including production. This is an environment-safety invariant only — no payment provider or credential was validated, selected, or contacted;
+- **feature-gate dependency hardening:** `ENABLE_EUR_CHECKOUT=true` and `ENABLE_USD_CHECKOUT=true` now additionally require `ENABLE_PAYMENTS=true` (previously they could be enabled independently of payments while still passing the currency-list check); the existing `PAYMENT_SUPPORTED_CURRENCIES` membership requirement is retained. Checked `docs/08_PAYMENT_ARCHITECTURE.md` and `project/DECISIONS.md` for a rule requiring `PAYMENT_BASE_CURRENCY` to belong to `PAYMENT_SUPPORTED_CURRENCIES`: no explicit rule found, so that additional constraint was **not** added;
+- test count grew from 56 to 84 (28 new tests: URL scheme/credential hardening, PAYMENT_MODE environment safety, feature-gate dependency, and the module-boundary architecture tests listed above); all existing behavior — `APP_ENV`/`LOG_LEVEL` typing, strict boolean parsing, IANA timezone/currency validation, database pool validation, secret redaction/minimum-shape checks, blank-means-not-configured semantics, production/preview strictness, the opaque provider-config bag, `toPublicConfig()`'s allow-list, startup instrumentation, and health-endpoint secrecy — was preserved, not weakened;
+- re-verified from a clean `npm ci`: `typecheck`, `lint`, `test` (84/84), `build` all pass; `npm audit --audit-level=high` exits `0` (same 4 pre-existing moderate findings, no dependency changed — `package.json`/`package-lock.json` untouched); `bash scripts/secret-scan.sh` passes; `format:check` passes on every file this correction touched; live-server smoke tests confirm both the valid-config boot path and the new `PAYMENT_MODE=live` rejection path;
+- `IMP-010` remains `IMPLEMENTED`, not `VERIFIED` — the GitHub-hosted Actions run evidence gap is unchanged; `IMP-011` was not made `READY` and no later task was performed.
 
 ### IMP-011 — Implement observability foundation
 
@@ -897,6 +907,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.11.  
+**Approved version:** 1.12.  
 **Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` with evidence under Decision 10; `IMP-010` recorded `IMPLEMENTED` with evidence under Decision 10, pending owner-provided GitHub-hosted Actions run evidence before it can become `VERIFIED`.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` with evidence under Decision 10; `IMP-010` recorded `IMPLEMENTED` with evidence under Decision 10 and hardened by an independent-review correction pass, pending owner-provided GitHub-hosted Actions run evidence before it can become `VERIFIED`.

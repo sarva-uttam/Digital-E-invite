@@ -1,9 +1,11 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { loadServerEnv, toPublicConfig } from "./config";
+import { parseServerEnv, toPublicConfig } from "./config";
 
-describe("loadServerEnv", () => {
+describe("parseServerEnv", () => {
   it("1. applies safe defaults for a default development configuration", () => {
-    const env = loadServerEnv({});
+    const env = parseServerEnv({});
 
     expect(env.appEnv).toBe("development");
     expect(env.logLevel).toBe("info");
@@ -39,7 +41,7 @@ describe("loadServerEnv", () => {
   });
 
   it("2. parses a valid explicit configuration to the expected typed representation", () => {
-    const env = loadServerEnv({
+    const env = parseServerEnv({
       APP_ENV: "test",
       LOG_LEVEL: "debug",
       APP_NAME: "Test App",
@@ -50,7 +52,7 @@ describe("loadServerEnv", () => {
       APP_TIMEZONE: "Europe/Paris",
       ALLOWED_ORIGINS: "https://example.test,https://admin.example.test:8443",
       TRUSTED_PROXY_COUNT: "2",
-      PAYMENT_MODE: "live",
+      PAYMENT_MODE: "sandbox",
       PAYMENT_BASE_CURRENCY: "EUR",
       PAYMENT_SUPPORTED_CURRENCIES: "EUR,USD,MUR",
     });
@@ -69,30 +71,30 @@ describe("loadServerEnv", () => {
     ]);
     expect(env.trustedProxyCount).toBe(2);
     expect(env.payment).toEqual({
-      mode: "live",
+      mode: "sandbox",
       baseCurrency: "EUR",
       supportedCurrencies: ["EUR", "USD", "MUR"],
     });
   });
 
   it("3. fails safely on an invalid APP_ENV without leaking unrelated env content", () => {
-    expect(() => loadServerEnv({ APP_ENV: "production-ish" })).toThrowError(
+    expect(() => parseServerEnv({ APP_ENV: "production-ish" })).toThrowError(
       /Invalid APP_ENV/,
     );
   });
 
   it("4. fails safely on an invalid LOG_LEVEL", () => {
-    expect(() => loadServerEnv({ LOG_LEVEL: "verbose" })).toThrowError(
+    expect(() => parseServerEnv({ LOG_LEVEL: "verbose" })).toThrowError(
       /Invalid LOG_LEVEL/,
     );
   });
 
   describe("5. strict boolean parsing", () => {
     it("accepts exactly 'true' and 'false'", () => {
-      expect(loadServerEnv({ ENABLE_AI_TEXT: "true" }).features.aiText).toBe(
+      expect(parseServerEnv({ ENABLE_AI_TEXT: "true" }).features.aiText).toBe(
         true,
       );
-      expect(loadServerEnv({ ENABLE_AI_TEXT: "false" }).features.aiText).toBe(
+      expect(parseServerEnv({ ENABLE_AI_TEXT: "false" }).features.aiText).toBe(
         false,
       );
     });
@@ -100,7 +102,7 @@ describe("loadServerEnv", () => {
     it.each(["1", "0", "yes", "no", "TRUE", "True", "on"])(
       "rejects ambiguous value %s",
       (value) => {
-        expect(() => loadServerEnv({ ENABLE_AI_TEXT: value })).toThrowError(
+        expect(() => parseServerEnv({ ENABLE_AI_TEXT: value })).toThrowError(
           /Invalid ENABLE_AI_TEXT/,
         );
       },
@@ -110,59 +112,134 @@ describe("loadServerEnv", () => {
   describe("6. invalid numeric values fail", () => {
     it("rejects a non-integer TRUSTED_PROXY_COUNT", () => {
       expect(() =>
-        loadServerEnv({ TRUSTED_PROXY_COUNT: "not-a-number" }),
+        parseServerEnv({ TRUSTED_PROXY_COUNT: "not-a-number" }),
       ).toThrowError(/Invalid TRUSTED_PROXY_COUNT/);
     });
 
     it("rejects a negative TRUSTED_PROXY_COUNT", () => {
-      expect(() => loadServerEnv({ TRUSTED_PROXY_COUNT: "-1" })).toThrowError(
+      expect(() => parseServerEnv({ TRUSTED_PROXY_COUNT: "-1" })).toThrowError(
         /Invalid TRUSTED_PROXY_COUNT/,
       );
     });
 
     it("rejects DATABASE_POOL_MIN greater than DATABASE_POOL_MAX", () => {
       expect(() =>
-        loadServerEnv({ DATABASE_POOL_MIN: "10", DATABASE_POOL_MAX: "2" }),
+        parseServerEnv({ DATABASE_POOL_MIN: "10", DATABASE_POOL_MAX: "2" }),
       ).toThrowError(/DATABASE_POOL_MIN must not exceed DATABASE_POOL_MAX/);
     });
   });
 
   describe("7. malformed URLs fail", () => {
     it("rejects a malformed APP_URL", () => {
-      expect(() => loadServerEnv({ APP_URL: "not a url" })).toThrowError(
+      expect(() => parseServerEnv({ APP_URL: "not a url" })).toThrowError(
         /Invalid APP_URL/,
       );
     });
 
     it("rejects a malformed PUBLIC_APP_URL", () => {
-      expect(() => loadServerEnv({ PUBLIC_APP_URL: "not a url" })).toThrowError(
-        /Invalid PUBLIC_APP_URL/,
-      );
+      expect(() =>
+        parseServerEnv({ PUBLIC_APP_URL: "not a url" }),
+      ).toThrowError(/Invalid PUBLIC_APP_URL/);
+    });
+
+    it.each(["ftp:", "file:", "javascript:", "data:"])(
+      "rejects a non-web %s scheme for APP_URL",
+      (scheme) => {
+        expect(() =>
+          parseServerEnv({ APP_URL: `${scheme}//example.test/resource` }),
+        ).toThrowError(/Invalid APP_URL.*must use http: or https:/);
+      },
+    );
+
+    it("rejects a non-web scheme for PUBLIC_APP_URL", () => {
+      expect(() =>
+        parseServerEnv({ PUBLIC_APP_URL: "ftp://example.test" }),
+      ).toThrowError(/Invalid PUBLIC_APP_URL.*must use http: or https:/);
+    });
+
+    it("accepts http: for APP_URL (development/test localhost)", () => {
+      const env = parseServerEnv({ APP_URL: "http://localhost:3000" });
+      expect(env.appUrl?.toString()).toBe("http://localhost:3000/");
+    });
+
+    it("rejects APP_URL with embedded credentials without echoing them", () => {
+      const CANARY = "canary-url-password-should-not-leak-7c1e";
+      try {
+        parseServerEnv({ APP_URL: `https://user:${CANARY}@example.test` });
+        expect.unreachable("expected parseServerEnv to throw");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        expect(message).toMatch(/Invalid APP_URL.*embedded credentials/);
+        expect(message).not.toContain(CANARY);
+      }
+    });
+
+    it("rejects PUBLIC_APP_URL with embedded credentials without echoing them", () => {
+      const CANARY = "canary-public-url-password-should-not-leak-3d9a";
+      try {
+        parseServerEnv({
+          PUBLIC_APP_URL: `https://user:${CANARY}@example.test`,
+        });
+        expect.unreachable("expected parseServerEnv to throw");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        expect(message).toMatch(/Invalid PUBLIC_APP_URL.*embedded credentials/);
+        expect(message).not.toContain(CANARY);
+      }
     });
   });
 
   describe("8. malformed list/origin configuration fails safely", () => {
     it("rejects an ALLOWED_ORIGINS entry that includes a path", () => {
       expect(() =>
-        loadServerEnv({ ALLOWED_ORIGINS: "https://example.test/some-path" }),
+        parseServerEnv({ ALLOWED_ORIGINS: "https://example.test/some-path" }),
       ).toThrowError(/must be an origin only/);
     });
 
     it("rejects an ALLOWED_ORIGINS entry that is not a URL", () => {
       expect(() =>
-        loadServerEnv({ ALLOWED_ORIGINS: "example.test" }),
+        parseServerEnv({ ALLOWED_ORIGINS: "example.test" }),
       ).toThrowError(/is not a well-formed origin/);
     });
 
     it("rejects a lowercase currency code in PAYMENT_SUPPORTED_CURRENCIES", () => {
       expect(() =>
-        loadServerEnv({ PAYMENT_SUPPORTED_CURRENCIES: "usd" }),
+        parseServerEnv({ PAYMENT_SUPPORTED_CURRENCIES: "usd" }),
       ).toThrowError(/Invalid PAYMENT_SUPPORTED_CURRENCIES/);
+    });
+
+    it("rejects a non-web scheme in an ALLOWED_ORIGINS entry", () => {
+      expect(() =>
+        parseServerEnv({ ALLOWED_ORIGINS: "ftp://example.test" }),
+      ).toThrowError(/Invalid ALLOWED_ORIGINS.*must use http: or https:/);
+    });
+
+    it("rejects an ALLOWED_ORIGINS entry with embedded credentials without echoing them", () => {
+      const CANARY = "canary-origin-password-should-not-leak-6a2f";
+      try {
+        parseServerEnv({
+          ALLOWED_ORIGINS: `https://user:${CANARY}@example.test`,
+        });
+        expect.unreachable("expected parseServerEnv to throw");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        expect(message).toMatch(
+          /Invalid ALLOWED_ORIGINS.*embedded credentials/,
+        );
+        expect(message).not.toContain(CANARY);
+      }
+    });
+
+    it("accepts an http: localhost origin", () => {
+      const env = parseServerEnv({
+        ALLOWED_ORIGINS: "http://localhost:3000",
+      });
+      expect(env.allowedOrigins).toEqual(["http://localhost:3000"]);
     });
   });
 
   it("9. disabled provider-dependent capabilities do not require provider credentials", () => {
-    const env = loadServerEnv({
+    const env = parseServerEnv({
       ENABLE_AI_TEXT: "false",
       ENABLE_AI_IMAGE: "false",
       ENABLE_EMAIL_DELIVERY: "false",
@@ -179,50 +256,82 @@ describe("loadServerEnv", () => {
 
   describe("10. enabling a capability without its required generic configuration fails closed", () => {
     it("rejects ENABLE_PAYMENTS=true without PUBLIC_APP_URL", () => {
-      expect(() => loadServerEnv({ ENABLE_PAYMENTS: "true" })).toThrowError(
+      expect(() => parseServerEnv({ ENABLE_PAYMENTS: "true" })).toThrowError(
         /ENABLE_PAYMENTS=true requires PUBLIC_APP_URL/,
       );
     });
 
     it("accepts ENABLE_PAYMENTS=true once PUBLIC_APP_URL is configured", () => {
-      const env = loadServerEnv({
+      const env = parseServerEnv({
         ENABLE_PAYMENTS: "true",
         PUBLIC_APP_URL: "https://example.test",
       });
       expect(env.features.payments).toBe(true);
     });
 
-    it("rejects ENABLE_EUR_CHECKOUT=true without EUR in PAYMENT_SUPPORTED_CURRENCIES", () => {
-      expect(() => loadServerEnv({ ENABLE_EUR_CHECKOUT: "true" })).toThrowError(
-        /ENABLE_EUR_CHECKOUT=true requires "EUR"/,
-      );
+    it("rejects ENABLE_EUR_CHECKOUT=true without ENABLE_PAYMENTS=true", () => {
+      expect(() =>
+        parseServerEnv({ ENABLE_EUR_CHECKOUT: "true" }),
+      ).toThrowError(/ENABLE_EUR_CHECKOUT=true requires ENABLE_PAYMENTS=true/);
     });
 
-    it("rejects ENABLE_USD_CHECKOUT=true without USD in PAYMENT_SUPPORTED_CURRENCIES", () => {
-      expect(() => loadServerEnv({ ENABLE_USD_CHECKOUT: "true" })).toThrowError(
-        /ENABLE_USD_CHECKOUT=true requires "USD"/,
-      );
+    it("rejects ENABLE_USD_CHECKOUT=true without ENABLE_PAYMENTS=true", () => {
+      expect(() =>
+        parseServerEnv({ ENABLE_USD_CHECKOUT: "true" }),
+      ).toThrowError(/ENABLE_USD_CHECKOUT=true requires ENABLE_PAYMENTS=true/);
     });
 
-    it("accepts ENABLE_EUR_CHECKOUT=true once EUR is listed", () => {
-      const env = loadServerEnv({
+    it("rejects ENABLE_EUR_CHECKOUT=true without EUR in PAYMENT_SUPPORTED_CURRENCIES, once payments is enabled", () => {
+      expect(() =>
+        parseServerEnv({
+          ENABLE_PAYMENTS: "true",
+          PUBLIC_APP_URL: "https://example.test",
+          ENABLE_EUR_CHECKOUT: "true",
+        }),
+      ).toThrowError(/ENABLE_EUR_CHECKOUT=true requires "EUR"/);
+    });
+
+    it("rejects ENABLE_USD_CHECKOUT=true without USD in PAYMENT_SUPPORTED_CURRENCIES, once payments is enabled", () => {
+      expect(() =>
+        parseServerEnv({
+          ENABLE_PAYMENTS: "true",
+          PUBLIC_APP_URL: "https://example.test",
+          ENABLE_USD_CHECKOUT: "true",
+        }),
+      ).toThrowError(/ENABLE_USD_CHECKOUT=true requires "USD"/);
+    });
+
+    it("accepts ENABLE_EUR_CHECKOUT=true once payments is enabled and EUR is listed", () => {
+      const env = parseServerEnv({
+        ENABLE_PAYMENTS: "true",
+        PUBLIC_APP_URL: "https://example.test",
         ENABLE_EUR_CHECKOUT: "true",
         PAYMENT_SUPPORTED_CURRENCIES: "MUR,EUR",
       });
       expect(env.features.eurCheckout).toBe(true);
     });
+
+    it("accepts ENABLE_USD_CHECKOUT=true once payments is enabled and USD is listed", () => {
+      const env = parseServerEnv({
+        ENABLE_PAYMENTS: "true",
+        PUBLIC_APP_URL: "https://example.test",
+        ENABLE_USD_CHECKOUT: "true",
+        PAYMENT_SUPPORTED_CURRENCIES: "MUR,USD",
+      });
+      expect(env.features.usdCheckout).toBe(true);
+    });
   });
 
   describe("11. production/preview explicit requirements are enforced", () => {
     it("rejects APP_ENV=production without APP_URL, PUBLIC_APP_URL, or ALLOWED_ORIGINS", () => {
-      expect(() => loadServerEnv({ APP_ENV: "production" })).toThrowError(
+      expect(() => parseServerEnv({ APP_ENV: "production" })).toThrowError(
         /APP_URL is required when APP_ENV is "production"/,
       );
     });
 
     it("rejects APP_ENV=production with APP_URL but missing PUBLIC_APP_URL", () => {
       expect(() =>
-        loadServerEnv({
+        parseServerEnv({
           APP_ENV: "production",
           APP_URL: "https://example.test",
         }),
@@ -231,7 +340,7 @@ describe("loadServerEnv", () => {
 
     it("rejects APP_ENV=preview without ALLOWED_ORIGINS", () => {
       expect(() =>
-        loadServerEnv({
+        parseServerEnv({
           APP_ENV: "preview",
           APP_URL: "https://preview.example.test",
           PUBLIC_APP_URL: "https://preview.example.test",
@@ -240,7 +349,7 @@ describe("loadServerEnv", () => {
     });
 
     it("accepts APP_ENV=production once all explicit requirements are satisfied", () => {
-      const env = loadServerEnv({
+      const env = parseServerEnv({
         APP_ENV: "production",
         APP_URL: "https://example.test",
         PUBLIC_APP_URL: "https://example.test",
@@ -250,14 +359,14 @@ describe("loadServerEnv", () => {
     });
 
     it("does not require APP_URL/PUBLIC_APP_URL/ALLOWED_ORIGINS in development or test", () => {
-      expect(() => loadServerEnv({ APP_ENV: "development" })).not.toThrow();
-      expect(() => loadServerEnv({ APP_ENV: "test" })).not.toThrow();
+      expect(() => parseServerEnv({ APP_ENV: "development" })).not.toThrow();
+      expect(() => parseServerEnv({ APP_ENV: "test" })).not.toThrow();
     });
   });
 
   it("12. server secrets never appear in the public configuration", () => {
     const CANARY = "canary-secret-value-should-never-leak-9f3c2a";
-    const env = loadServerEnv({
+    const env = parseServerEnv({
       APP_SECRET: `${CANARY}-app-secret-padding`,
       ENCRYPTION_KEY: `${CANARY}-encryption-key-padding`,
       TOKEN_HASH_KEY: `${CANARY}-token-hash-key-padding`,
@@ -277,7 +386,7 @@ describe("loadServerEnv", () => {
 
   it("13. unknown, unrelated process environment variables do not cause false failures", () => {
     expect(() =>
-      loadServerEnv({
+      parseServerEnv({
         PATH: "/usr/bin:/bin",
         HOME: "/home/runner",
         CI: "true",
@@ -291,10 +400,10 @@ describe("loadServerEnv", () => {
   it("14. configuration errors do not include supplied secret values", () => {
     const CANARY = "super-secret-password-should-not-leak-4b7e";
     try {
-      loadServerEnv({
+      parseServerEnv({
         DATABASE_URL: `not a valid connection string ${CANARY}`,
       });
-      expect.unreachable("expected loadServerEnv to throw");
+      expect.unreachable("expected parseServerEnv to throw");
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       expect(message).not.toContain(CANARY);
@@ -304,17 +413,17 @@ describe("loadServerEnv", () => {
 
   describe("15. blank values have the approved 'not configured' semantics", () => {
     it("treats a blank APP_URL as not configured rather than invalid", () => {
-      const env = loadServerEnv({ APP_URL: "" });
+      const env = parseServerEnv({ APP_URL: "" });
       expect(env.appUrl).toBeUndefined();
     });
 
     it("treats a whitespace-only value as not configured", () => {
-      const env = loadServerEnv({ AUTH_CLIENT_SECRET: "   " });
+      const env = parseServerEnv({ AUTH_CLIENT_SECRET: "   " });
       expect(env.providerConfig.AUTH_CLIENT_SECRET).toBeUndefined();
     });
 
     it("omits blank provider config keys from providerConfig entirely", () => {
-      const env = loadServerEnv({
+      const env = parseServerEnv({
         AUTH_PROVIDER: "",
         STORAGE_PROVIDER: "  ",
       });
@@ -324,11 +433,11 @@ describe("loadServerEnv", () => {
   });
 
   it("16. defaults remain correct across repeated calls", () => {
-    expect(loadServerEnv({})).toEqual(loadServerEnv({}));
+    expect(parseServerEnv({})).toEqual(parseServerEnv({}));
   });
 
   it("keeps opaque provider config present but unvalidated when supplied", () => {
-    const env = loadServerEnv({
+    const env = parseServerEnv({
       AUTH_PROVIDER: "some-future-provider",
       STORAGE_REGION: "eu-west-1",
     });
@@ -337,27 +446,81 @@ describe("loadServerEnv", () => {
   });
 
   it("rejects an unrecognized DATABASE_SSL_MODE", () => {
-    expect(() => loadServerEnv({ DATABASE_SSL_MODE: "trust-me" })).toThrowError(
-      /Invalid DATABASE_SSL_MODE/,
-    );
+    expect(() =>
+      parseServerEnv({ DATABASE_SSL_MODE: "trust-me" }),
+    ).toThrowError(/Invalid DATABASE_SSL_MODE/);
   });
 
   it("rejects an unrecognized IANA time zone", () => {
     expect(() =>
-      loadServerEnv({ APP_TIMEZONE: "Not/A_Real_Zone" }),
+      parseServerEnv({ APP_TIMEZONE: "Not/A_Real_Zone" }),
     ).toThrowError(/Invalid APP_TIMEZONE/);
   });
 
   it("rejects a malformed DEFAULT_CURRENCY", () => {
-    expect(() => loadServerEnv({ DEFAULT_CURRENCY: "eu" })).toThrowError(
+    expect(() => parseServerEnv({ DEFAULT_CURRENCY: "eu" })).toThrowError(
       /Invalid DEFAULT_CURRENCY/,
     );
+  });
+
+  describe("18. PAYMENT_MODE environment safety", () => {
+    it("rejects PAYMENT_MODE=live when APP_ENV is development", () => {
+      expect(() =>
+        parseServerEnv({ APP_ENV: "development", PAYMENT_MODE: "live" }),
+      ).toThrowError(
+        /PAYMENT_MODE.*only permitted when APP_ENV is "production"/,
+      );
+    });
+
+    it("rejects PAYMENT_MODE=live when APP_ENV is test", () => {
+      expect(() =>
+        parseServerEnv({ APP_ENV: "test", PAYMENT_MODE: "live" }),
+      ).toThrowError(
+        /PAYMENT_MODE.*only permitted when APP_ENV is "production"/,
+      );
+    });
+
+    it("rejects PAYMENT_MODE=live when APP_ENV is preview", () => {
+      expect(() =>
+        parseServerEnv({
+          APP_ENV: "preview",
+          PAYMENT_MODE: "live",
+          APP_URL: "https://preview.example.test",
+          PUBLIC_APP_URL: "https://preview.example.test",
+          ALLOWED_ORIGINS: "https://preview.example.test",
+        }),
+      ).toThrowError(
+        /PAYMENT_MODE.*only permitted when APP_ENV is "production"/,
+      );
+    });
+
+    it("accepts PAYMENT_MODE=live only when APP_ENV is production", () => {
+      const env = parseServerEnv({
+        APP_ENV: "production",
+        PAYMENT_MODE: "live",
+        APP_URL: "https://example.test",
+        PUBLIC_APP_URL: "https://example.test",
+        ALLOWED_ORIGINS: "https://example.test",
+      });
+      expect(env.payment.mode).toBe("live");
+    });
+
+    it("still permits PAYMENT_MODE=sandbox (the default) in every environment, including production", () => {
+      expect(() => parseServerEnv({ APP_ENV: "development" })).not.toThrow();
+      const prodEnv = parseServerEnv({
+        APP_ENV: "production",
+        APP_URL: "https://example.test",
+        PUBLIC_APP_URL: "https://example.test",
+        ALLOWED_ORIGINS: "https://example.test",
+      });
+      expect(prodEnv.payment.mode).toBe("sandbox");
+    });
   });
 });
 
 describe("toPublicConfig", () => {
   it("17. contains only the explicitly allow-listed public fields", () => {
-    const env = loadServerEnv({
+    const env = parseServerEnv({
       DEFAULT_LOCALE: "fr",
       DEFAULT_CURRENCY: "EUR",
       APP_TIMEZONE: "Europe/Paris",
@@ -383,7 +546,43 @@ describe("toPublicConfig", () => {
   });
 
   it("represents an unconfigured PUBLIC_APP_URL as undefined, not a placeholder", () => {
-    const env = loadServerEnv({});
+    const env = parseServerEnv({});
     expect(toPublicConfig(env).publicAppUrl).toBeUndefined();
+  });
+});
+
+describe("19. module boundary: the shared parser is pure and requires an explicit source", () => {
+  it("has exactly one required parameter (no default value baked in)", () => {
+    // Function.prototype.length counts only parameters before the first
+    // one with a default value. If parseServerEnv ever regains a
+    // `= process.env` default, this drops to 0 and the test fails —
+    // a concrete runtime signal that the pure-parser contract broke.
+    expect(parseServerEnv.length).toBe(1);
+  });
+
+  it("does not compile without an explicit EnvSource argument", () => {
+    function callWithoutSource(): void {
+      // @ts-expect-error parseServerEnv must not compile without an
+      // explicit EnvSource argument. If a default parameter is
+      // reintroduced, this directive itself becomes a type error under
+      // `npm run typecheck`.
+      parseServerEnv();
+    }
+    // Referenced (satisfies no-unused-vars) but never invoked: calling it
+    // would throw at runtime because the compiled JS has no real value to
+    // read `source[key]` from.
+    void callWithoutSource;
+  });
+
+  it("never reads process.env directly (static source check)", () => {
+    const sourcePath = fileURLToPath(new URL("./config.ts", import.meta.url));
+    const source = readFileSync(sourcePath, "utf8");
+    expect(source).not.toMatch(/process\.env/);
+  });
+
+  it('does not import "server-only" (static source check)', () => {
+    const sourcePath = fileURLToPath(new URL("./config.ts", import.meta.url));
+    const source = readFileSync(sourcePath, "utf8");
+    expect(source).not.toMatch(/^\s*import\s+["']server-only["']/m);
   });
 });

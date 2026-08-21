@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import { register } from "./instrumentation";
 
@@ -27,5 +29,14 @@ describe("register (Next.js startup validation)", () => {
     process.env.APP_ENV = "not-a-real-environment";
 
     await expect(register()).resolves.toBeUndefined();
+  });
+
+  it("loads configuration through the protected ./lib/env entry point, not ./lib/config directly", () => {
+    const sourcePath = fileURLToPath(
+      new URL("./instrumentation.ts", import.meta.url),
+    );
+    const source = readFileSync(sourcePath, "utf8");
+    expect(source).toMatch(/import\(["']\.\/lib\/env["']\)/);
+    expect(source).not.toMatch(/import\(["']\.\/lib\/config["']\)/);
   });
 });

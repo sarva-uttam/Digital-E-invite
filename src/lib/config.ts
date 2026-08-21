@@ -1,12 +1,25 @@
 /**
  * Framework-agnostic application configuration boundary (IMP-010).
  *
- * This module intentionally does NOT import "server-only" so it can be
- * imported safely by both the Next.js web app (through src/lib/env.ts,
- * which re-exports it behind the server-only guard) and the separately
- * deployable worker (see worker/src/config.ts), without triggering the
- * "server-only" package's Client Component throw guard outside a
- * Next.js/webpack build.
+ * This module intentionally does NOT import "server-only" AND does not
+ * read the real process environment implicitly: `parseServerEnv` requires
+ * an explicit `EnvSource` argument with no default. This keeps the module
+ * pure so it can be imported safely by both the Next.js web app and the
+ * separately deployable worker, without triggering the "server-only"
+ * package's Client Component throw guard outside a Next.js/webpack build
+ * — but, critically, an accidental direct import of this module from
+ * application code still cannot read the real server environment,
+ * because there is nothing here that reaches for it on its own.
+ *
+ * The real runtime environment is read only at the two runtime-specific
+ * entry points, each of which supplies it by default and delegates to
+ * `parseServerEnv`:
+ *
+ * - src/lib/env.ts — the Next.js-facing entry point (`import "server-only"`
+ *   guarded); Next.js application code must import configuration from
+ *   there, never from this module directly.
+ * - worker/src/config.ts — the worker-facing entry point (`loadWorkerEnv`),
+ *   a plain Node.js boundary with no `server-only` guard.
  *
  * Scope (IMP-010): validates the provider-neutral configuration contract
  * already defined in .env.example. It selects, contacts, and initializes
@@ -264,6 +277,42 @@ function readOptionalUrl(
   }
 }
 
+/**
+ * Stricter variant for application-facing web URLs (APP_URL,
+ * PUBLIC_APP_URL): only `http:`/`https:` are accepted (rejects `ftp:`,
+ * `file:`, `javascript:`, `data:`, and any other scheme), and embedded
+ * `user:pass@` credentials are rejected. `http:` remains permitted in
+ * every environment (including production) because no approved
+ * architecture document requires this parser to enforce HTTPS — Render's
+ * managed TLS/HTTP-to-HTTPS redirect is an infrastructure-level behavior
+ * (docs/12_DEPLOYMENT.md §15), not a documented application-config
+ * invariant; development/test rely on plain `http://localhost`.
+ */
+function readOptionalWebUrl(source: EnvSource, key: string): URL | undefined {
+  const value = raw(source, key);
+  if (value === undefined) return undefined;
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new ConfigError(
+      `Invalid ${key}: "${value}" is not a well-formed URL.`,
+    );
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new ConfigError(
+      `Invalid ${key}: "${value}" must use http: or https:.`,
+    );
+  }
+  if (parsed.username !== "" || parsed.password !== "") {
+    // Never echo the value here: by definition it embeds credentials.
+    throw new ConfigError(
+      `Invalid ${key}: must not include embedded credentials.`,
+    );
+  }
+  return parsed;
+}
+
 function isValidTimeZone(timeZone: string): boolean {
   try {
     new Intl.DateTimeFormat(undefined, { timeZone });
@@ -338,6 +387,17 @@ function readOrigins(source: EnvSource, key: string): readonly string[] {
         `Invalid ${key}: "${entry}" is not a well-formed origin.`,
       );
     }
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      throw new ConfigError(
+        `Invalid ${key}: "${entry}" must use http: or https:.`,
+      );
+    }
+    if (parsed.username !== "" || parsed.password !== "") {
+      // Never echo the entry here: by definition it embeds credentials.
+      throw new ConfigError(
+        `Invalid ${key}: origin entries must not include embedded credentials.`,
+      );
+    }
     if (parsed.pathname !== "/" || parsed.search !== "" || parsed.hash !== "") {
       throw new ConfigError(
         `Invalid ${key}: "${entry}" must be an origin only (scheme://host[:port]), with no path, query, or fragment.`,
@@ -380,11 +440,17 @@ function readOpaqueConfig(source: EnvSource): OpaqueServerConfig {
 
 /**
  * Parses and validates the application's configuration contract from an
- * environment source (defaults to `process.env`). Fails safely (throws
- * `ConfigError`) on invalid values without ever echoing a secret-classified
- * value in the thrown message.
+ * explicit environment source. Deliberately has no default parameter: the
+ * caller must supply the source, so this pure function can never silently
+ * read the real process environment. `src/lib/env.ts` (Next.js) and
+ * `worker/src/config.ts` (worker) are the only entry points that supply
+ * the real environment by default.
+ *
+ * Fails safely (throws `ConfigError`) on invalid values without ever
+ * echoing a secret-classified value, or a value containing embedded URL
+ * credentials, in the thrown message.
  */
-export function loadServerEnv(source: EnvSource = process.env): ServerEnv {
+export function parseServerEnv(source: EnvSource): ServerEnv {
   const appEnv = readEnum(source, "APP_ENV", APP_ENVIRONMENTS, "development");
   const logLevel = readEnum(source, "LOG_LEVEL", LOG_LEVELS, "info");
   const appName = readNonEmpty(
@@ -392,8 +458,8 @@ export function loadServerEnv(source: EnvSource = process.env): ServerEnv {
     "APP_NAME",
     "AI Digital Invitation Platform",
   );
-  const appUrl = readOptionalUrl(source, "APP_URL");
-  const publicAppUrl = readOptionalUrl(source, "PUBLIC_APP_URL");
+  const appUrl = readOptionalWebUrl(source, "APP_URL");
+  const publicAppUrl = readOptionalWebUrl(source, "PUBLIC_APP_URL");
   const defaultLocale = readNonEmpty(source, "DEFAULT_LOCALE", "en");
   const defaultCurrency = readCurrencyCode(source, "DEFAULT_CURRENCY", "MUR");
   const appTimezone = readTimezone(source, "APP_TIMEZONE", "Indian/Mauritius");
@@ -448,6 +514,14 @@ export function loadServerEnv(source: EnvSource = process.env): ServerEnv {
       ["MUR"],
     ),
   };
+  // Environment-safety invariant, not a payment integration: .env.example
+  // requires sandbox credentials outside production, so "live" mode must
+  // never run in development/test/preview regardless of who set it.
+  if (payment.mode === "live" && appEnv !== "production") {
+    throw new ConfigError(
+      `Invalid PAYMENT_MODE: "live" is only permitted when APP_ENV is "production" (current APP_ENV: "${appEnv}").`,
+    );
+  }
 
   const test: TestEnvConfig = {
     testDatabaseUrl: readOptionalUrl(source, "TEST_DATABASE_URL", {
@@ -487,9 +561,22 @@ export function loadServerEnv(source: EnvSource = process.env): ServerEnv {
       "ENABLE_PAYMENTS=true requires PUBLIC_APP_URL to be configured (checkout return/cancel URLs).",
     );
   }
+  // A currency-specific checkout flag is contradictory configuration
+  // without payments enabled at all; fail closed rather than allow an
+  // unreachable/inconsistent combination to boot silently.
+  if (features.eurCheckout && !features.payments) {
+    throw new ConfigError(
+      "ENABLE_EUR_CHECKOUT=true requires ENABLE_PAYMENTS=true.",
+    );
+  }
   if (features.eurCheckout && !payment.supportedCurrencies.includes("EUR")) {
     throw new ConfigError(
       'ENABLE_EUR_CHECKOUT=true requires "EUR" to be listed in PAYMENT_SUPPORTED_CURRENCIES.',
+    );
+  }
+  if (features.usdCheckout && !features.payments) {
+    throw new ConfigError(
+      "ENABLE_USD_CHECKOUT=true requires ENABLE_PAYMENTS=true.",
     );
   }
   if (features.usdCheckout && !payment.supportedCurrencies.includes("USD")) {
@@ -520,9 +607,9 @@ export function loadServerEnv(source: EnvSource = process.env): ServerEnv {
 
 /**
  * Derives the narrow, explicitly allow-listed configuration shape that is
- * safe to expose outside the server. Never spreads `ServerEnv` or
- * `process.env`; every field is named individually so a future secret
- * added to `ServerEnv` cannot silently become public.
+ * safe to expose outside the server. Never spreads `ServerEnv` or the raw
+ * environment; every field is named individually so a future secret added
+ * to `ServerEnv` cannot silently become public.
  */
 export function toPublicConfig(env: ServerEnv): PublicConfig {
   return {

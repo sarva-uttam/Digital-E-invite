@@ -3,8 +3,8 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.16  
-**Approved date:** 2026-08-21  
+**Version:** 1.17  
+**Approved date:** 2026-08-22  
 **Current phase:** Application implementation — authorized and task-controlled  
 **Application release status:** No application release exists
 
@@ -269,6 +269,24 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - Technical required-status-check enforcement remains unavailable on the current private-repository plan; the successful CI-before-merge manual policy was followed.
 - **Migration/action required:** None. **Compatibility/customer impact:** None — merged but not deployed; `Application release: None`.
 
+### Base-schema and migration-system milestone — `IMP-020`
+
+**Track:** DATA  
+**Application version:** 0.1.0 (unreleased)  
+**Status:** IMPLEMENTED — on branch `imp-020-migration-base-schema`, not merged, not deployed  
+**Application release:** None
+
+- Implemented the 32-table base PostgreSQL schema (`src/db/schema/*.ts`, Drizzle ORM `0.45.2`) translating every table in `docs/06_DATABASE_DESIGN.md` §8–§16, using `docs/04_DOMAIN_MODEL.md`'s explicit lifecycle-state enumerations for status `CHECK` constraints docs/06 itself leaves unenumerated; every column, foreign key, unique constraint, and check constraint traces to an explicit source annotation, with no invented business rule.
+- Added `pg` `8.23.0` and `@types/pg` `8.23.1` as explicit pinned direct dependencies (both were already present transitively).
+- Committed three reviewed migrations: the generated base schema (`0000`), a custom composite foreign key enforcing that `invitations.current_version_id` always names a version of the same invitation per docs/06 §14.1 (`0001`), and base-level `app_runtime` database-role separation withholding `UPDATE`/`DELETE` on the five append-only tables named across docs/06 §16.3/§21/§17 (`0002`, no login role or password created). Zero schema drift (`drizzle-kit generate`/`check` both clean); `drizzle-kit push` unused anywhere.
+- Added an explicit-connection migration runner (`scripts/db-migrate.mjs`, `src/db/migrate.ts`) reading only `DATABASE_DIRECT_URL`, never invoked from application startup, and a real-PostgreSQL (no mocks) integration test suite (`src/db/*.db.test.ts`) run through a new, separate `npm run test:db` that fails rather than silently skips when `TEST_DATABASE_URL` is missing or unsafe; the existing unit suite is unaffected (91/91 passing, unchanged).
+- Extended the existing `.github/workflows/ci.yml` `quality-gate` job — not a new workflow — with a `postgres:18.6-alpine` service container (synthetic job-scoped credentials, no repository secret required) and migration/drift/integration-test steps, without weakening any existing gate.
+- Verified current official sources at implementation time: PostgreSQL 18.6 (released 2026-08-13) and its native `uuidv7()`, the official `postgres:18.6-alpine` Docker image, and `pg` `8.23.0` compatibility with Node.js 24 and Drizzle ORM `0.45.2`.
+- Local verification from a clean state passed: `npm ci`, `format:check`, `lint`, `typecheck`, `test` (91/91, unchanged), `build`, `npm audit --audit-level=high` (same 4 pre-existing moderate findings), and the tracked-file secret scan.
+- **Known limitation:** local Docker Desktop's engine did not respond throughout this implementation session, so no local real-PostgreSQL execution occurred; the committed `docker-compose.yml` (PostgreSQL `18.6-alpine`) is unexercised locally. GitHub-hosted CI evidence from an actual pull request is the outstanding, authoritative source of PostgreSQL integration evidence and remains required before `VERIFIED`.
+- No product feature, provider selection/activation, application/domain-service database access, infrastructure deployment, production credential, or customer launch occurred. `IMP-021` and `IMP-022` were not started; no pg-boss processing was initialized.
+- **Migration/action required:** independent review, PR, and successful GitHub-hosted `CI / quality-gate` before merge. **Compatibility/customer impact:** None — no product feature exists yet; `Application release: None`.
+
 ## 9. 2026-08-17 — Documentation foundation
 
 **Track:** PACKAGE  
@@ -471,6 +489,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.15.  
-**Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; the `IMP-004`, `IMP-005`, and `IMP-010` entries recorded under Decision 8 as `VERIFIED`, merged, and undeployed. `IMP-020` is `READY` by dependency reconciliation only and has not started.
+**Approved version:** 1.16.  
+**Approved date:** 2026-08-22.  
+**Owner decisions:** Decisions 1–10 approved as proposed; the `IMP-004`, `IMP-005`, and `IMP-010` entries recorded under Decision 8 as `VERIFIED`, merged, and undeployed. The `IMP-020` entry is recorded `IMPLEMENTED` — on an unmerged branch, not `RELEASED` — pending independent review, PR, and GitHub-hosted CI evidence.

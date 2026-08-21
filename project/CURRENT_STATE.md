@@ -3,8 +3,8 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.16  
-**Snapshot date:** 2026-08-21  
+**Version:** 1.17  
+**Snapshot date:** 2026-08-22  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
 **Claude Package version:** 1.0  
@@ -31,11 +31,11 @@ This is a status document, not a substitute for the approved specifications. If 
 
 ## 2. Snapshot summary
 
-As of **2026-08-21**, the project is in the **task-controlled application implementation phase**.
+As of **2026-08-22**, the project is in the **task-controlled application implementation phase**.
 
 The product, domain, architecture, security, testing, deployment, roadmap, pricing, entitlement, AI-usage, guest, and localization rules are documented and approved.
 
-`IMP-004`, `IMP-005`, and `IMP-010` are implemented, merged, and verified on `main`. PR #3 merged the configuration/environment boundaries by normal merge commit `075f6df030484de914e6ef70a8ca412e18c83ec4`; GitHub-hosted PR run `32505567479` and immediate push-to-`main` run `32506567512` passed. No product feature, database schema, migration, provider activation, infrastructure deployment, payment/AI integration, production application, application release, or customer launch exists.
+`IMP-004`, `IMP-005`, and `IMP-010` are implemented, merged, and verified on `main`. PR #3 merged the configuration/environment boundaries by normal merge commit `075f6df030484de914e6ef70a8ca412e18c83ec4`; GitHub-hosted PR run `32505567479` and immediate push-to-`main` run `32506567512` passed. `IMP-020 — Create migration system and base schema` is `IMPLEMENTED` on branch `imp-020-migration-base-schema` (not merged, not deployed): the 32-table base schema, initial Drizzle migrations, migration runner, database-integration tests, and CI PostgreSQL service exist on that branch only. No product feature, provider activation, infrastructure deployment, payment/AI integration, production application, application release, or customer launch exists.
 
 ---
 
@@ -43,10 +43,10 @@ The product, domain, architecture, security, testing, deployment, roadmap, prici
 
 **Phase:** Application implementation — authorized and task-controlled  
 **Phase state:** Owner authorization granted; task-ledger dependencies and gates remain binding  
-**Implementation state:** `IMP-004`, `IMP-005`, and `IMP-010` are verified and merged; no product feature or downstream task has started  
+**Implementation state:** `IMP-004`, `IMP-005`, and `IMP-010` are verified and merged; `IMP-020` is `IMPLEMENTED` on an unmerged feature branch; no downstream task (`IMP-021`, `IMP-022`) has started  
 **Production state:** No production application exists; production deployment is unauthorized  
 **Customer availability:** Not launched  
-**Next action:** `IMP-020 — Create migration system and base schema` is `READY` solely because its complete dependencies (`IMP-003`, `IMP-010`) are verified. It has not started and is not performed by this reconciliation.
+**Next action:** independent review, PR, and GitHub-hosted CI verification of branch `imp-020-migration-base-schema`, before `IMP-020` may be recorded `VERIFIED` and `IMP-021`/`IMP-022` may become eligible.
 
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Owner decision `DEC-024` grants task-controlled application implementation authorization; only `READY` tasks may be performed.
 
@@ -135,7 +135,7 @@ Owner-approved `IMP-003` is `VERIFIED`. The initial engineering baseline is Node
 
 Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore remain provisional production baselines. Authentication, observability, transactional email, exact AI models, payment/acquiring, analytics and other unresolved specialist providers remain unselected and gated.
 
-Application implementation is authorized by owner decision `DEC-024` only through eligible tasks in `project/TASKS.md`. `IMP-004`, `IMP-005`, and `IMP-010` are `VERIFIED` and merged. PR #3 preserved all three IMP-010 implementation commits through normal merge commit `075f6df030484de914e6ef70a8ca412e18c83ec4`; GitHub-hosted PR run `32505567479` and post-merge `main` run `32506567512` succeeded. `IMP-020` is `READY` by dependency reconciliation only and has not started. No product feature, database schema, migration, provider configuration, infrastructure deployment, or application release exists.
+Application implementation is authorized by owner decision `DEC-024` only through eligible tasks in `project/TASKS.md`. `IMP-004`, `IMP-005`, and `IMP-010` are `VERIFIED` and merged. PR #3 preserved all three IMP-010 implementation commits through normal merge commit `075f6df030484de914e6ef70a8ca412e18c83ec4`; GitHub-hosted PR run `32505567479` and post-merge `main` run `32506567512` succeeded. `IMP-020 — Create migration system and base schema` is `IMPLEMENTED` on unmerged branch `imp-020-migration-base-schema`: a 32-table base schema, three reviewed migrations, a migration runner, database-integration tests, and an extended CI PostgreSQL service gate. It is not yet `VERIFIED` — that requires the same independent review/PR/GitHub-hosted-CI/merge process used for prior tasks. No product feature, provider configuration, infrastructure deployment, or application release exists.
 
 ---
 
@@ -290,11 +290,19 @@ Implemented and verified on `main` through PR #3 (`IMP-010`):
 
 Verification evidence: PR #3 merged normally as `075f6df030484de914e6ef70a8ca412e18c83ec4`; GitHub-hosted PR run `32505567479` and push-to-`main` run `32506567512` passed with Node.js `v24.19.0`, npm `11.17.0`, clean install, format, lint, typecheck, 6/6 test files, 91/91 tests, build, the high/critical dependency-audit gate, and the best-effort tracked-file secret scan.
 
+Implemented on unmerged branch `imp-020-migration-base-schema` (`IMP-020`, not yet `VERIFIED`):
+
+- a 32-table base schema under `src/db/schema/*.ts` (Drizzle ORM `0.45.2`) translating every table in `docs/06_DATABASE_DESIGN.md` §8–§16, cross-referenced against `docs/04_DOMAIN_MODEL.md` for lifecycle-state enumerations, with `pg` `8.23.0`/`@types/pg` `8.23.1` added as explicit pinned dependencies;
+- three committed, reviewed migrations (`src/db/migrations/0000`–`0002`) — the generated base schema, a custom composite foreign key protecting `invitations.current_version_id`, and base-level `app_runtime` database-role separation (no login/password created); zero schema drift (`drizzle-kit generate`/`check` both clean); `drizzle-kit push` unused;
+- a migration runner (`src/db/migrate.ts`, `scripts/db-migrate.mjs`) reading only `DATABASE_DIRECT_URL`, never run from application startup;
+- database-integration tests (`src/db/*.db.test.ts`, real PostgreSQL, no mocks) run via a new explicit `npm run test:db`, kept fully separate from the unit suite (91/91 unit tests still passing, unchanged);
+- `.github/workflows/ci.yml`'s existing `quality-gate` job extended with a `postgres:18.6-alpine` service and migration/drift/integration-test steps, without weakening any existing gate;
+- known limitation: local Docker Desktop's engine did not respond throughout this implementation session (repeated API 500 errors), so no local real-PostgreSQL execution occurred; the committed `docker-compose.yml` is unexercised locally. GitHub-hosted CI evidence from an actual pull request remains outstanding.
+
 Still not created or selected for production:
 
 - exact database/authentication/storage/queue/hosting/observability vendor activation;
-- database schema and migrations;
-- API/server actions beyond the health check;
+- application/domain-service database access (repositories), API/server actions beyond the health check;
 - worker job processing (pg-boss wiring);
 - UI components/pages beyond the placeholder homepage;
 - runtime environments beyond local development;
@@ -388,7 +396,8 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ### 19.2 Implementation-task gates
 
-- `IMP-020` is `READY` but has not started;
+- `IMP-020` is `IMPLEMENTED` on unmerged branch `imp-020-migration-base-schema`, pending independent review/PR/GitHub-hosted CI before `VERIFIED`;
+- `IMP-021` and `IMP-022` remain `BLOCKED` pending `IMP-020` verification (and, for `IMP-021`, `IMP-013`);
 - `IMP-011` remains `BLOCKED` by the unresolved observability decision;
 - `IMP-012` remains `BLOCKED` by the unresolved authentication decision;
 - `IMP-041` remains `BLOCKED` by `IMP-040`;
@@ -529,4 +538,4 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 **Status:** Approved — Owner Approved.  
 **Approved version:** 1.15.  
 **Snapshot date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, and `IMP-010` are recorded `VERIFIED` under Decisions 5/6/9. `IMP-020` is `READY` by dependency reconciliation only and has not started.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, and `IMP-010` are recorded `VERIFIED` under Decisions 5/6/9. `IMP-020` is recorded `IMPLEMENTED` under Decision 5 (status precision) on unmerged branch `imp-020-migration-base-schema`; it requires independent review/PR/GitHub-hosted CI evidence before it may be recorded `VERIFIED`.

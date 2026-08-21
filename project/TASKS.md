@@ -437,9 +437,26 @@ This gate does not authorize production deployment, customer launch, provider co
 ### IMP-020 — Create migration system and base schema
 
 **Priority:** P0  
-**State:** READY  
+**State:** IMPLEMENTED  
 **Dependencies:** IMP-003, IMP-010  
 **Acceptance criteria:** versioned forward migrations; documented rollback/repair; local/test database setup; schema matches approved database design.
+
+**Implementation evidence — 2026-08-21:**
+
+- implemented on branch `imp-020-migration-base-schema` from verified `main` at `73e8f5faae7d9d2c5a8858021df635fe17dcfcd0`; not merged, not deployed;
+- 32-table base schema implemented under `src/db/schema/*.ts` (Drizzle ORM 0.45.2), covering every table in `docs/06_DATABASE_DESIGN.md` §8–§16; every column, foreign key, unique constraint, and check constraint is either an exact translation of an explicit docs/06 annotation or docs/04_DOMAIN_MODEL.md's explicitly enumerated lifecycle-state list (recorded in each schema file's header comment), with no invented business rule; ambiguous cases (columns docs/06 lists without an explicit "references" annotation, e.g. `events.selected_package_definition_id`, `entitlement_ledger_entries.generation_request_id`, all of `entitlement_balances`) were left without a foreign key rather than guessed;
+- PostgreSQL 18.6 (released 2026-08-13) and its native `uuidv7()` verified as current via official sources; every internal primary key defaults to `uuidv7()` — no UUID-generation library added;
+- `pg` 8.23.0 and `@types/pg` 8.23.1 added as explicit pinned direct dependencies (both were already present transitively, confirming compatibility with Drizzle ORM 0.45.2 and Node.js 24); no second driver added;
+- `invitations.current_version_id` ↔ `invitation_versions.invitation_id` is a genuinely circular table reference; resolved in Drizzle via lazy `AnyPgColumn`-typed reference callbacks, with docs/06 §14.1's explicit composite-foreign-key invariant ("current_version_id must refer to a version belonging to the same invitation") implemented as a reviewed custom SQL migration (`0001_invitations_current_version_composite_fk.sql`) rather than in the Drizzle schema DSL, because an `extraConfig` callback that touches the other table's columns directly reintroduces a TypeScript circular-type error that the lazy column-reference callbacks avoid;
+- base-level database role separation (docs/06 §16.3/§21, §17 invariant 13) implemented as a second reviewed custom migration (`0002_app_runtime_role_privileges.sql`): a `NOLOGIN` privilege-group role `app_runtime` with full CRUD on every table except `UPDATE`/`DELETE` on `audit_events`, `entitlement_ledger_entries`, `invitation_versions`, `rsvp_submissions`, and `payment_transactions`; no login role or password is created — provisioning the actual runtime credential and granting it membership is documented as deployment/provider work (README.md "Database roles"), not invented here;
+- `drizzle-kit generate` produces no further changes against the committed migrations (zero schema drift) and `drizzle-kit check` reports migration-history consistency; `drizzle-kit push` is not used anywhere;
+- `drizzle.config.ts` requires no database credential (only `generate`/`check` are invoked through it); migrations are applied through an explicit `DATABASE_DIRECT_URL`-only path (`scripts/db-migrate.mjs` for local/CI, `src/db/migrate.ts` reused by the test suite) with no fallback to any other variable, and are never run from `instrumentation.ts`, request handling, or worker startup;
+- added `src/db/schema-invariants.db.test.ts` and `src/db/migrations.db.test.ts` — real-PostgreSQL integration tests (no mocks) covering: full migration application from an empty database and a safe no-op reapplication; every expected table; PostgreSQL major version 18; `uuidv7()` defaults; primary/foreign/unique/check constraints including the composite foreign key; the approved index strategy (spot check); `timestamptz`/`date` typing; migration-history table contents; the public-config allow-list never exposing database configuration; uniqueness, foreign-key, and check-constraint rejection; and the `app_runtime` role's grants (via `information_schema.role_table_grants`, requiring no login role);
+- `npm run test:db` (new, `vitest.db.config.mts`) is a separate suite from `npm test`: it fails, not skips, when `TEST_DATABASE_URL` is unset or does not look disposable (`src/db/test-safety.ts`); ordinary unit tests remain unaffected (91/91 still passing, unchanged) and never touch a database;
+- extended `.github/workflows/ci.yml`'s existing `quality-gate` job (not a new workflow) with a `postgres:18.6-alpine` service container using synthetic job-scoped credentials (no repository secret required), plus `db:check`, a schema-drift check (`drizzle-kit generate` + `git status --porcelain` on `src/db/migrations`), `db:migrate`, and `test:db` steps, without weakening any existing gate;
+- local verification from a clean state: `npm ci`, `format:check`, `lint`, `typecheck`, `test` (6/6 files, 91/91 tests, unchanged), `build`, `npm audit --audit-level=high` (same 4 pre-existing moderate `esbuild`/`drizzle-kit` findings, no change), and the best-effort tracked-file secret scan all passed;
+- **known limitation:** Docker Desktop is installed on the local development machine but its engine did not respond (repeated `500 Internal Server Error` from the Docker API) throughout this implementation session, so no local real-PostgreSQL execution occurred; `docker-compose.yml` (PostgreSQL `18.6-alpine`, pinned) is committed and documented (README.md "Database development") but unexercised locally. GitHub-hosted CI evidence from an actual pull request remains outstanding and is the authoritative source of PostgreSQL integration evidence per this task's own instructions;
+- IMP-021 and IMP-022 (which depend on IMP-020) were not started; no pg-boss processing was initialized; no provider/database-host production activation, production credential, or deployment occurred.
 
 ### IMP-021 — Implement users, events, and event versions
 
@@ -889,6 +906,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.13.  
+**Approved version:** 1.14.  
 **Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, and `IMP-010` are `VERIFIED` with evidence under Decision 10. `IMP-020` is `READY` because its complete dependencies (`IMP-003`, `IMP-010`) are verified; it has not started. Specialist-decision gates remain binding.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, and `IMP-010` are `VERIFIED` with evidence under Decision 10. `IMP-020` is `IMPLEMENTED` on branch `imp-020-migration-base-schema` (not merged) pending the same independent review/PR/GitHub-hosted-CI/merge process used for prior tasks before it may be recorded `VERIFIED`. Specialist-decision gates remain binding; `IMP-021` and `IMP-022` remain `BLOCKED` pending that verification.

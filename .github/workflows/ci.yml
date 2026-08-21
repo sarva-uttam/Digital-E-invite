@@ -28,6 +28,34 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    # IMP-020 — disposable PostgreSQL 18 service for migration and database
+    # integration checks. Same major version as the DEC-023/IMP-003 approved
+    # production baseline. Credentials below are synthetic, CI-scoped, and
+    # exist only for the lifetime of this job's ephemeral container — they
+    # are not GitHub repository secrets and grant no access outside this
+    # run.
+    services:
+      postgres:
+        image: postgres:18.6-alpine
+        env:
+          POSTGRES_USER: ci_test
+          POSTGRES_PASSWORD: ci_test_password
+          POSTGRES_DB: ci_test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci_test -d ci_test_db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # Disposable CI-only database, scoped to this job. Never production,
+      # staging, or preview data. DATABASE_DIRECT_URL is used for migration
+      # application (administrative role in this disposable instance is the
+      # same as the runtime role here — role separation beyond app_runtime's
+      # table grants is deployment/provider work, see README.md).
+      DATABASE_DIRECT_URL: postgresql://ci_test:ci_test_password@localhost:5432/ci_test_db
+      TEST_DATABASE_URL: postgresql://ci_test:ci_test_password@localhost:5432/ci_test_db
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -67,6 +95,26 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Migration-history consistency check (IMP-020)
+        run: npm run db:check
+
+      - name: Schema drift check (IMP-020)
+        run: |
+          set -euo pipefail
+          npx drizzle-kit generate
+          if [ -n "$(git status --porcelain -- src/db/migrations)" ]; then
+            echo "::error::Drizzle schema changed but the committed migration in src/db/migrations was not updated. Run 'npm run db:generate' locally, review the generated SQL, and commit it."
+            git status --porcelain -- src/db/migrations
+            git diff -- src/db/migrations
+            exit 1
+          fi
+
+      - name: Apply migrations to the disposable CI database (IMP-020)
+        run: npm run db:migrate
+
+      - name: Database integration tests (IMP-020)
+        run: npm run test:db
 
       - name: Dependency vulnerability check (npm audit)
         run: |

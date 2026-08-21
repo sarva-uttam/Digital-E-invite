@@ -192,8 +192,8 @@ The owner has approved an initial engineering stack (`DEC-023`, established thro
 - Next.js 16.3.1 with the App Router;
 - TypeScript 6.0.3 (strict);
 - npm with a committed `package-lock.json`;
-- Drizzle ORM 0.45.2 and Drizzle Kit 0.31.10 (not yet used for schema or migrations);
-- PostgreSQL 18 as the authoritative datastore (no database is provisioned yet);
+- Drizzle ORM 0.45.2 and Drizzle Kit 0.31.10 — the base schema and initial migrations exist as of `IMP-020` (see "Database development" below); no application/domain-service database access exists yet;
+- PostgreSQL 18 as the authoritative datastore (verified against PostgreSQL 18.6, released 2026-08-13; no production database is provisioned — local/CI use is disposable test infrastructure only);
 - pg-boss 12.27.0, backed by PostgreSQL, as the durable-job mechanism — this supersedes the earlier provisional Render Key Value/BullMQ direction; no separate Redis/Valkey service is part of the baseline.
 
 This is an initial baseline decision, not final production activation. Final choices remain pending for:
@@ -236,6 +236,56 @@ No `.env` file is required to run these commands: unset baseline variables fall 
 
 ---
 
+## Database development (`IMP-020`)
+
+The base PostgreSQL schema and initial migrations exist under `src/db/`. This section operates disposable local/test infrastructure only — no production database, provider, or credential is configured by any of these commands.
+
+### Local disposable PostgreSQL
+
+`docker-compose.yml` starts PostgreSQL 18.6 (the current patch as of implementation time) on `localhost:5432` with synthetic, local-only credentials:
+
+```bash
+docker compose up -d postgres   # requires Docker; not started automatically by any script here
+```
+
+If Docker is unavailable, the commands below still work against any PostgreSQL 18 instance you point `DATABASE_DIRECT_URL`/`TEST_DATABASE_URL` at (for example, a temporary managed instance you control) — GitHub-hosted CI is the authoritative source of PostgreSQL integration evidence when local Docker cannot run.
+
+### Commands
+
+```bash
+npm run db:generate   # generate a new migration from src/db/schema/*.ts (no DB connection needed)
+npm run db:check      # validate migration-history consistency (no DB connection needed)
+DATABASE_DIRECT_URL=postgresql://app_local:local_only_password@localhost:5432/ai_invite_dev npm run db:migrate   # apply committed migrations
+TEST_DATABASE_URL=postgresql://app_local:local_only_password@localhost:5432/ai_invite_dev npm run test:db        # database integration tests (real PostgreSQL, no mocks)
+```
+
+`npm test` (the ordinary unit suite) never touches a database and never depends on one being available. `npm run test:db` is a separate, explicit suite that **fails** — it does not silently skip — when `TEST_DATABASE_URL` is unset or does not look like a disposable local/CI database.
+
+`npm run db:migrate` never falls back between `DATABASE_DIRECT_URL` and any other variable; it requires `DATABASE_DIRECT_URL` explicitly. `drizzle-kit push` is never used — it is not a project command, and using it manually against any shared database defeats the reviewed-migration workflow below.
+
+### To destroy and recreate only the local disposable database
+
+```bash
+docker compose down -v postgres   # drops the named Docker volume — local data only
+docker compose up -d postgres
+DATABASE_DIRECT_URL=postgresql://app_local:local_only_password@localhost:5432/ai_invite_dev npm run db:migrate
+```
+
+### Migration policy
+
+1. **Migrations are immutable once applied to a shared/deployed environment.** Corrections are always a new forward migration — never edit a previously applied SQL file, and never use a "down"/rollback migration mechanism.
+2. **Local/test databases are disposable.** If a local migration turns out wrong before it has ever been applied anywhere shared, destroy and recreate the local database (above) and regenerate/edit the still-unapplied migration file.
+3. **CI is the authoritative migration check.** Every pull request applies the complete migration history to a fresh, disposable PostgreSQL 18 service container from empty, verifies migration-history consistency (`drizzle-kit check`), and fails if the committed schema and migration files have drifted (`drizzle-kit generate` would produce a change).
+4. **No production migration is authorized.** No production database exists; this task performs no production migration and grants no production access.
+5. **Destructive future changes use expand-and-contract** (add → backfill/dual-write if needed → switch → verify → remove in a later release), per `docs/06_DATABASE_DESIGN.md` §23 and `docs/12_DEPLOYMENT.md` §24. A backup/restore checkpoint is confirmed first, and the migration runs through a reviewed step separate from ordinary web/worker startup — migrations are never run automatically from `instrumentation.ts`, request handling, or worker startup.
+6. **Partially failed migrations are never blindly rerun.** Inspect the actual PostgreSQL state first; repair through a new idempotent forward migration or restore from a known-good backup, as appropriate.
+
+### Database roles
+
+The base migration creates a `NOLOGIN` privilege-group role, `app_runtime`, granted ordinary CRUD on every table except `UPDATE`/`DELETE` on the append-only tables (`audit_events`, `entitlement_ledger_entries`, `invitation_versions`, `rsvp_submissions`, `payment_transactions`), per `docs/06_DATABASE_DESIGN.md` §16.3/§21/§17. `app_runtime` has no password and is not granted to any login by this migration — provisioning the actual runtime login credential and running `GRANT app_runtime TO <login-role>;` is deployment/provider-specific work performed outside this repository's migrations. Local/CI verification (`src/db/schema-invariants.db.test.ts`) checks the role's grants directly via `information_schema.role_table_grants` without needing a login role to exist.
+
+---
+
 ## Repository map
 
 ```text
@@ -252,9 +302,18 @@ No `.env` file is required to run these commands: unset baseline variables fall 
 ├── eslint.config.mjs
 ├── .prettierrc.json
 ├── vitest.config.mts
+├── vitest.db.config.mts   # database integration test config (IMP-020)
+├── drizzle.config.ts      # Drizzle Kit config: generate/check only, no DB credentials (IMP-020)
+├── docker-compose.yml     # disposable local PostgreSQL 18 (IMP-020)
+├── scripts/
+│   ├── secret-scan.sh
+│   └── db-migrate.mjs     # administrative/local migration runner (IMP-020)
 ├── src/
 │   ├── app/            # Next.js App Router (pages, layout, /api/health)
-│   └── lib/            # server-only baseline (environment validation)
+│   ├── lib/            # server-only baseline (environment validation)
+│   └── db/             # base schema, migrations, migration runner, DB tests (IMP-020)
+│       ├── schema/      # Drizzle table definitions (source of truth: docs/06_DATABASE_DESIGN.md)
+│       └── migrations/  # committed, reviewed, immutable SQL migrations
 ├── worker/
 │   └── src/            # separately deployable worker (structural placeholder)
 ├── docs/

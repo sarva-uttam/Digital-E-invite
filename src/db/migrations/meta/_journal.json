@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1787339108526,
+      "tag": "0000_plain_leo",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1787339196212,
+      "tag": "0001_invitations_current_version_composite_fk",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787339253139,
+      "tag": "0002_app_runtime_role_privileges",
+      "breakpoints": true
+    }
+  ]
+}

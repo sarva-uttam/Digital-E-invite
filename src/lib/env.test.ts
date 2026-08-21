@@ -1,59 +1,56 @@
-import { describe, expect, it } from "vitest";
-import { loadServerEnv } from "./env";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { afterEach, describe, expect, it } from "vitest";
+import { loadServerEnv, toPublicConfig } from "./env";
 
-describe("loadServerEnv", () => {
-  it("applies safe defaults when nothing is configured", () => {
+const ORIGINAL_ENV = { ...process.env };
+
+afterEach(() => {
+  process.env = { ...ORIGINAL_ENV };
+});
+
+/**
+ * Comprehensive parsing/validation behavior is covered by config.test.ts
+ * against the framework-agnostic ./config module. This file only proves
+ * that the Next.js-facing "server-only" barrel remains the protected
+ * entry point and correctly defaults to the real process environment.
+ */
+describe("env (Next.js server-only entry point)", () => {
+  it("re-exports loadServerEnv with correct default behavior", () => {
     const env = loadServerEnv({});
+    expect(env.appEnv).toBe("development");
+    expect(env.defaultCurrency).toBe("MUR");
+  });
 
-    expect(env).toEqual({
-      appEnv: "development",
-      logLevel: "info",
+  it("re-exports toPublicConfig with the same narrow allow-listed shape", () => {
+    const env = loadServerEnv({});
+    expect(toPublicConfig(env)).toEqual({
       defaultLocale: "en",
       defaultCurrency: "MUR",
       appTimezone: "Indian/Mauritius",
+      publicAppUrl: undefined,
     });
   });
 
-  it("accepts explicit valid values", () => {
-    const env = loadServerEnv({
-      APP_ENV: "test",
-      LOG_LEVEL: "debug",
-      DEFAULT_LOCALE: "fr",
-      DEFAULT_CURRENCY: "EUR",
-      APP_TIMEZONE: "Europe/Paris",
-    });
-
-    expect(env).toEqual({
-      appEnv: "test",
-      logLevel: "debug",
-      defaultLocale: "fr",
-      defaultCurrency: "EUR",
-      appTimezone: "Europe/Paris",
-    });
-  });
-
-  it("fails safely on an invalid APP_ENV without leaking unrelated env content", () => {
-    expect(() => loadServerEnv({ APP_ENV: "production-ish" })).toThrowError(
-      /Invalid APP_ENV/,
-    );
-  });
-
-  it("fails safely on an invalid LOG_LEVEL", () => {
-    expect(() => loadServerEnv({ LOG_LEVEL: "verbose" })).toThrowError(
-      /Invalid LOG_LEVEL/,
-    );
-  });
-
-  it("never includes secret-shaped keys in its return value", () => {
+  it("keeps secret-bearing configuration out of the public shape (see config.test.ts for the full canary suite)", () => {
     const env = loadServerEnv({
       APP_ENV: "development",
-      APP_SECRET: "should-not-appear",
-      DATABASE_URL: "postgres://should-not-appear",
+      APP_SECRET: "should-not-appear-anywhere-in-public-output-1234",
     });
 
-    const serialized = JSON.stringify(env);
+    const serialized = JSON.stringify(toPublicConfig(env));
     expect(serialized).not.toContain("should-not-appear");
-    expect(env).not.toHaveProperty("appSecret");
-    expect(env).not.toHaveProperty("databaseUrl");
+  });
+
+  it("defaults to the real process.env when called with no argument", () => {
+    process.env.APP_NAME = "Canary Web App Name For Env Wrapper Test";
+    const env = loadServerEnv();
+    expect(env.appName).toBe("Canary Web App Name For Env Wrapper Test");
+  });
+
+  it('still guards this module with the "server-only" import', () => {
+    const sourcePath = fileURLToPath(new URL("./env.ts", import.meta.url));
+    const source = readFileSync(sourcePath, "utf8");
+    expect(source).toMatch(/^import\s+["']server-only["'];/m);
   });
 });

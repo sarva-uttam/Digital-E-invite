@@ -10,7 +10,7 @@ An AI-assisted digital invitation platform for creating, personalizing, publishi
 **Availability vision:** Global  
 **MVP event type:** Weddings only  
 **Document status:** Approved — Owner Approved  
-**Version:** 1.9  
+**Version:** 1.10  
 **Approved date:** 2026-08-21
 
 ---
@@ -378,7 +378,7 @@ Public contribution rules, licensing and external support channels have not yet 
 
 ## Current next steps
 
-Claude Package v1.0 remains `Implementation Preparation Ready`. `DOC-001` through `DOC-010` and `IMP-001` through `IMP-005` are verified. PR #2 merged the CI quality gates after successful GitHub-hosted pull-request CI, and the immediate push-to-`main` CI run also passed. `IMP-010 — Implement configuration and environment boundaries` is implemented on branch `imp-010-config-boundaries` (a typed, framework-agnostic configuration boundary reused by both the web app and the future worker, real Next.js startup validation, and a narrow explicit public/server-only separation), hardened by an independent-review correction pass (the shared parser now requires an explicit source and can no longer read the real environment even if imported directly, application/origin URLs reject non-web schemes and embedded credentials, and payment-mode/checkout-flag environment safety rules were added), and locally validated — but not yet `VERIFIED`, since no actual GitHub-hosted Actions run evidence has been obtained yet.
+Claude Package v1.0 remains `Implementation Preparation Ready`. `DOC-001` through `DOC-010` and `IMP-001` through `IMP-005` are verified. PR #2 merged the CI quality gates after successful GitHub-hosted pull-request CI, and the immediate push-to-`main` CI run also passed. `IMP-010 — Implement configuration and environment boundaries` is implemented on branch `imp-010-config-boundaries` (a typed, framework-agnostic configuration boundary reused by both the web app and the future worker, real Next.js startup validation, and a narrow explicit public/server-only separation), hardened by two independent-review correction passes (the shared parser now requires an explicit source and can no longer read the real environment even if imported directly; application/origin URLs reject non-web schemes and embedded credentials without ever echoing the raw credential-bearing value, regardless of which validation rule fails first; and payment-mode/checkout-flag environment safety rules were added), and locally validated — but not yet `VERIFIED`, since no actual GitHub-hosted Actions run evidence has been obtained yet.
 
 Current sequence:
 
@@ -438,6 +438,6 @@ GitHub `main` is the permanent source of truth. Claude Code must enter through `
 ## Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.9.  
+**Approved version:** 1.10.  
 **Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; Decision 10 fulfilled by the verified `IMP-004` engineering baseline; `IMP-005` is `VERIFIED` from successful GitHub-hosted pull-request and post-merge CI evidence; `IMP-010` is implemented, hardened by an independent-review correction pass, and locally validated, pending GitHub-hosted Actions run evidence.
+**Owner decisions:** Decisions 1–10 approved as proposed; Decision 10 fulfilled by the verified `IMP-004` engineering baseline; `IMP-005` is `VERIFIED` from successful GitHub-hosted pull-request and post-merge CI evidence; `IMP-010` is implemented, hardened by two independent-review correction passes, and locally validated, pending GitHub-hosted Actions run evidence.

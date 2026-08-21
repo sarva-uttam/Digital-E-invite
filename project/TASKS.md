@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.12  
+**Version:** 1.13  
 **Approved date:** 2026-08-21  
 **Current phase:** Application implementation — authorized and task-controlled  
 **Application implementation authorization:** GRANTED — task-controlled; only `READY` tasks may be performed
@@ -426,6 +426,8 @@ This gate does not authorize production deployment, customer launch, provider co
 - test count grew from 56 to 84 (28 new tests: URL scheme/credential hardening, PAYMENT_MODE environment safety, feature-gate dependency, and the module-boundary architecture tests listed above); all existing behavior — `APP_ENV`/`LOG_LEVEL` typing, strict boolean parsing, IANA timezone/currency validation, database pool validation, secret redaction/minimum-shape checks, blank-means-not-configured semantics, production/preview strictness, the opaque provider-config bag, `toPublicConfig()`'s allow-list, startup instrumentation, and health-endpoint secrecy — was preserved, not weakened;
 - re-verified from a clean `npm ci`: `typecheck`, `lint`, `test` (84/84), `build` all pass; `npm audit --audit-level=high` exits `0` (same 4 pre-existing moderate findings, no dependency changed — `package.json`/`package-lock.json` untouched); `bash scripts/secret-scan.sh` passes; `format:check` passes on every file this correction touched; live-server smoke tests confirm both the valid-config boot path and the new `PAYMENT_MODE=live` rejection path;
 - `IMP-010` remains `IMPLEMENTED`, not `VERIFIED` — the GitHub-hosted Actions run evidence gap is unchanged; `IMP-011` was not made `READY` and no later task was performed.
+
+**Correction — 2026-08-21 (final independent review, same branch, new commit):** a residual redaction gap was found in the previous correction: `readOptionalWebUrl` (`APP_URL`/`PUBLIC_APP_URL`) and `readOrigins` (`ALLOWED_ORIGINS`) still interpolated the raw supplied value/entry into the "malformed" and "must use http: or https:" error messages. Because a credential-bearing URL (e.g. `ftp://user:secret@example.test`) can fail the protocol check *before* the credentials check runs — or fail inside `new URL(...)` itself for a malformed-but-credential-bearing value — those two paths could still leak an embedded username/password. Fixed by removing every `${value}`/`${entry}` interpolation from all four throw sites in both functions, so **no** `APP_URL`/`PUBLIC_APP_URL`/`ALLOWED_ORIGINS` validation error ever includes the raw supplied value, regardless of which rule it fails or in what order. Directly reproduced and re-verified the reviewer's exact example (`ftp://user:secret@example.com`) via a standalone Node ESM check: the thrown message is `Invalid APP_URL: URL must use http: or https:.` with no username, password, or raw URL present. Added 7 regression tests covering the credential+non-web-scheme case and the malformed-credential-bearing case for `APP_URL`, `PUBLIC_APP_URL`, and `ALLOWED_ORIGINS` (plus a path-combined case for origins), each asserting the thrown message excludes the canary, the literal `"user"`, and the full raw value/entry. Test count grew from 84 to 91. No other behavior changed; no dependency, `.env.example`, or provider change; re-verified from a clean `npm ci`: `typecheck`, `lint`, `test` (91/91), `build`, `npm audit --audit-level=high` (exit `0`, same 4 pre-existing moderate findings), and `bash scripts/secret-scan.sh` all pass; `format:check` passes on both files this correction touched. `IMP-010` remains `IMPLEMENTED`, not `VERIFIED`; `IMP-011` remains `BLOCKED` and no later task was performed.
 
 ### IMP-011 — Implement observability foundation
 
@@ -907,6 +909,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.12.  
+**Approved version:** 1.13.  
 **Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` with evidence under Decision 10; `IMP-010` recorded `IMPLEMENTED` with evidence under Decision 10 and hardened by an independent-review correction pass, pending owner-provided GitHub-hosted Actions run evidence before it can become `VERIFIED`.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` with evidence under Decision 10; `IMP-010` recorded `IMPLEMENTED` with evidence under Decision 10 and hardened by two independent-review correction passes, pending owner-provided GitHub-hosted Actions run evidence before it can become `VERIFIED`.

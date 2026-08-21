@@ -3,7 +3,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.14  
+**Version:** 1.15  
 **Snapshot date:** 2026-08-21  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -288,7 +288,7 @@ Implemented on branch `imp-010-config-boundaries`, locally validated, pending Gi
 - typed, validated fields: `APP_NAME`, `APP_URL`/`PUBLIC_APP_URL` (http/https only, no embedded credentials), `APP_TIMEZONE` (real IANA zone), `DEFAULT_CURRENCY`/`PAYMENT_BASE_CURRENCY`/`PAYMENT_SUPPORTED_CURRENCIES`, `ALLOWED_ORIGINS` (http/https only, no embedded credentials), `TRUSTED_PROXY_COUNT`, `PAYMENT_MODE` (rejects `live` unless `APP_ENV=production`), `DATABASE_URL`/`DATABASE_DIRECT_URL`/`DATABASE_SSL_MODE`/`DATABASE_POOL_MIN`/`MAX`, the 8 `ENABLE_*` feature flags, `APP_SECRET`/`ENCRYPTION_KEY`/`TOKEN_HASH_KEY`, `TEST_DATABASE_URL`/`E2E_BASE_URL`; production/preview require `APP_URL`/`PUBLIC_APP_URL`/`ALLOWED_ORIGINS`; `ENABLE_PAYMENTS`/`ENABLE_EUR_CHECKOUT`/`ENABLE_USD_CHECKOUT` fail closed without their generic (non-provider) prerequisite, and `ENABLE_EUR_CHECKOUT`/`ENABLE_USD_CHECKOUT` additionally require `ENABLE_PAYMENTS=true`;
 - provider-specific fields (auth/storage/AI/payment-provider/email/cache/queue/observability) remain an opaque, server-only, blank-normalized bag — no provider selected, contacted, or initialized;
 - `toPublicConfig()` — a 4-field explicit allow-list (`defaultLocale`, `defaultCurrency`, `appTimezone`, `publicAppUrl`); no `NEXT_PUBLIC_*` variable was introduced; `GET /api/health` is unchanged;
-- test count grew from 8 to 84 across 6 files (56 at first implementation, +28 from an independent-review correction pass), including canary-secret non-disclosure, embedded-credential non-disclosure, and public-config allow-list tests.
+- test count grew from 8 to 91 across 6 files (56 at first implementation, +28 from the first independent-review correction, +7 from a second correction that removed a residual gap where a credential-bearing `APP_URL`/`PUBLIC_APP_URL`/`ALLOWED_ORIGINS` value could still be echoed in its error if it failed the scheme check, or the URL constructor itself, before reaching the credentials check), including canary-secret non-disclosure, embedded-credential non-disclosure, and public-config allow-list tests.
 
 Still not created or selected for production:
 
@@ -526,6 +526,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.14.  
+**Approved version:** 1.15.  
 **Snapshot date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` under Decisions 5/6/9; `IMP-010` recorded `IMPLEMENTED` and hardened by an independent-review correction pass, pending GitHub-hosted Actions run evidence before `VERIFIED`.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` under Decisions 5/6/9; `IMP-010` recorded `IMPLEMENTED` and hardened by two independent-review correction passes, pending GitHub-hosted Actions run evidence before `VERIFIED`.

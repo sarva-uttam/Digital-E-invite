@@ -187,6 +187,66 @@ describe("parseServerEnv", () => {
         expect(message).not.toContain(CANARY);
       }
     });
+
+    it("rejects an APP_URL that is both credential-bearing and non-web-scheme without ever echoing the raw URL (protocol check fires first)", () => {
+      const CANARY = "canary-ftp-scheme-password-should-not-leak-9b2d";
+      const rawUrl = `ftp://user:${CANARY}@example.test`;
+      try {
+        parseServerEnv({ APP_URL: rawUrl });
+        expect.unreachable("expected parseServerEnv to throw");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        expect(message).toMatch(/Invalid APP_URL/);
+        expect(message).not.toContain(CANARY);
+        expect(message).not.toContain("user");
+        expect(message).not.toContain(rawUrl);
+      }
+    });
+
+    it("rejects a malformed, credential-bearing APP_URL without echoing it (constructor throws before any rule check)", () => {
+      const CANARY = "canary-malformed-url-password-should-not-leak-5f1c";
+      const rawUrl = `not a well formed url user:${CANARY}@example.test`;
+      try {
+        parseServerEnv({ APP_URL: rawUrl });
+        expect.unreachable("expected parseServerEnv to throw");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        expect(message).toMatch(/Invalid APP_URL/);
+        expect(message).not.toContain(CANARY);
+        expect(message).not.toContain("user");
+        expect(message).not.toContain(rawUrl);
+      }
+    });
+
+    it("rejects a PUBLIC_APP_URL that is both credential-bearing and non-web-scheme without ever echoing the raw URL", () => {
+      const CANARY = "canary-ftp-public-password-should-not-leak-4e7a";
+      const rawUrl = `ftp://user:${CANARY}@example.test`;
+      try {
+        parseServerEnv({ PUBLIC_APP_URL: rawUrl });
+        expect.unreachable("expected parseServerEnv to throw");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        expect(message).toMatch(/Invalid PUBLIC_APP_URL/);
+        expect(message).not.toContain(CANARY);
+        expect(message).not.toContain("user");
+        expect(message).not.toContain(rawUrl);
+      }
+    });
+
+    it("rejects a malformed, credential-bearing PUBLIC_APP_URL without echoing it", () => {
+      const CANARY = "canary-malformed-public-password-should-not-leak-2a9d";
+      const rawUrl = `not a well formed url user:${CANARY}@example.test`;
+      try {
+        parseServerEnv({ PUBLIC_APP_URL: rawUrl });
+        expect.unreachable("expected parseServerEnv to throw");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        expect(message).toMatch(/Invalid PUBLIC_APP_URL/);
+        expect(message).not.toContain(CANARY);
+        expect(message).not.toContain("user");
+        expect(message).not.toContain(rawUrl);
+      }
+    });
   });
 
   describe("8. malformed list/origin configuration fails safely", () => {
@@ -227,6 +287,53 @@ describe("parseServerEnv", () => {
           /Invalid ALLOWED_ORIGINS.*embedded credentials/,
         );
         expect(message).not.toContain(CANARY);
+      }
+    });
+
+    it("rejects an ALLOWED_ORIGINS entry that is both credential-bearing and non-web-scheme without ever echoing the raw entry", () => {
+      const CANARY = "canary-origin-ftp-password-should-not-leak-8c3e";
+      const rawEntry = `ftp://user:${CANARY}@example.test`;
+      try {
+        parseServerEnv({ ALLOWED_ORIGINS: rawEntry });
+        expect.unreachable("expected parseServerEnv to throw");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        expect(message).toMatch(/Invalid ALLOWED_ORIGINS/);
+        expect(message).not.toContain(CANARY);
+        expect(message).not.toContain("user");
+        expect(message).not.toContain(rawEntry);
+      }
+    });
+
+    it("rejects a malformed, credential-bearing ALLOWED_ORIGINS entry without echoing it", () => {
+      const CANARY = "canary-origin-malformed-password-should-not-leak-1d6b";
+      const rawEntry = `not a well formed origin user:${CANARY}@example.test`;
+      try {
+        parseServerEnv({ ALLOWED_ORIGINS: rawEntry });
+        expect.unreachable("expected parseServerEnv to throw");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        expect(message).toMatch(/Invalid ALLOWED_ORIGINS/);
+        expect(message).not.toContain(CANARY);
+        expect(message).not.toContain("user");
+        expect(message).not.toContain(rawEntry);
+      }
+    });
+
+    it("rejects a credential-bearing ALLOWED_ORIGINS entry that also has a path, without echoing it", () => {
+      const CANARY = "canary-origin-path-password-should-not-leak-7f4a";
+      const rawEntry = `https://user:${CANARY}@example.test/some-path`;
+      try {
+        parseServerEnv({ ALLOWED_ORIGINS: rawEntry });
+        expect.unreachable("expected parseServerEnv to throw");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        // The credentials rule fires before the path rule; either way the
+        // raw entry and the canary must never appear in the message.
+        expect(message).toMatch(/Invalid ALLOWED_ORIGINS/);
+        expect(message).not.toContain(CANARY);
+        expect(message).not.toContain("user");
+        expect(message).not.toContain(rawEntry);
       }
     });
 

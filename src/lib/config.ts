@@ -291,23 +291,23 @@ function readOptionalUrl(
 function readOptionalWebUrl(source: EnvSource, key: string): URL | undefined {
   const value = raw(source, key);
   if (value === undefined) return undefined;
+  // Invariant: no branch below ever includes the raw supplied value in a
+  // thrown message. A URL that fails one rule (e.g. a non-http(s) scheme)
+  // may still carry embedded credentials that a later rule would have
+  // caught, so the safe approach is to never echo the value at all,
+  // rather than rely on check ordering.
   let parsed: URL;
   try {
     parsed = new URL(value);
   } catch {
-    throw new ConfigError(
-      `Invalid ${key}: "${value}" is not a well-formed URL.`,
-    );
+    throw new ConfigError(`Invalid ${key}: value is not a well-formed URL.`);
   }
   if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-    throw new ConfigError(
-      `Invalid ${key}: "${value}" must use http: or https:.`,
-    );
+    throw new ConfigError(`Invalid ${key}: URL must use http: or https:.`);
   }
   if (parsed.username !== "" || parsed.password !== "") {
-    // Never echo the value here: by definition it embeds credentials.
     throw new ConfigError(
-      `Invalid ${key}: must not include embedded credentials.`,
+      `Invalid ${key}: URL must not include embedded credentials.`,
     );
   }
   return parsed;
@@ -376,6 +376,11 @@ function readOrigins(source: EnvSource, key: string): readonly string[] {
   const entries = value.split(",").map((entry) => entry.trim());
   const origins: string[] = [];
   for (const entry of entries) {
+    // Invariant: no branch below ever includes the raw entry in a thrown
+    // message. An entry that fails one rule (e.g. a non-http(s) scheme,
+    // or a path/query/fragment) may still carry embedded credentials that
+    // a later rule would have caught, so the safe approach is to never
+    // echo the entry at all, rather than rely on check ordering.
     if (entry === "") {
       throw new ConfigError(`Invalid ${key}: contains an empty origin entry.`);
     }
@@ -384,23 +389,22 @@ function readOrigins(source: EnvSource, key: string): readonly string[] {
       parsed = new URL(entry);
     } catch {
       throw new ConfigError(
-        `Invalid ${key}: "${entry}" is not a well-formed origin.`,
+        `Invalid ${key}: contains an entry that is not a well-formed origin.`,
       );
     }
     if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
       throw new ConfigError(
-        `Invalid ${key}: "${entry}" must use http: or https:.`,
+        `Invalid ${key}: every origin entry must use http: or https:.`,
       );
     }
     if (parsed.username !== "" || parsed.password !== "") {
-      // Never echo the entry here: by definition it embeds credentials.
       throw new ConfigError(
         `Invalid ${key}: origin entries must not include embedded credentials.`,
       );
     }
     if (parsed.pathname !== "/" || parsed.search !== "" || parsed.hash !== "") {
       throw new ConfigError(
-        `Invalid ${key}: "${entry}" must be an origin only (scheme://host[:port]), with no path, query, or fragment.`,
+        `Invalid ${key}: every origin entry must be an origin only (scheme://host[:port]), with no path, query, or fragment.`,
       );
     }
     origins.push(parsed.origin);

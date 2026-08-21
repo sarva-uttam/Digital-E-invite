@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.14  
+**Version:** 1.15  
 **Approved date:** 2026-08-21  
 **Current phase:** Application implementation — authorized and task-controlled  
 **Application release status:** No application release exists
@@ -270,6 +270,7 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - **Not yet obtained:** an actual GitHub-hosted Actions run, for the same reason recorded under `IMP-005` — this environment has no `gh` CLI and no `GITHUB_TOKEN`/`GH_TOKEN`, and pushing a feature branch alone does not trigger `CI` (the `push` trigger is scoped to `main`).
 - No provider was selected/configured; no database, migration, or queue work occurred; no observability/auth/payment/AI/product-feature work occurred; no production deployment, resource, or credential was created. `IMP-011` and later tasks remain `BLOCKED` and were not performed.
 - **Correction (2026-08-21, independent review, same branch, new commit):** the parser is renamed `parseServerEnv(source)` with its `= process.env` default removed, so the framework-agnostic module can no longer read the real environment even if imported directly — zero `process.env` references remain, enforced by static-source, arity, and `@ts-expect-error` compile-time regression tests; `src/lib/env.ts`/`worker/src/config.ts` each gained their own `process.env`-defaulting wrapper (`loadServerEnv`/`loadWorkerEnv`); `src/instrumentation.ts` now imports the protected `./lib/env` entry point instead of `./lib/config` directly (confirmed live via the compiled `src_lib_env_ts_*` chunk). `APP_URL`/`PUBLIC_APP_URL`/each `ALLOWED_ORIGINS` entry now reject non-http(s) schemes and embedded credentials (never echoed). `PAYMENT_MODE=live` is now rejected unless `APP_ENV=production`. `ENABLE_EUR_CHECKOUT`/`ENABLE_USD_CHECKOUT` now additionally require `ENABLE_PAYMENTS=true`. No HTTPS-only restriction and no `PAYMENT_BASE_CURRENCY`-must-be-supported rule were added, because no approved document was found requiring either. Test count grew from 56 to 84. No dependency, `.env.example`, or provider change. `IMP-010` remains `IMPLEMENTED`, not `VERIFIED`.
+- **Correction 2 (2026-08-21, final independent review, same branch, new commit):** fixed a residual redaction gap: `readOptionalWebUrl` (`APP_URL`/`PUBLIC_APP_URL`) and `readOrigins` (`ALLOWED_ORIGINS`) still interpolated the raw value/entry into the "malformed" and "must use http: or https:" errors, so a credential-bearing URL failing the scheme check (or failing inside the `URL` constructor itself) before reaching the credentials check could still leak an embedded username/password — e.g. `ftp://user:secret@example.test` previously echoed `user:secret@example.test`. Removed every raw-value interpolation from all four throw sites in both functions; directly reproduced and re-verified the exact `ftp://user:secret@...` case via a standalone check, confirming no username/password/raw-URL leak. Added 7 regression tests. Test count grew from 84 to 91. No other behavior, dependency, `.env.example`, or provider change.
 - **Migration/action required:** Owner opens a pull request from `imp-010-config-boundaries` into `main` (or provides `gh`/API access) so the `quality-gate` run executes; only after that evidence is recorded can `IMP-010` become `VERIFIED`. **Compatibility/customer impact:** None — not merged, not deployed, no customer-visible change, `Application release: None`.
 
 ---
@@ -476,6 +477,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.14.  
+**Approved version:** 1.15.  
 **Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; the `IMP-004` and `IMP-005` entries recorded under Decision 8 (release truth: `VERIFIED`, merged, undeployed); the `IMP-010` entry recorded under Decision 8 as `IMPLEMENTED` and hardened by an independent-review correction pass, pending GitHub-hosted Actions run evidence before `VERIFIED`.
+**Owner decisions:** Decisions 1–10 approved as proposed; the `IMP-004` and `IMP-005` entries recorded under Decision 8 (release truth: `VERIFIED`, merged, undeployed); the `IMP-010` entry recorded under Decision 8 as `IMPLEMENTED` and hardened by two independent-review correction passes, pending GitHub-hosted Actions run evidence before `VERIFIED`.

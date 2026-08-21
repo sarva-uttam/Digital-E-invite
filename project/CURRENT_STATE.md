@@ -3,7 +3,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.12  
+**Version:** 1.13  
 **Snapshot date:** 2026-08-21  
 **Repository:** `Moniseur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -37,7 +37,7 @@ The product, domain, architecture, security, testing, deployment, roadmap, prici
 
 The engineering baseline (`IMP-004`) is implemented and verified: a minimal Next.js application scaffold and developer tooling exist. No product feature, database, migration, provider configuration, infrastructure deployment, payment integration, or AI-provider integration exists, and there is no customer launch.
 
-The documentation package, handoff declaration, and implementation-preparation tasks `IMP-001` through `IMP-004` are complete and verified. Application implementation is owner-authorized, but only through eligible tasks in `project/TASKS.md`. `IMP-005 — Establish CI quality gates` is `VERIFIED`: PR #2 passed its GitHub-hosted quality gate, merged normally as `47cfb630ae85f639f2ec1106496a42c52fd7a4de`, and the immediate push-to-`main` CI run also passed. `IMP-010` is the only next `READY` task; it has not started, and later tasks remain governed by their existing dependencies.
+The documentation package, handoff declaration, and implementation-preparation tasks `IMP-001` through `IMP-004` are complete and verified. Application implementation is owner-authorized, but only through eligible tasks in `project/TASKS.md`. `IMP-005 — Establish CI quality gates` is `VERIFIED`: PR #2 passed its GitHub-hosted quality gate, merged normally as `47cfb630ae85f639f2ec1106496a42c52fd7a4de`, and the immediate push-to-`main` CI run also passed. `IMP-010 — Implement configuration and environment boundaries` is implemented on branch `imp-010-config-boundaries` and locally validated, but not yet `VERIFIED`: no actual GitHub-hosted Actions run evidence has been obtained (this environment still has no `gh` CLI or GitHub API token). Every later task remains `BLOCKED`.
 
 ---
 
@@ -45,10 +45,10 @@ The documentation package, handoff declaration, and implementation-preparation t
 
 **Phase:** Application implementation — authorized and task-controlled  
 **Phase state:** Owner authorization granted; task-ledger dependencies and gates remain binding  
-**Implementation state:** `IMP-004` and `IMP-005` verified and merged; `IMP-010` is `READY` but not started; no product feature implemented; later tasks remain blocked by their existing dependencies  
+**Implementation state:** `IMP-004` and `IMP-005` verified and merged; `IMP-010` implemented on branch `imp-010-config-boundaries`, locally validated, pending GitHub-hosted Actions run evidence; no product feature implemented; later tasks remain blocked by their existing dependencies  
 **Production state:** No production application exists; production deployment is unauthorized  
 **Customer availability:** Not launched  
-**Next action:** Perform only `IMP-010 — Implement configuration and environment boundaries` under its existing task scope; do not begin `IMP-011` or later work.
+**Next action:** Owner opens a pull request from `imp-010-config-boundaries` into `main` (or provides `gh`/API access) so the `CI` workflow's `quality-gate` run can be observed and `IMP-010` recorded `VERIFIED`.
 
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Owner decision `DEC-024` grants task-controlled application implementation authorization; only `READY` tasks may be performed.
 
@@ -137,7 +137,7 @@ Owner-approved `IMP-003` is `VERIFIED`. The initial engineering baseline is Node
 
 Render Singapore, Render PostgreSQL in Singapore, and Amazon S3 Singapore remain provisional production baselines. Authentication, observability, transactional email, exact AI models, payment/acquiring, analytics and other unresolved specialist providers remain unselected and gated.
 
-Application implementation is authorized by owner decision `DEC-024` only through eligible tasks in `project/TASKS.md`. `IMP-004 — Establish repository engineering baseline` and `IMP-005 — Establish CI quality gates` are `VERIFIED` and merged. PR #2 preserved implementation commit `839b176e6370d944a8a29bc83cab8c6ee4e3dac0` through merge commit `47cfb630ae85f639f2ec1106496a42c52fd7a4de`; GitHub-hosted PR run `32420895244` and post-merge `main` run `32421454608` succeeded. `IMP-010` is `READY` but has not started, and later tasks remain governed by their existing dependencies. No product feature, database, migration, provider configuration, infrastructure deployment or application release exists.
+Application implementation is authorized by owner decision `DEC-024` only through eligible tasks in `project/TASKS.md`. `IMP-004 — Establish repository engineering baseline` and `IMP-005 — Establish CI quality gates` are `VERIFIED` and merged. PR #2 preserved implementation commit `839b176e6370d944a8a29bc83cab8c6ee4e3dac0` through merge commit `47cfb630ae85f639f2ec1106496a42c52fd7a4de`; GitHub-hosted PR run `32420895244` and post-merge `main` run `32421454608` succeeded. `IMP-010 — Implement configuration and environment boundaries` is implemented on branch `imp-010-config-boundaries`, locally validated, pending GitHub-hosted Actions run evidence, and later tasks remain governed by their existing dependencies. No product feature, database, migration, provider configuration, infrastructure deployment or application release exists.
 
 ---
 
@@ -281,6 +281,15 @@ Implemented and verified on `main` through PR #2 (`IMP-005`):
 - an `npm audit --audit-level=high` merge gate (4 pre-existing moderate-severity `esbuild`/`drizzle-kit` dev-tooling findings do not block it);
 - `scripts/secret-scan.sh` — a narrow, dependency-free, best-effort scan of tracked files for known secret-shaped patterns, used because GitHub-native secret scanning is unavailable on this private repository's plan.
 
+Implemented on branch `imp-010-config-boundaries`, locally validated, pending GitHub-hosted Actions evidence (`IMP-010`, not yet `VERIFIED`):
+
+- `src/lib/config.ts` — framework-agnostic typed configuration boundary (no `server-only` import) reused by `src/lib/env.ts` (Next.js, `server-only`-guarded) and `worker/src/config.ts` (relative import, no `server-only`);
+- `src/instrumentation.ts` — the current official Next.js startup hook (`register()`), scoped to the Node.js runtime, that validates configuration once per server instance and fails startup on invalid configuration (verified live: invalid `APP_ENV` makes every request return `500` until corrected);
+- typed, validated fields: `APP_NAME`, `APP_URL`/`PUBLIC_APP_URL`, `APP_TIMEZONE` (real IANA zone), `DEFAULT_CURRENCY`/`PAYMENT_BASE_CURRENCY`/`PAYMENT_SUPPORTED_CURRENCIES`, `ALLOWED_ORIGINS`, `TRUSTED_PROXY_COUNT`, `PAYMENT_MODE`, `DATABASE_URL`/`DATABASE_DIRECT_URL`/`DATABASE_SSL_MODE`/`DATABASE_POOL_MIN`/`MAX`, the 8 `ENABLE_*` feature flags, `APP_SECRET`/`ENCRYPTION_KEY`/`TOKEN_HASH_KEY`, `TEST_DATABASE_URL`/`E2E_BASE_URL`; production/preview require `APP_URL`/`PUBLIC_APP_URL`/`ALLOWED_ORIGINS`; `ENABLE_PAYMENTS`/`ENABLE_EUR_CHECKOUT`/`ENABLE_USD_CHECKOUT` fail closed without their generic (non-provider) prerequisite;
+- provider-specific fields (auth/storage/AI/payment-provider/email/cache/queue/observability) remain an opaque, server-only, blank-normalized bag — no provider selected, contacted, or initialized;
+- `toPublicConfig()` — a 4-field explicit allow-list (`defaultLocale`, `defaultCurrency`, `appTimezone`, `publicAppUrl`); no `NEXT_PUBLIC_*` variable was introduced; `GET /api/health` is unchanged;
+- test count grew from 8 to 56 across 6 files, including canary-secret non-disclosure and public-config allow-list tests.
+
 Still not created or selected for production:
 
 - exact database/authentication/storage/queue/hosting/observability vendor activation;
@@ -379,7 +388,7 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ### 19.2 Implementation-start blockers
 
-- `IMP-004` and `IMP-005` are verified on `main`; `IMP-010` is `READY` but has not started, and later tasks remain blocked by their existing dependencies;
+- `IMP-004` and `IMP-005` are verified on `main`; `IMP-010` is implemented on branch `imp-010-config-boundaries` but not yet `VERIFIED` because no GitHub-hosted Actions run evidence has been obtained (this environment has no `gh` CLI or GitHub API token; an owner-opened pull request or granted API/CLI access is required to complete verification), and later tasks remain blocked by their existing dependencies;
 - the pg-boss/Drizzle/PostgreSQL transaction compatibility test remains required before critical ORM-adapter reliance (not yet performed; no schema or queue exists);
 - unresolved specialist providers, provider plans, pricing, contracts, production limits, and applicable legal/privacy obligations remain subject to their approved gates;
 - Claude Code Plan Mode readiness review has not occurred;
@@ -399,10 +408,11 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ## 20. Immediate next actions
 
-1. Execute only the `READY` task `IMP-010 — Implement configuration and environment boundaries`; this reconciliation does not perform it.
-2. Preserve the approved exact versions and environment separation; do not configure unresolved providers or production resources.
-3. Satisfy compatibility and specialist-provider gates in their existing task order.
-4. Keep `IMP-011` and later tasks blocked until their own dependencies and decisions are satisfied.
+1. Owner opens a pull request from `imp-010-config-boundaries` into `main` (or provides `gh`/GitHub API access) so the `CI` workflow's `quality-gate` run executes and its evidence can be recorded.
+2. Once GitHub-hosted run evidence is obtained and passes, record `IMP-010` as `VERIFIED`.
+3. Preserve the approved exact versions and environment separation; do not configure unresolved providers or production resources.
+4. Satisfy compatibility and specialist-provider gates in their existing task order.
+5. Keep `IMP-011` and later tasks blocked until their own dependencies and decisions are satisfied.
 
 ---
 
@@ -516,6 +526,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.10.  
+**Approved version:** 1.13.  
 **Snapshot date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` under Decisions 5/6/9; `IMP-010` is `READY` but not started.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` under Decisions 5/6/9; `IMP-010` recorded `IMPLEMENTED`, pending GitHub-hosted Actions run evidence before `VERIFIED`.

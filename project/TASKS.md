@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.10  
+**Version:** 1.11  
 **Approved date:** 2026-08-21  
 **Current phase:** Application implementation — authorized and task-controlled  
 **Application implementation authorization:** GRANTED — task-controlled; only `READY` tasks may be performed
@@ -395,9 +395,27 @@ This gate does not authorize production deployment, customer launch, provider co
 ### IMP-010 — Implement configuration and environment boundaries
 
 **Priority:** P0  
-**State:** READY  
+**State:** IMPLEMENTED  
 **Dependencies:** IMP-005  
 **Acceptance criteria:** typed startup validation; server/public separation; environment-specific credentials; safe errors; tests.
+
+**Implementation evidence — 2026-08-21:**
+
+- implemented on branch `imp-010-config-boundaries` from verified `main` at `fd606f53ed24e5769c002d34652ff52d0cea0e0e`; no dependency was added (`package.json`/`package-lock.json` unchanged);
+- restructured the `IMP-004` baseline into a framework-agnostic module (`src/lib/config.ts`) that does not import `server-only`, so it is safely importable by the future worker and by tests, plus a thin Next.js-facing barrel (`src/lib/env.ts`, unchanged `import "server-only"` guard, re-exports `./config`) and a worker-facing re-export (`worker/src/config.ts`, relative import, no `server-only`);
+- typed startup validation: added `src/instrumentation.ts` exporting `register()`, the current official Next.js 16.3.1 startup hook (verified 2026-08-21 against `nextjs.org/docs/app/guides/instrumentation`: called once per server instance and must complete before the server accepts requests; not experimental in this version). It calls `loadServerEnv()` only when `process.env.NEXT_RUNTIME === "nodejs"` (avoids Edge-runtime assumptions per current guidance) and performs no observability/telemetry work (deferred to `IMP-011`). Verified live with `npm run start`: valid configuration boots and serves `GET /api/health` normally; an invalid `APP_ENV` makes every request fail with `500` and the server logs repeat `Failed to prepare server ... ConfigError: Invalid APP_ENV: ...` — startup validation is genuinely wired in, not merely defined;
+- extended the validated, provider-neutral fields already in `.env.example`: `APP_NAME`, `APP_URL`/`PUBLIC_APP_URL` (typed `URL`), `APP_TIMEZONE` (validated as a real IANA zone via `Intl.DateTimeFormat`), `DEFAULT_CURRENCY`/`PAYMENT_BASE_CURRENCY`/`PAYMENT_SUPPORTED_CURRENCIES` (3-letter currency-code shape), `ALLOWED_ORIGINS` (parsed/validated origin list, no path/query/fragment), `TRUSTED_PROXY_COUNT` (non-negative integer), `PAYMENT_MODE` (enum), `DATABASE_URL`/`DATABASE_DIRECT_URL` (typed `URL`, secret-classified — never echoed on error), `DATABASE_SSL_MODE` (standard libpq enum), `DATABASE_POOL_MIN`/`MAX` (non-negative integers, cross-validated `MIN <= MAX`), the 8 `ENABLE_*` feature flags (strict `"true"`/`"false"` only), `APP_SECRET`/`ENCRYPTION_KEY`/`TOKEN_HASH_KEY` (optional, minimum-length-if-present, never echoed), and `TEST_DATABASE_URL`/`E2E_BASE_URL`;
+- provider-specific fields with no current consumer (`AUTH_*`, `STORAGE_*`, `AI_TEXT_*`, `AI_IMAGE_*`, `PAYMENT_PROVIDER`/`_API_BASE_URL`/`_MERCHANT_ID`/`_SECRET_KEY`/`_WEBHOOK_SECRET`, `EMAIL_*`, `CACHE_URL`, `QUEUE_URL`, `SCHEDULER_SECRET`, `OTEL_*`, `ERROR_REPORTING_DSN`) are typed as an allow-listed, server-only, blank-normalized bag (`providerConfig`) with no deeper shape validation, because their exact shape depends on the provider selected under its own gated task; no provider was selected, contacted, or initialized;
+- server/public boundary: `toPublicConfig()` derives a narrow object with exactly four named fields (`defaultLocale`, `defaultCurrency`, `appTimezone`, `publicAppUrl`) — it never spreads `ServerEnv` or `process.env`, so a future secret added to `ServerEnv` cannot silently become public; no `NEXT_PUBLIC_*` variable was introduced;
+- environment-specific/production strictness: when `APP_ENV` is `production` or `preview`, `APP_URL`, `PUBLIC_APP_URL`, and a non-empty `ALLOWED_ORIGINS` are required (per `docs/09_SECURITY_ARCHITECTURE.md` §13 CORS/CSRF origin validation and `docs/12_DEPLOYMENT.md` §15 canonical/public URL); `development`/`test` keep safe defaults so CI/local boot without any provider credential; no fallback secret is ever generated;
+- feature-gated fail-closed behavior demonstrated with two provider-neutral examples: `ENABLE_PAYMENTS=true` requires `PUBLIC_APP_URL`; `ENABLE_EUR_CHECKOUT`/`ENABLE_USD_CHECKOUT=true` require the matching code in `PAYMENT_SUPPORTED_CURRENCIES`; disabled capabilities never require their provider credentials;
+- safe-error design: secret-classified fields (`APP_SECRET`, `ENCRYPTION_KEY`, `TOKEN_HASH_KEY`, `DATABASE_URL`, `DATABASE_DIRECT_URL`, `TEST_DATABASE_URL`) never echo their supplied value in a thrown message; non-secret fields (enums, origins, currency codes, URLs) may echo the invalid value, matching `docs/09` §15 guidance; the health endpoint (`GET /api/health`) was not touched and still returns only `{status, service, time}`;
+- **tests added:** 56 total (up from 8) across 6 files — `src/lib/config.test.ts` (44 tests; covers all 17 required IMP-010 acceptance scenarios including canary-secret non-disclosure, blank-value "not configured" semantics, and the narrow public-config allow-list), `src/lib/env.test.ts` (3, thin smoke test of the `server-only` barrel), `src/instrumentation.test.ts` (3; proves `register()` is actually invoked and fails closed on invalid config in the Node.js runtime, and is a no-op on Edge), `worker/src/config.test.ts` (3; proves the worker re-export behaves identically and its source — and the shared module's source — contains no `import "server-only"`), plus the existing `src/app/api/health/route.test.ts` (2) and `worker/src/index.test.ts` (1) unchanged;
+- verified from a clean `npm ci` on this machine: `typecheck`, `lint`, `test` (56/56 passing), `build` all passed; `npm audit --audit-level=high` exits `0` (only the 4 pre-existing moderate `esbuild`/`drizzle-kit` findings recorded under `IMP-005` remain, no dependency changed); `bash scripts/secret-scan.sh` passed; `format:check` passes on every file this task touched (verified narrowly with `prettier --check` on exactly those files) — the local machine's `core.autocrlf=true` checkout artifact recorded under `IMP-005` still affects the same 15 pre-existing files and is unrelated to this task;
+- `.env.example` was not modified: its existing documentation (blank = not configured, safe defaults, feature gates false, provider-specific names deliberately absent) remains truthful under this implementation;
+- **evidence gap — why this task is `IMPLEMENTED` and not `VERIFIED`:** as with `IMP-005`, this environment has no `gh` CLI and no `GITHUB_TOKEN`/`GH_TOKEN`; pushing the feature branch alone does not trigger `CI` (the `push` trigger is scoped to `main` only). A `pull_request` targeting `main` must be opened for the authoritative GitHub-hosted `quality-gate` run to execute;
+- **required to reach `VERIFIED`:** the owner opens a pull request from `imp-010-config-boundaries` into `main` (or provides `gh`/API access) and the `CI` / `quality-gate` run succeeds;
+- no later task was implemented; no provider was selected/configured; no database, migration, or queue work occurred; no observability/auth/payment/AI/product-feature work occurred; no production deployment, resource, or credential was created. `IMP-011` and every later task remain `BLOCKED`.
 
 ### IMP-011 — Implement observability foundation
 
@@ -879,6 +897,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.10.  
+**Approved version:** 1.11.  
 **Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` recorded `VERIFIED` with evidence under Decision 10; `IMP-005` recorded `IMPLEMENTED` with evidence under Decision 10, pending owner-provided GitHub-hosted Actions run evidence before it can become `VERIFIED`.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004` and `IMP-005` recorded `VERIFIED` with evidence under Decision 10; `IMP-010` recorded `IMPLEMENTED` with evidence under Decision 10, pending owner-provided GitHub-hosted Actions run evidence before it can become `VERIFIED`.

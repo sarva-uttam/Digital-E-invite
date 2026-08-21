@@ -1,59 +1,36 @@
 import { describe, expect, it } from "vitest";
-import { loadServerEnv } from "./env";
+import { loadServerEnv, toPublicConfig } from "./env";
 
-describe("loadServerEnv", () => {
-  it("applies safe defaults when nothing is configured", () => {
+/**
+ * Comprehensive parsing/validation behavior is covered by config.test.ts
+ * against the framework-agnostic ./config module. This file only proves
+ * that the Next.js-facing "server-only" barrel re-exports the same
+ * boundary correctly.
+ */
+describe("env (Next.js server-only re-export)", () => {
+  it("re-exports loadServerEnv with correct default behavior", () => {
     const env = loadServerEnv({});
+    expect(env.appEnv).toBe("development");
+    expect(env.defaultCurrency).toBe("MUR");
+  });
 
-    expect(env).toEqual({
-      appEnv: "development",
-      logLevel: "info",
+  it("re-exports toPublicConfig with the same narrow allow-listed shape", () => {
+    const env = loadServerEnv({});
+    expect(toPublicConfig(env)).toEqual({
       defaultLocale: "en",
       defaultCurrency: "MUR",
       appTimezone: "Indian/Mauritius",
+      publicAppUrl: undefined,
     });
   });
 
-  it("accepts explicit valid values", () => {
-    const env = loadServerEnv({
-      APP_ENV: "test",
-      LOG_LEVEL: "debug",
-      DEFAULT_LOCALE: "fr",
-      DEFAULT_CURRENCY: "EUR",
-      APP_TIMEZONE: "Europe/Paris",
-    });
-
-    expect(env).toEqual({
-      appEnv: "test",
-      logLevel: "debug",
-      defaultLocale: "fr",
-      defaultCurrency: "EUR",
-      appTimezone: "Europe/Paris",
-    });
-  });
-
-  it("fails safely on an invalid APP_ENV without leaking unrelated env content", () => {
-    expect(() => loadServerEnv({ APP_ENV: "production-ish" })).toThrowError(
-      /Invalid APP_ENV/,
-    );
-  });
-
-  it("fails safely on an invalid LOG_LEVEL", () => {
-    expect(() => loadServerEnv({ LOG_LEVEL: "verbose" })).toThrowError(
-      /Invalid LOG_LEVEL/,
-    );
-  });
-
-  it("never includes secret-shaped keys in its return value", () => {
+  it("keeps secret-bearing configuration out of the public shape (see config.test.ts for the full canary suite)", () => {
     const env = loadServerEnv({
       APP_ENV: "development",
-      APP_SECRET: "should-not-appear",
-      DATABASE_URL: "postgres://should-not-appear",
+      APP_SECRET: "should-not-appear-anywhere-in-public-output-1234",
     });
 
-    const serialized = JSON.stringify(env);
+    const serialized = JSON.stringify(toPublicConfig(env));
     expect(serialized).not.toContain("should-not-appear");
-    expect(env).not.toHaveProperty("appSecret");
-    expect(env).not.toHaveProperty("databaseUrl");
   });
 });

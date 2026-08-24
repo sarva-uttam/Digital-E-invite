@@ -1,0 +1,37 @@
+name: Temporary formatter
+
+on:
+  push:
+    branches:
+      - vision-v2-autonomous-rebuild
+
+permissions:
+  contents: write
+
+concurrency:
+  group: temporary-formatter
+  cancel-in-progress: true
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: vision-v2-autonomous-rebuild
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24.19.0
+          cache: npm
+      - run: npm ci
+      - run: npm run format
+      - name: Commit formatter output
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/app/globals.css src/app/page.tsx src/lib/catalog.test.ts
+          git diff --cached --quiet && exit 0
+          git commit -m "style: apply repository formatter"
+          git push origin HEAD:vision-v2-autonomous-rebuild

@@ -53,6 +53,12 @@ jobs:
       - name: Install dependencies (npm ci)
         run: npm ci
 
+      - name: Temporary formatter evidence
+        run: |
+          npm run format
+          git diff -- src/app/globals.css src/app/page.tsx src/lib/catalog.test.ts
+          exit 1
+
       - name: Format check
         run: npm run format:check
 

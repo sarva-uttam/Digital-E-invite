@@ -1,3 +1,5 @@
+> **Current authority update — 2026-08-25:** Vision V2 autonomous rebuilding is active on branch `vision-v2-autonomous-rebuild`. `docs/14_OWNER_VISION_V2.md` and `project/TASKS_V2.md` supersede conflicting v1 scope, package, and routine-approval statements. The first delivery slice covers vision/governance reset, the customer-facing discovery experience, and a typed four-tier catalogue. Production launch, paid provider activation, real credentials/customer data, legal commitments, and destructive operations remain hard stops.
+
 # Current State
 
 **File:** `project/CURRENT_STATE.md`  
@@ -5,7 +7,7 @@
 **Status:** Approved — Owner Approved  
 **Version:** 1.16  
 **Snapshot date:** 2026-08-21  
-**Repository:** `Moniseur-zordi/Digital-E-invite`  
+**Repository:** `monsieur-zordi/Digital-E-invite`  
 **Branch:** `main`  
 **Claude Package version:** 1.0  
 **Package status:** Implementation Preparation Ready

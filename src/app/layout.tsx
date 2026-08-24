@@ -4,7 +4,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Élan — Digital invitations, thoughtfully made",
-  description: "Create beautiful, personal digital invitations for weddings and life's meaningful moments.",
+  description:
+    "Create beautiful, personal digital invitations for weddings and life's meaningful moments.",
   openGraph: {
     title: "There is a little surprise for you",
     description: "Open this beautiful digital invitation.",
@@ -13,5 +14,9 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return <html lang="en"><body>{children}</body></html>;
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
 }

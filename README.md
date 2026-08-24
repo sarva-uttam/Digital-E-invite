@@ -1,3 +1,5 @@
+> **Vision V2 autonomous rebuild is active (2026-08-25).** The owner has expanded the platform to a wedding-first, multi-occasion product with Bronze, Silver, Gold, and Platinum packages and authorized continuous implementation without routine approval pauses. See [Owner Vision V2](docs/14_OWNER_VISION_V2.md) and the [Autonomous Delivery Plan](project/TASKS_V2.md). Conflicting v1 scope and workflow statements below are retained as historical context until each specialist document is reconciled.
+
 # AI Digital Invitation Platform
 
 An AI-assisted digital invitation platform for creating, personalizing, publishing, sharing and managing beautiful wedding invitations and RSVPs through one secure, mobile-first service.

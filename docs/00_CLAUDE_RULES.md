@@ -1,3 +1,5 @@
+> **Vision V2 amendment — 2026-08-25:** Routine approval pauses and conflicting v1 product constraints are superseded by [`docs/14_OWNER_VISION_V2.md`](./14_OWNER_VISION_V2.md) and [`project/TASKS_V2.md`](../project/TASKS_V2.md). The security, privacy, payment integrity, accessibility, testing, migration safety, and production hard stops in this constitution remain binding. Development may otherwise proceed autonomously through dependency-safe work.
+
 # Claude Code Engineering Rules
 
 **File:** `docs/00_CLAUDE_RULES.md`

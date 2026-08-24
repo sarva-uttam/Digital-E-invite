@@ -3,9 +3,9 @@ import { occasionCategories, packageTiers } from "./catalog";
 
 describe("v2 product catalogue", () => {
   it("keeps weddings as the flagship while supporting an extensible catalogue", () => {
-    expect(
-      occasionCategories.find((occasion) => occasion.flagship)?.id,
-    ).toBe("wedding");
+    expect(occasionCategories.find((occasion) => occasion.flagship)?.id).toBe(
+      "wedding",
+    );
     expect(occasionCategories.length).toBeGreaterThan(4);
   });
 

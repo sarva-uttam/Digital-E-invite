@@ -43,8 +43,8 @@ export default function HomePage() {
           </h1>
           <p className="lede">
             Turn a few clues about your celebration into a living
-            invitation—beautiful to open, effortless to share, and personal
-            to every guest.
+            invitation—beautiful to open, effortless to share, and personal to
+            every guest.
           </p>
           <div className="actions">
             <a className="button" href="#create">
@@ -126,7 +126,9 @@ export default function HomePage() {
                 className={occasion.flagship ? "featured" : ""}
                 key={occasion.id}
               >
-                <span>{occasion.flagship ? "Our signature" : "Create for"}</span>
+                <span>
+                  {occasion.flagship ? "Our signature" : "Create for"}
+                </span>
                 <h3>{occasion.label}</h3>
                 <p>
                   {occasion.flagship
@@ -171,15 +173,13 @@ export default function HomePage() {
 
       <section className="cta" id="create">
         <div className="shell">
-          <p className="kicker">
-            Your story deserves a beautiful beginning
-          </p>
+          <p className="kicker">Your story deserves a beautiful beginning</p>
           <h2>
             Ready to send a little <em>magic?</em>
           </h2>
           <p>
-            Start with a few simple questions. No design skills, no printing,
-            no door-to-door delivery.
+            Start with a few simple questions. No design skills, no printing, no
+            door-to-door delivery.
           </p>
           <a className="button light" href="#top">
             Start creating

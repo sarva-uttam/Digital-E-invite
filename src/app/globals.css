@@ -7,7 +7,7 @@
   --sage: #9faf91;
   color: var(--ink);
   background: var(--paper);
-  font-family: Arial,"Helvetica Neue",sans-serif;
+  font-family: Arial, "Helvetica Neue", sans-serif;
 }
 
 * {
@@ -29,7 +29,7 @@ a {
 }
 
 .shell {
-  width: min(1180px,calc(100% - 40px));
+  width: min(1180px, calc(100% - 40px));
   margin: auto;
 }
 
@@ -43,7 +43,10 @@ a {
 }
 
 .brand {
-  font: 34px Georgia,"Times New Roman",serif;
+  font:
+    34px Georgia,
+    "Times New Roman",
+    serif;
 }
 
 .brand span {
@@ -70,7 +73,7 @@ nav a:hover {
   border-radius: 2px;
   font-size: 14px;
   font-weight: 600;
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
 }
 
 .buttonSmall {
@@ -88,25 +91,35 @@ nav a:hover {
 
 .kicker {
   text-transform: uppercase;
-  letter-spacing: .19em;
+  letter-spacing: 0.19em;
   font-size: 11px;
   font-weight: 600;
   color: var(--wine);
 }
 
-h1,.sectionTitle,.cta h2 {
-  font: clamp(54px,6.3vw,92px)/.98 Georgia,"Times New Roman",serif;
+h1,
+.sectionTitle,
+.cta h2 {
+  font:
+    clamp(54px, 6.3vw, 92px)/0.98 Georgia,
+    "Times New Roman",
+    serif;
   margin: 20px 0 24px;
-  letter-spacing: -.03em;
+  letter-spacing: -0.03em;
 }
 
-.hero h1 em,.sectionTitle em,.cta h2 em {
+.hero h1 em,
+.sectionTitle em,
+.cta h2 em {
   color: var(--wine);
   font-weight: 400;
 }
 
 .lede {
-  font: 18px/1.65 Arial,"Helvetica Neue",sans-serif;
+  font:
+    18px/1.65 Arial,
+    "Helvetica Neue",
+    sans-serif;
   max-width: 560px;
   color: #51645c;
 }
@@ -135,7 +148,12 @@ h1,.sectionTitle,.cta h2 {
   position: relative;
   display: grid;
   place-items: center;
-  background: radial-gradient(circle at 50% 40%,#f3ddcf 0,#e8cdbd 44%,#dcb5a3 100%);
+  background: radial-gradient(
+    circle at 50% 40%,
+    #f3ddcf 0,
+    #e8cdbd 44%,
+    #dcb5a3 100%
+  );
   overflow: hidden;
   border-radius: 48% 48% 8px 8px;
 }
@@ -161,12 +179,15 @@ h1,.sectionTitle,.cta h2 {
 
 .inviteOverline {
   text-transform: uppercase;
-  letter-spacing: .17em;
+  letter-spacing: 0.17em;
   font-size: 9px;
 }
 
 .invite h2 {
-  font: 48px/1 Georgia,"Times New Roman",serif;
+  font:
+    48px/1 Georgia,
+    "Times New Roman",
+    serif;
   margin: 36px 0 20px;
 }
 
@@ -187,10 +208,11 @@ h1,.sectionTitle,.cta h2 {
   font: 13px/1.6 serif;
 }
 
-.invite strong,.invite small {
+.invite strong,
+.invite small {
   display: block;
   margin: 24px 0 8px;
-  letter-spacing: .12em;
+  letter-spacing: 0.12em;
 }
 
 .invite button {
@@ -200,7 +222,7 @@ h1,.sectionTitle,.cta h2 {
   padding: 11px 20px;
   text-transform: uppercase;
   font-size: 9px;
-  letter-spacing: .13em;
+  letter-spacing: 0.13em;
 }
 
 .floatingNote {
@@ -256,7 +278,7 @@ h1,.sectionTitle,.cta h2 {
   padding: 17px;
   overflow: hidden;
   text-transform: uppercase;
-  letter-spacing: .18em;
+  letter-spacing: 0.18em;
   font-size: 11px;
 }
 
@@ -269,12 +291,12 @@ h1,.sectionTitle,.cta h2 {
 }
 
 .sectionTitle {
-  font-size: clamp(45px,5vw,72px);
+  font-size: clamp(45px, 5vw, 72px);
 }
 
 .steps {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 50px;
   margin-top: 65px;
 }
@@ -289,12 +311,17 @@ h1,.sectionTitle,.cta h2 {
   font-size: 12px;
 }
 
-.steps h3,.occasionGrid h3 {
-  font: 30px Georgia,"Times New Roman",serif;
+.steps h3,
+.occasionGrid h3 {
+  font:
+    30px Georgia,
+    "Times New Roman",
+    serif;
   margin: 45px 0 13px;
 }
 
-.steps p,.occasionGrid p {
+.steps p,
+.occasionGrid p {
   line-height: 1.65;
   color: #66746d;
 }
@@ -305,7 +332,7 @@ h1,.sectionTitle,.cta h2 {
 
 .occasionGrid {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
   margin-top: 55px;
 }
@@ -326,15 +353,15 @@ h1,.sectionTitle,.cta h2 {
   color: #f4dcd5;
 }
 
-.occasionGrid article>span {
+.occasionGrid article > span {
   text-transform: uppercase;
-  letter-spacing: .15em;
+  letter-spacing: 0.15em;
   font-size: 9px;
 }
 
 .tiers {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: repeat(4, 1fr);
   border: 1px solid #c7c6b8;
   margin-top: 55px;
 }
@@ -352,14 +379,17 @@ h1,.sectionTitle,.cta h2 {
 }
 
 .tier h3 {
-  font: 42px Georgia,"Times New Roman",serif;
+  font:
+    42px Georgia,
+    "Times New Roman",
+    serif;
   margin: 8px 0 32px;
 }
 
-.tier>div p {
+.tier > div p {
   font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: .12em;
+  letter-spacing: 0.12em;
   color: #777;
 }
 
@@ -388,7 +418,7 @@ h1,.sectionTitle,.cta h2 {
   color: white;
 }
 
-.platinum>div p {
+.platinum > div p {
   color: #d8cec0;
 }
 
@@ -408,7 +438,7 @@ h1,.sectionTitle,.cta h2 {
   margin: 24px auto;
 }
 
-.cta>div>p:not(.kicker) {
+.cta > div > p:not(.kicker) {
   color: #f1d9d2;
 }
 
@@ -435,7 +465,7 @@ footer p:last-child {
   text-align: right;
 }
 
-@media(max-width:800px) {
+@media (max-width: 800px) {
   .nav nav {
     display: none;
   }
@@ -465,7 +495,8 @@ footer p:last-child {
     white-space: nowrap;
   }
 
-  .steps,.tiers {
+  .steps,
+  .tiers {
     grid-template-columns: 1fr;
   }
 
@@ -493,12 +524,11 @@ footer p:last-child {
   footer p:last-child {
     text-align: center;
   }
-
 }
 
-@media(max-width:500px) {
+@media (max-width: 500px) {
   .shell {
-    width: min(100% - 28px,1180px);
+    width: min(100% - 28px, 1180px);
   }
 
   .buttonSmall {
@@ -529,10 +559,9 @@ footer p:last-child {
   .invite {
     width: 85%;
   }
-
 }
 
-@media(prefers-reduced-motion:no-preference) {
+@media (prefers-reduced-motion: no-preference) {
   .petalOne {
     animation: float 5s ease-in-out infinite;
   }
@@ -542,14 +571,13 @@ footer p:last-child {
   }
 
   .invite {
-    animation: arrive .8s ease-out both;
+    animation: arrive 0.8s ease-out both;
   }
 
   @keyframes float {
     50% {
       transform: translateY(16px) rotate(12deg);
     }
-
   }
 
   @keyframes arrive {
@@ -562,7 +590,5 @@ footer p:last-child {
       opacity: 1;
       transform: translateY(0) rotate(-2deg);
     }
-
   }
-
 }

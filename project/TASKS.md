@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.16  
+**Version:** 1.17  
 **Approved date:** 2026-08-26  
 **Current phase:** Application implementation — authorized, continuous, dependency-aware (`DEC-028`)  
 **Application implementation authorization:** GRANTED — this is the single authoritative execution ledger (`project/TASKS_V2.md` retired); ordinary dependency-safe tasks may proceed continuously without a routine approval pause, subject to unchanged hard stops
@@ -456,7 +456,7 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 ### IMP-020 — Create migration system and base schema
 
 **Priority:** P0  
-**State:** IMPLEMENTED — evidence below; PR merge/CI evidence to follow once merged  
+**State:** VERIFIED  
 **Dependencies:** IMP-003, IMP-010  
 **Acceptance criteria:** versioned forward migrations; documented rollback/repair; local/test database setup; schema matches approved database design.
 
@@ -474,7 +474,8 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 - `package.json`: added `pg@8.23.0`/`@types/pg@8.23.1` (both verified to exist on the npm registry at implementation time) and `db:generate`/`db:check`/`db:migrate`/`test:db` scripts; no `push`/schema-sync script was added, matching §23's "Production never uses automatic schema push/synchronization."
 - **Rollback/repair, documented in `README.md`:** migration history is append-only and immutable; a bad migration is corrected by a new forward migration, never by editing/deleting an applied one. There is no destructive migration to roll back yet since the committed schema has no tables.
 - **Local verification performed (2026-08-26):** `npm run format:check`/`lint`/`typecheck`/`test`/`build` all pass, with only the pre-existing, already-documented Windows `core.autocrlf`/`server-only` local-checkout artifacts present (verified staged git blobs are LF, matching the repository's committed convention, not CRLF); `npx drizzle-kit generate` and `npx drizzle-kit check` both succeed against the empty schema with no DB connection required; `npm audit --audit-level=high` reports only the 4 pre-existing moderate `esbuild`/`drizzle-kit` findings; the secret scan reports no known patterns.
-- **Local verification NOT performed:** Docker Desktop's daemon is not running in this environment (CLI present, no backend), so `npm run test:db` and a live `npm run db:migrate` could not be exercised locally. This is disclosed rather than assumed passing — the GitHub Actions PostgreSQL service container in the pushed PR is the actual, first live verification of the migration/integration-test steps added here; its result is the authoritative evidence for those steps, recorded once the PR's CI run completes.
+- **Local verification NOT performed:** Docker Desktop's daemon is not running in this environment (CLI present, no backend), so `npm run test:db` and a live `npm run db:migrate` could not be exercised locally. Disclosed rather than assumed passing.
+- **Live/CI verification — 2026-08-26:** PR #6 (`imp-020-migration-system`) initially failed `Format check` on `src/db/migrations/meta/_journal.json` (drizzle-kit's own generated JSON did not match this repo's Prettier style, not the local Windows CRLF artifact); fixed in commit `e52133b122123f8f9a8c79f47c71238075a5b915` and documented in `README.md` ("run `npm run format` after `db:generate`"). The corrected PR's GitHub-hosted `CI / quality-gate` run [`32904136112`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32904136112) passed all steps, including the four new IMP-020 steps against a real disposable PostgreSQL 18 service container: migration-history consistency check, schema-drift check, applying migrations, and database integration tests (which verified PostgreSQL major version 18, that `uuidv7()` is callable and returns a version-7 UUID, and that applying the migration history is idempotent). PR #6 merged normally as `1710eff1a1fa9528d018b98ad26fe4562bb97936`; the immediate push-to-`main` CI run [`32904336343`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32904336343) also passed. Local `main` fast-forwarded `4cc6a44..1710eff` and matches `origin/main`.
 - No provider selection/activation, production database, production credential, or production/staging resource was created. `docker-compose.yml`'s Postgres instance and the CI service container are both disposable and non-production.
 
 ### IMP-021 — Implement users, events, and event versions
@@ -487,7 +488,7 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 ### IMP-022 — Implement append-only audit and outbox foundations
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** IN_PROGRESS  
 **Dependencies:** IMP-020  
 **Acceptance criteria:** append-only audit events; safe actor/reason metadata; transactional outbox or approved equivalent; replay/idempotency tests.
 
@@ -597,7 +598,7 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 ### IMP-050 — Implement versioned catalogue and price-book model
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** READY — `DEC-025` provides the approved catalog/price-book values (base MUR prices, sandbox-only; production charging remains separately gated by `IMP-051`–`IMP-055`)  
 **Dependencies:** IMP-020, approved launch price book (amounts may remain sandbox-only until approved)  
 **Acceptance criteria:** immutable package/price/tax/currency snapshots; MUR primary; market activation; no client authority; historical prices preserved.
 
@@ -925,6 +926,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.16.  
+**Approved version:** 1.17.  
 **Approved date:** 2026-08-26.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-020` is `IMPLEMENTED` with local evidence recorded above; PR merge/CI evidence follows once merged, at which point `IMP-021`, `IMP-022`, and `IMP-050` become eligible under their recorded dependencies (though `IMP-021` remains additionally `BLOCKED` by `IMP-013`, itself blocked on the unresolved authentication decision). Specialist-decision gates remain binding. This ledger is the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-022` and `IMP-050` are now `READY` (dependencies satisfied); `IMP-021` remains `BLOCKED` by `IMP-013`, itself blocked on the unresolved authentication decision; `IMP-023` remains `BLOCKED` by `IMP-022` until that task completes. Specialist-decision gates remain binding. This ledger is the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.

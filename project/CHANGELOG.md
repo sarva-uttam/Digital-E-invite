@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.18  
+**Version:** 1.19  
 **Approved date:** 2026-08-26  
 **Current phase:** Application implementation — continuous, dependency-aware, task-ledger-controlled (`DEC-028`)  
 **Application release status:** No application release exists
@@ -302,7 +302,7 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 **Track:** APPLICATION  
 **Application version:** 0.1.0 (unreleased)  
-**Status:** IMPLEMENTED — pull request open; merge/CI evidence to follow  
+**Status:** VERIFIED — merged as `1710eff1a1fa9528d018b98ad26fe4562bb97936`; not deployed  
 **Application release:** None
 
 - Established the migration system and tooling per `docs/06_DATABASE_DESIGN.md` §23: `drizzle.config.ts`, `src/db/client.ts`, `src/db/migrate.ts`, `scripts/db-migrate.mjs`, `docker-compose.yml` (disposable local PostgreSQL, pinned `postgres:18.6-alpine`), a PostgreSQL service container and four new steps in `.github/workflows/ci.yml` (migration-history check, schema-drift check, apply-to-disposable-database, database integration tests), and `src/db/test-safety.ts`/`vitest.db.config.mts` guarding the destructive test suite against ever targeting a non-disposable database.
@@ -310,7 +310,8 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - Verified against current official PostgreSQL 18.0 release notes (not assumed) that PostgreSQL 18 provides a native `uuidv7()` function, satisfying `docs/06_DATABASE_DESIGN.md` §6.1's identifier strategy with no extension required.
 - A pre-existing, unmerged, un-reviewed branch (`imp-020-migration-base-schema`, forked before Vision V2/PR #4 existed, no PR ever opened, no CI ever run against it) was discovered during this task. It was inspected for design quality — its migration-tooling patterns (native `uuidv7()` default, credential-free `generate`/`check`, disposable-database safety guard) independently reached the same conclusions adopted here — but it was **not merged**: it implements the full database across every domain in one unreviewed commit, which is out of this task's scope and predates the wedding-only/four-package reconciliation. It remains on the remote, untouched, for the owner's own disposal.
 - **Local verification:** `format:check`/`lint`/`typecheck`/`test`/`build` pass (only the pre-existing, already-documented Windows `core.autocrlf`/`server-only` local-checkout artifacts present; staged git blobs confirmed LF); `drizzle-kit generate`/`check` pass against the empty schema (no DB connection required); `npm audit --audit-level=high` reports only the 4 pre-existing moderate findings; secret scan clean.
-- **Not locally verified:** Docker Desktop's daemon is unavailable in this environment, so the live-database steps (`db:migrate`, `test:db`) could not run locally. GitHub Actions' PostgreSQL service container is the first live verification of these steps; recorded once that CI run completes.
+- **Not locally verified:** Docker Desktop's daemon is unavailable in this environment, so the live-database steps (`db:migrate`, `test:db`) could not run locally.
+- **Live/CI verification — 2026-08-26:** the first CI run failed `Format check` for real on `src/db/migrations/meta/_journal.json` (drizzle-kit's generated JSON did not match this repo's Prettier style); fixed in `e52133b122123f8f9a8c79f47c71238075a5b915`. The corrected run ([`32904136112`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32904136112)) passed all steps, including the four new IMP-020 steps against a real disposable PostgreSQL 18 container — migration-history check, schema-drift check, applying migrations, and database integration tests (PostgreSQL major version 18 confirmed, `uuidv7()` confirmed callable, idempotent re-apply confirmed). PR #6 merged normally as `1710eff1a1fa9528d018b98ad26fe4562bb97936`; the push-to-`main` run ([`32904336343`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32904336343)) also passed.
 - No provider activation, production database, production credential, or production/staging resource was created.
 - **Migration/action required:** None yet — no domain table exists to migrate data into. **Compatibility/customer impact:** None — no application release exists.
 

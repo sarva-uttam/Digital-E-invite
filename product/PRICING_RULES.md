@@ -3,9 +3,9 @@
 **File:** `product/PRICING_RULES.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
-**Approved date:** 2026-08-17  
-**Depends on:** approved `docs/00_CLAUDE_RULES.md` through `docs/13_ROADMAP.md`  
+**Version:** 1.1  
+**Approved date:** 2026-08-17 (package structure and prices reconciled 2026-08-25 per `project/DECISIONS.md` `DEC-025`, `DEC-026`)  
+**Depends on:** approved `docs/00_CLAUDE_RULES.md` through `docs/13_ROADMAP.md`; `project/DECISIONS.md` (DEC-025, DEC-026)  
 **Closely related:** `product/ENTITLEMENTS.md`, `product/AI_USAGE_RULES.md`, `product/GUEST_RULES.md`, `product/LOCALIZATION.md`
 
 ---
@@ -14,7 +14,7 @@
 
 This document defines the commercial rules used to create, display, version, discount, upgrade, charge, refund, and report prices for one-time wedding invitation packages.
 
-It deliberately does **not** approve final launch amounts. The historical Rs 800, Rs 2,500, and Rs 5,000 figures remain hypotheses until validated. Package allowances are finalized in the entitlement documents after pricing economics and provider costs are known.
+The four base MUR package prices (Bronze 799 / Silver 1,499 / Gold 2,999 / Platinum 5,999) and the guest-capacity add-on rate (MUR 15/guest) are owner-approved catalog values per `DEC-025` and `DEC-026`. This remains a **catalog/price-book approval, not production-payment activation** — production checkout stays disabled until payment-provider selection, tax review, and the activation rule in Section 5.3 are satisfied. Any figure not named in `DEC-025`/`DEC-026` (including the superseded historical Rs 800/2,500/5,000 three-tier hypotheses) remains an unapproved hypothesis. Package allowances are finalized in the entitlement documents consistent with `DEC-025`.
 
 ---
 
@@ -52,20 +52,21 @@ It deliberately does **not** approve final launch amounts. The historical Rs 800
 
 ## 4. Package structure
 
-Use three customer-facing tiers:
+Use four customer-facing tiers (`DEC-025`, superseding the earlier three-tier Essential/Signature/Premium structure):
 
-1. **Essential** — complete entry package;
-2. **Signature** — recommended middle package;
-3. **Premium** — highest-value package.
+1. **Bronze** — affordable, complete entry package;
+2. **Silver** — mainstream package for smaller/medium weddings;
+3. **Gold** — the recommended, "Most Popular" middle package;
+4. **Platinum** — highest-value, luxury package.
 
-These names replace Silver, Gold, and Platinum as the proposed working names. Branding review may rename them before launch without changing historical package identifiers.
+These are the approved final tier names; stable internal package identifiers remain independent of display names.
 
 ### 4.1 Positioning rules
 
-- Essential cannot be a crippled teaser; it must complete the core create-preview-pay-publish-share-RSVP outcome.
-- Signature is recommended only when its extra value is genuine and clearly disclosed.
-- Premium adds meaningful controlled value, not artificial restrictions or unsafe effects.
-- Differences may include concepts, refinements, output quality, approved languages, theme options, guest capacity, branding treatment, hosting duration, support, and compatible add-ons.
+- Bronze cannot be a crippled teaser; it must complete the core create-preview-pay-publish-share-RSVP outcome.
+- Gold is recommended only when its extra value is genuine and clearly disclosed.
+- Platinum adds meaningful controlled value, not artificial restrictions or unsafe effects.
+- Differences may include concepts, refinements, output quality, approved languages, theme options, guest capacity, branding treatment, hosting duration, support, and compatible add-ons — see the approved entitlement table in `DEC-025`.
 - No package promises arbitrary code, unlimited AI, permanent hosting, guaranteed artistic perfection, guaranteed delivery by third parties, or 24/7 support unless actually provided.
 
 ### 4.2 Source of allowances
@@ -83,15 +84,16 @@ The checkout comparison is generated from approved versioned definitions, not du
 
 ## 5. Launch-price status
 
-### 5.1 Historical hypotheses
+### 5.1 Approved base prices
 
-The original concept proposed:
+The owner-approved base MUR catalog prices (`DEC-025`) are:
 
-- Silver / Essential hypothesis: **Rs 800**;
-- Gold / Signature hypothesis: **Rs 2,500**;
-- Platinum / Premium hypothesis: **Rs 5,000**.
+- Bronze: **Rs 799**;
+- Silver: **Rs 1,499**;
+- Gold: **Rs 2,999**;
+- Platinum: **Rs 5,999**.
 
-These amounts are reference hypotheses only. They must not appear as active production prices, structured metadata, ads, checkout values, receipts, or promises until the owner approves a validated price book.
+These are approved catalog/price-book values and may appear in marketing, catalogue pages, and structured metadata. They are **not** a production-payment activation: they must not appear as live checkout charges, receipts, or completed-purchase confirmations until Section 5.3's activation rule is satisfied. The earlier Rs 800/2,500/5,000 three-tier hypotheses are superseded and must not appear anywhere as current figures.
 
 ### 5.2 Validation inputs
 
@@ -273,19 +275,19 @@ Referral, planner, affiliate, employee, recovery, and manual goodwill discounts 
 
 ## 13. Guest-capacity pricing
 
-The business-model principle is a useful included capacity plus clear paid expansion. The old per-guest hypothesis is not approved.
+The business-model principle is a useful included capacity plus clear, explicit, never-automatic paid expansion.
 
-Proposed MVP rule:
+Approved MVP rule (`DEC-026`, superseding this section's earlier "predeclared packs only" approach):
 
-- packages include a defined **invitee capacity**, whose counting rules live in `product/GUEST_RULES.md`;
-- additional capacity is sold in simple predeclared packs rather than metered surprise billing;
-- the server warns at configurable thresholds;
+- packages include a defined **invitee capacity** per `DEC-025` (Bronze 75 / Silver 150 / Gold 300 / Platinum 750), whose counting rules live in `product/GUEST_RULES.md`;
+- additional capacity is sold **per additional guest** at **MUR 15/guest**, in whole-guest increments, always as an explicit, confirmed, separately displayed purchase — never an automatic or silent overage charge; this is metered pricing, but it is not "surprise" billing because nothing is charged without the host explicitly requesting and confirming the specific quantity and resulting total first;
+- the server warns at configurable thresholds before the base capacity is reached;
 - reaching a limit never deletes guest or RSVP data;
-- owners may view/manage existing records but cannot add/import/send beyond the enforceable capacity until they upgrade or add capacity;
+- owners may view/manage existing records but cannot add/import/send beyond the enforceable capacity until they purchase additional guest capacity;
 - capacity purchases are event-specific and non-transferable;
-- no automatic post-use charge occurs.
+- no automatic post-use charge occurs; the checkout mechanism for this add-on remains gated behind payment-provider selection (`docs/08_PAYMENT_ARCHITECTURE.md`, `IMP-050`–`IMP-055`) — until then, any capacity-stepper UI may compute and display the resulting price but must not claim to complete a real purchase.
 
-Exact included quantities and pack sizes/prices remain unset until the entitlement and pricing validation phase.
+The MUR 15/guest rate is the current approved figure and may be revised by a future decision.
 
 ---
 
@@ -668,11 +670,11 @@ The available public sources do not justify inventing a definitive online-servic
 
 ### Decision 1 — Package names
 
-**Approved:** Use Essential, Signature, and Premium as the working customer-facing tier names, subject to final branding review; retain stable internal IDs independent of names.
+**Superseded 2026-08-25 by `DEC-025`:** Use Bronze, Silver, Gold, and Platinum as the approved final customer-facing tier names; retain stable internal IDs independent of names. *(Original text preserved: "Use Essential, Signature, and Premium as the working customer-facing tier names, subject to final branding review.")*
 
 ### Decision 2 — Final launch prices
 
-**Approved:** Keep Rs 800, Rs 2,500, and Rs 5,000 as historical hypotheses only. Approve actual launch amounts through a new versioned MUR price book after value, cost, provider, tax, refund, and margin validation.
+**Superseded 2026-08-25 by `DEC-025`:** Rs 799 (Bronze), Rs 1,499 (Silver), Rs 2,999 (Gold), and Rs 5,999 (Platinum) are the approved base MUR catalog prices. The Rs 800/2,500/5,000 three-tier figures are historical hypotheses, no longer current.
 
 ### Decision 3 — Checkout activation
 
@@ -680,7 +682,7 @@ The available public sources do not justify inventing a definitive online-servic
 
 ### Decision 4 — Pricing structure
 
-**Approved:** Use three complete one-time event packages, with Signature as the honestly recommended middle tier and no recurring consumer subscription.
+**Superseded 2026-08-25 by `DEC-025`:** Use four complete one-time event packages (Bronze/Silver/Gold/Platinum), with Gold as the honestly recommended, "Most Popular" tier, and no recurring consumer subscription.
 
 ### Decision 5 — Money and history
 
@@ -700,7 +702,7 @@ The available public sources do not justify inventing a definitive online-servic
 
 ### Decision 9 — Guest-capacity sales
 
-**Approved:** Replace unapproved per-extra-guest metering with clear invitee-capacity packs. Never auto-charge overage or delete existing guest/RSVP data at the limit.
+**Superseded 2026-08-25 by `DEC-026`:** Sell additional guest capacity per-guest at MUR 15/guest, always as an explicit, confirmed, non-automatic purchase. Never auto-charge overage or delete existing guest/RSVP data at the limit. *(Original text preserved: "Replace unapproved per-extra-guest metering with clear invitee-capacity packs.")*
 
 ### Decision 10 — Hosting extensions
 
@@ -751,6 +753,6 @@ The available public sources do not justify inventing a definitive online-servic
 ## 34. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
-**Approved date:** 2026-08-17.  
-**Owner decisions:** Decisions 1–20 approved as proposed.
+**Approved version:** 1.1.  
+**Approved date:** 2026-08-17 (Decisions 1, 2, 4, and 9 superseded 2026-08-25 by `DEC-025`/`DEC-026`).  
+**Owner decisions:** Decisions 1–20 approved as proposed; see supersession notes above for Decisions 1, 2, 4, and 9.

@@ -3,12 +3,12 @@
 **File:** docs/03_MVP_PRD.md  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved  
-**Version:** 1.0  
+**Version:** 1.1  
 **Owner Decision:** Approved  
 **Approval Date:** 16 August 2026  
 **Document Type:** Minimum Viable Product requirements  
-**Depends On:** docs/00_CLAUDE_RULES.md; docs/01_PROJECT_VISION.md; docs/02_BUSINESS_MODEL.md  
-**Last Updated:** 16 August 2026  
+**Depends On:** docs/00_CLAUDE_RULES.md; docs/01_PROJECT_VISION.md; docs/02_BUSINESS_MODEL.md; project/DECISIONS.md (DEC-025)  
+**Last Updated:** 25 August 2026 — package tier count reconciled to four tiers per `DEC-025`  
 
 ---
 
@@ -39,7 +39,7 @@ The MVP inherits:
 - English-first interface;
 - French and Mauritian Kreol invitation-copy support;
 - Russian deferred beyond the MVP;
-- one-time event packages and three tiers;
+- one-time event packages and four tiers (Bronze/Silver/Gold/Platinum, `DEC-025`);
 - package selection before concept generation;
 - controlled preview before payment;
 - verified payment before final publication;
@@ -181,7 +181,7 @@ AI must not silently alter names, dates, times, venues, deadlines, contacts, or 
 
 # 12. Packages and Entitlements
 
-The MVP supports three versioned customer-facing tiers.
+The MVP supports four versioned customer-facing tiers: Bronze, Silver, Gold, Platinum (`DEC-025`).
 
 Users must see meaningful differences such as concept allowance, refinement allowance, guest allowance, hosting duration, branding, language support, features, price, and currency once approved.
 
@@ -408,7 +408,7 @@ Live chat and 24-hour support are not required.
 - wedding-event creation;
 - structured questionnaire and event facts;
 - draft persistence;
-- three versioned packages;
+- four versioned packages (Bronze/Silver/Gold/Platinum);
 - controlled AI concepts and copy;
 - concept selection and bounded refinement;
 - protected preview;
@@ -538,6 +538,6 @@ The owner approved these decisions on 16 August 2026:
 # 38. Approval Record
 
 **Owner Decision:** Approved  
-**Approval Date:** 16 August 2026  
-**Approved Version:** 1.0  
+**Approval Date:** 16 August 2026 (package tier count reconciled 25 August 2026 per `DEC-025`)  
+**Approved Version:** 1.1  
 **Authority:** Approved source-of-truth document under the hierarchy established by docs/00_CLAUDE_RULES.md.

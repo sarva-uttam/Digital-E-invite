@@ -3,9 +3,9 @@
 **File:** `docs/06_DATABASE_DESIGN.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
-**Approved date:** 2026-08-17  
-**Depends on:** `docs/00_CLAUDE_RULES.md` through `docs/05_SYSTEM_ARCHITECTURE.md`
+**Version:** 1.1  
+**Approved date:** 2026-08-17 (package-code enum reconciled 2026-08-25 per `DEC-025`)  
+**Depends on:** `docs/00_CLAUDE_RULES.md` through `docs/05_SYSTEM_ARCHITECTURE.md`; `project/DECISIONS.md` (DEC-025)
 
 ---
 
@@ -268,7 +268,7 @@ Free text has explicit application limits. Structured answers must not be hidden
 
 ### 10.1 `package_definitions`
 
-Versioned definitions for `SILVER`, `GOLD`, and `PLATINUM`.
+Versioned definitions for `BRONZE`, `SILVER`, `GOLD`, and `PLATINUM` (`project/DECISIONS.md` `DEC-025`).
 
 - `id uuid primary key`
 - `package_code text not null`
@@ -1044,6 +1044,6 @@ These sources establish capabilities, not approval of a hosting provider or an u
 ## 31. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
-**Approved date:** 2026-08-17.  
+**Approved version:** 1.1.  
+**Approved date:** 2026-08-17 (package-code enum reconciled 2026-08-25 per `DEC-025`).  
 **Owner decisions:** Decisions 1–12 approved as proposed.

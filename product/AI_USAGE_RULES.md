@@ -3,9 +3,9 @@
 **File:** `product/AI_USAGE_RULES.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
-**Approved date:** 2026-08-17  
-**Depends on:** approved `docs/00_CLAUDE_RULES.md` through `docs/13_ROADMAP.md`, `product/PRICING_RULES.md`, and `product/ENTITLEMENTS.md`  
+**Version:** 1.1  
+**Approved date:** 2026-08-17 (allowances reconciled 2026-08-25 to the four-tier structure per `DEC-025`)  
+**Depends on:** approved `docs/00_CLAUDE_RULES.md` through `docs/13_ROADMAP.md`, `product/PRICING_RULES.md`, `product/ENTITLEMENTS.md`, and `project/DECISIONS.md` (DEC-025)  
 **Closely related:** `product/GUEST_RULES.md`, `product/LOCALIZATION.md`
 
 ---
@@ -37,10 +37,10 @@ The AI workflow must:
 
 ## 3. Approved package allowances inherited here
 
-| Allowance | Essential | Signature | Premium |
-|---|---:|---:|---:|
-| Total initial AI concepts per event | 1 | 3 | 5 |
-| AI refinements per event | 2 | 6 | 12 |
+| Allowance | Bronze | Silver | Gold | Platinum |
+|---|---:|---:|---:|---:|
+| Total initial AI concepts per event | 1 | 2 | 3 | 5 |
+| AI refinements per event | 2 | 4 | 8 | 12 |
 
 These figures are approved entitlement totals, not monthly quotas.
 
@@ -119,9 +119,10 @@ A preview reservation is created before expensive provider work. It is consumed 
 
 If the owner later purchases:
 
-- Essential has no additional initial concept after a successful preview, but retains two refinements;
-- Signature has two remaining concepts after a successful preview;
-- Premium has four remaining concepts after a successful preview.
+- Bronze has no additional initial concept after a successful preview, but retains two refinements;
+- Silver has one remaining concept after a successful preview;
+- Gold has two remaining concepts after a successful preview;
+- Platinum has four remaining concepts after a successful preview.
 
 Deleting an unpaid event does not restore another preview where abuse or velocity limits would be bypassed. Preview eligibility is a controlled access right, not a reusable credit.
 
@@ -380,7 +381,7 @@ Rigid 720p/1080p/4K package promises remain prohibited until approved quality pr
 - Mauritian Kreol uses locale code `mfe` and activates only after native/human quality review passes.
 - Russian remains a planned global language but is not an MVP AI entitlement until separately activated and documented in `LOCALIZATION.md`.
 
-The invitation language-slot limits remain Essential 1, Signature 2, and Premium 3 simultaneous published variants from activated languages.
+The invitation language-slot limits remain Bronze 1, Silver 2, Gold 3, and Platinum 4 simultaneous published variants from activated languages.
 
 AI must not translate authoritative factual fields without validation. Low-confidence or culturally sensitive text must be flagged as editable and, where necessary, require human review or use reviewed fallback copy.
 
@@ -564,7 +565,7 @@ Reconcile internal requests and costs against provider records. Differences crea
 
 Tests must cover:
 
-- exact 1/3/5 concept and 2/6/12 refinement enforcement;
+- exact 1/2/3/5 concept and 2/4/8/12 refinement enforcement;
 - preview conversion into every package;
 - atomic reservations under concurrency;
 - duplicate request/job/webhook idempotency;
@@ -642,7 +643,7 @@ AI generation remains disabled in production until:
 
 ### Decision 5 — Preview conversion
 
-**Approved:** Preserve the approved rule that a successful preview counts toward the purchased 1/3/5 total, leaving 0/2/4 initial concepts after purchase for Essential/Signature/Premium.
+**Superseded 2026-08-25 by `DEC-025`:** Preserve the approved rule that a successful preview counts toward the purchased 1/2/3/5 total, leaving 0/1/2/4 initial concepts after purchase for Bronze/Silver/Gold/Platinum.
 
 ### Decision 6 — Usable-result threshold
 
@@ -709,6 +710,6 @@ AI generation remains disabled in production until:
 ## 35. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
-**Approved date:** 2026-08-17.  
+**Approved version:** 1.1.  
+**Approved date:** 2026-08-17 (Decision 5 superseded 2026-08-25 by `DEC-025`).  
 **Owner decisions:** Decisions 1–20 approved as proposed.

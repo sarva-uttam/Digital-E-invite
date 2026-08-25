@@ -3,12 +3,12 @@
 **File:** docs/02_BUSINESS_MODEL.md  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved  
-**Version:** 1.0  
+**Version:** 1.1  
 **Owner Decision:** Approved  
 **Approval Date:** 16 August 2026  
 **Document Type:** Business model and commercial strategy  
-**Depends On:** docs/00_CLAUDE_RULES.md; docs/01_PROJECT_VISION.md  
-**Last Updated:** 16 August 2026  
+**Depends On:** docs/00_CLAUDE_RULES.md; docs/01_PROJECT_VISION.md; project/DECISIONS.md (DEC-025–DEC-028)  
+**Last Updated:** 25 August 2026 — package architecture and pricing reconciled to `DEC-025`  
 
 ---
 
@@ -47,7 +47,7 @@ Couples and families organizing weddings are the primary launch segment. Their n
 
 ## 4.2 Individual Hosts
 
-Hosts of birthdays, engagements, anniversaries, baby showers, graduations, religious ceremonies, and private celebrations may be supported according to the approved MVP and roadmap.
+Hosts of birthdays, engagements, anniversaries, baby showers, graduations, religious ceremonies, and private celebrations are a long-term business-model direction, not current MVP scope. The MVP is wedding-only (`project/DECISIONS.md` `DEC-004`, reaffirmed `DEC-027`); these other host segments remain deferred candidates in `project/BACKLOG.md` and require an approved scope decision before any implementation.
 
 ## 4.3 Event Planners
 
@@ -91,15 +91,16 @@ Planners initially purchase per-event packages. Prepaid credits, professional su
 
 # 7. Package Architecture
 
-A three-tier customer-facing structure is approved:
+A four-tier customer-facing structure is approved (`project/DECISIONS.md` `DEC-025`, superseding the earlier three-tier structure and the Essential/Signature/Premium naming direction):
 
-1. a complete entry option;
-2. a clearly recommended middle option;
-3. a premium option.
+1. Bronze — a complete, affordable entry option;
+2. Silver — the mainstream option for smaller/medium weddings;
+3. Gold — the clearly recommended, "Most Popular" middle option with premium motion and multilingual capability;
+4. Platinum — the luxury/premium option.
 
-Silver, Gold, and Platinum remain working labels only. Final names should preferably communicate function and customer value, such as Essential, Signature, and Premium, and will be settled during branding and pricing validation.
+Bronze, Silver, Gold, and Platinum are the approved final tier names.
 
-Every tier must deliver a usable invitation. Higher tiers may add concepts, refinements, quality, languages, effects, guest capacity, hosting duration, branding control, variants, and support.
+Every tier must deliver a usable invitation. Higher tiers add concepts, refinements, quality, languages, effects, guest capacity, hosting duration, branding control, variants, and support, per the approved entitlement table in `DEC-025`.
 
 # 8. Usage Claims
 
@@ -109,17 +110,18 @@ Approved wording may use a specific numerical allowance, extended allowance, gen
 
 Hidden limits must never be marketed as unlimited.
 
-# 9. Historical Pricing Hypotheses
+# 9. Approved Package Prices
 
-The original working prices were:
+The approved base MUR prices (`DEC-025`) are:
 
-- Silver: Rs 800;
-- Gold: Rs 2,500;
-- Platinum: Rs 5,000.
+- Bronze: Rs 799;
+- Silver: Rs 1,499;
+- Gold: Rs 2,999;
+- Platinum: Rs 5,999.
 
-They are **not approved launch prices**. They remain hypotheses until validated against willingness to pay, alternatives, designer pricing, output quality, entitlements, AI costs, payment fees, taxes, support, hosting, refunds, international pricing, and target contribution margin.
+These are approved **catalog/price-book values**, not a production-payment activation — payment-provider selection, tax review, and the payment-integrity gates in `docs/08_PAYMENT_ARCHITECTURE.md` remain separately required before any customer can be charged. EUR/USD price books, discounts, and refund rules remain undecided. Any figure not in this list (including the superseded Rs 800/2,500/5,000 three-tier hypotheses) must not be treated as approved.
 
-The earlier guest-pricing proposal—100 included plus Rs 5 per additional guest for Silver, 300 included plus Rs 3 per additional guest for Gold, and a high or fair-use Platinum allowance—is also unapproved.
+Additional guest capacity beyond a package's base capacity is priced at MUR 15 per additional guest, purchased as an explicit, confirmed add-on rather than an automatic overage (`DEC-026`).
 
 # 10. Pricing Principles
 
@@ -299,7 +301,7 @@ Responses include early validation, provider abstraction, server-side limits, un
 
 The commercial MVP should include:
 
-- a small three-tier package set;
+- a small four-tier package set;
 - one-time event purchases;
 - clear versioned entitlements;
 - server-authoritative pricing;
@@ -335,6 +337,8 @@ The owner approved these decisions on 16 August 2026:
 9. Packages include defined hosting durations rather than permanent hosting.
 10. Planners initially purchase per-event packages.
 11. Planner subscriptions are deferred until repeat behaviour is validated.
+
+**Superseded on 2026-08-25:** Decisions 3–5 above (three-tier structure, Silver/Gold/Platinum-as-working-labels-only, and the Rs 800/2,500/5,000 hypotheses) are superseded by `project/DECISIONS.md` `DEC-025`: the approved structure is now four tiers — Bronze, Silver, Gold, Platinum — as final names, with approved base MUR prices of 799/1,499/2,999/5,999. This historical record is preserved unedited above per the repository's append-only decision convention; `DEC-025` is authoritative going forward.
 12. International pricing uses market-specific price books rather than direct MUR conversion.
 13. Guest-facing pages will not contain third-party advertising.
 14. The platform will avoid unlimited AI-generation claims.
@@ -350,6 +354,6 @@ A commercial proposal must create clear value, fit the invitation journey, be un
 # 32. Approval Record
 
 **Owner Decision:** Approved  
-**Approval Date:** 16 August 2026  
-**Approved Version:** 1.0  
+**Approval Date:** 16 August 2026 (package architecture and pricing reconciled 25 August 2026 per `DEC-025`)  
+**Approved Version:** 1.1  
 **Authority:** Approved source-of-truth document under the hierarchy established by docs/00_CLAUDE_RULES.md.

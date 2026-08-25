@@ -3,9 +3,9 @@
 **File:** `product/GUEST_RULES.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
-**Approved date:** 2026-08-17  
-**Depends on:** approved `docs/00_CLAUDE_RULES.md` through `docs/13_ROADMAP.md`, `product/PRICING_RULES.md`, `product/ENTITLEMENTS.md`, and `product/AI_USAGE_RULES.md`  
+**Version:** 1.1  
+**Approved date:** 2026-08-17 (capacity table reconciled 2026-08-25 to the four-tier structure per `DEC-025`/`DEC-026`)  
+**Depends on:** approved `docs/00_CLAUDE_RULES.md` through `docs/13_ROADMAP.md`, `product/PRICING_RULES.md`, `product/ENTITLEMENTS.md`, `product/AI_USAGE_RULES.md`, and `project/DECISIONS.md` (DEC-025, DEC-026)  
 **Closely related:** `product/LOCALIZATION.md`
 
 ---
@@ -70,11 +70,12 @@ An RSVP is the latest effective response for a party/member plus its append-only
 
 | Package | Included active guest-member capacity |
 |---|---:|
-| Essential | 100 persons |
-| Signature | 300 persons |
-| Premium | 750 persons |
+| Bronze | 75 persons |
+| Silver | 150 persons |
+| Gold | 300 persons |
+| Platinum | 750 persons |
 
-Capacity is event-specific. It is not transferable between events and has no automatic overage billing.
+Capacity is event-specific and not transferable between events (`project/DECISIONS.md` `DEC-025`). Additional capacity beyond the included amount is available on every tier as an explicit, confirmed MUR 15/guest add-on (`DEC-026`) — never an automatic or silent overage charge. An **active invited person** is one individual guest currently counted toward capacity; a family of four counts as four people even when they share one private party link (`DEC-025`).
 
 The following each consume one place while active:
 
@@ -574,7 +575,7 @@ Do not include full guest lists, raw tokens, sensitive message content, or conta
 
 Tests must cover:
 
-- exact 100/300/750 person enforcement;
+- exact 75/150/300/750 person enforcement plus MUR 15/guest add-on capacity purchases;
 - party containers consuming zero and every member/place consuming one;
 - atomic concurrent additions at the limit;
 - declined guests not automatically freeing capacity;
@@ -703,6 +704,6 @@ Tests must cover:
 ## 38. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
-**Approved date:** 2026-08-17.  
+**Approved version:** 1.1.  
+**Approved date:** 2026-08-17 (capacity table reconciled 2026-08-25 per `DEC-025`/`DEC-026`).  
 **Owner decisions:** Decisions 1–20 approved as proposed.

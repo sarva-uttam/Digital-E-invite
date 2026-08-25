@@ -1,4 +1,4 @@
-> **Vision V2 autonomous rebuild is active (2026-08-25).** The owner has expanded the platform to a wedding-first, multi-occasion product with Bronze, Silver, Gold, and Platinum packages and authorized continuous implementation without routine approval pauses. See [Owner Vision V2](docs/14_OWNER_VISION_V2.md) and the [Autonomous Delivery Plan](project/TASKS_V2.md). Conflicting v1 scope and workflow statements below are retained as historical context until each specialist document is reconciled.
+> **Vision V2 reconciliation is active (2026-08-25).** The platform is a **wedding-only MVP** with a four-package Bronze/Silver/Gold/Platinum commercial ladder, and continuous autonomous implementation remains authorized without routine approval pauses, subject to unchanged security/privacy/testing/payment/production gates. See [Owner Vision V2](docs/14_OWNER_VISION_V2.md) and `project/DECISIONS.md` (`DEC-025` through `DEC-028`) for the reconciled scope, entitlements and execution model. `project/TASKS_V2.md` is retired; `project/TASKS.md` is the single authoritative execution ledger.
 
 # AI Digital Invitation Platform
 
@@ -12,8 +12,8 @@ An AI-assisted digital invitation platform for creating, personalizing, publishi
 **Availability vision:** Global  
 **MVP event type:** Weddings only  
 **Document status:** Approved — Owner Approved  
-**Version:** 1.11  
-**Approved date:** 2026-08-21
+**Version:** 1.12  
+**Approved date:** 2026-08-25
 
 ---
 
@@ -84,19 +84,20 @@ The detailed source of truth is `docs/03_MVP_PRD.md`.
 
 ## Commercial model
 
-The approved direction uses three one-time, event-scoped packages:
+The approved direction uses four one-time, event-scoped packages (`DEC-025`):
 
-| Package | Initial concepts | Refinements | Guest capacity | Invitation languages | Hosting from first publication |
-|---|---:|---:|---:|---:|---:|
-| Essential | 1 | 2 | 100 | 1 | 30 days |
-| Signature | 3 | 6 | 300 | 2 | 90 days |
-| Premium | 5 | 12 | 750 | 3 | 365 days |
+| Package | Initial concepts | Refinements | Guest capacity | Invitation languages | Hosting from first publication | Price (MUR) |
+|---|---:|---:|---:|---:|---:|---:|
+| Bronze | 1 | 2 | 75 | 1 | 90 days | 799 |
+| Silver | 2 | 4 | 150 | 2 | 180 days | 1,499 |
+| Gold | 3 | 8 | 300 | 3 | 365 days | 2,999 |
+| Platinum | 5 | 12 | 750 | 4 | 545 days | 5,999 |
 
 Every package includes the complete core workflow and the same security, privacy and accessibility baseline.
 
-Additional capacity or usage must use an explicit, confirmed add-on or capacity pack. The platform must not create surprise charges or automatic overages.
+Additional guest capacity beyond a package's base capacity may be purchased as an explicit add-on at MUR 15 per additional guest (`DEC-026`); the purchase/checkout mechanism itself remains gated behind payment-provider selection (`IMP-050`–`IMP-055`). The platform must not create surprise charges or automatic overages.
 
-Final launch prices, discounts, add-on prices and refund rules remain undecided. Historical rupee figures are hypotheses and must not be treated as approved pricing.
+These four base MUR prices are owner-approved catalog values (`DEC-025`), not a production-payment activation. EUR/USD price books, discounts, refund rules, and any figure not in the table above remain undecided; older Essential/Signature/Premium figures are superseded and must not be treated as current.
 
 See:
 
@@ -339,20 +340,20 @@ The appearance of a planned root file in this map does not mean it has already b
 - do not commit a draft as authoritative;
 - do not deploy to production or activate a production provider without separate explicit authorization.
 
-### Task-controlled implementation phase
+### Continuous, dependency-aware implementation phase
 
-Application implementation is authorized only through eligible tasks in `project/TASKS.md`. For every task:
+Application implementation is authorized through eligible tasks in `project/TASKS.md` (the single authoritative ledger — `project/TASKS_V2.md` is retired, `DEC-028`). Per `DEC-028`, ordinary dependency-safe tasks may proceed continuously without a routine approval pause between each one; the hard stops in `CLAUDE.md` and `docs/00_CLAUDE_RULES.md` remain binding regardless. For every task:
 
 1. read `CLAUDE.md` and the mandatory source set;
-2. select one task explicitly `READY` (or otherwise authorized) in `project/TASKS.md`;
+2. select a task that is `READY` (or otherwise authorized) in `project/TASKS.md`;
 3. read every specification constraining that task;
 4. resolve blockers before writing code;
 5. implement the smallest coherent change;
 6. test and verify it proportionate to risk;
 7. update project records truthfully;
-8. report the evidence and stop before the next task.
+8. continue to the next dependency-safe task, or stop at a named hard-stop condition.
 
-A `BLOCKED` task is never authorized merely because implementation has begun elsewhere. See `CLAUDE.md` section 2 for the task-controlled gate.
+A `BLOCKED` task is never authorized merely because implementation has begun elsewhere. See `CLAUDE.md` section 2 for the current gate.
 
 ---
 
@@ -388,9 +389,9 @@ Current task state:
 2. `IMP-011` remains `BLOCKED` by the unresolved observability decision.
 3. `IMP-012` remains `BLOCKED` by the unresolved authentication decision.
 4. `IMP-041` remains `BLOCKED` by `IMP-040`; every other later task remains governed by its recorded dependencies.
-5. No provider, database schema, migration, queue, infrastructure, deployment, production resource, product feature, customer launch, or application release was created by this reconciliation.
+5. No provider, database schema, migration, queue, infrastructure, deployment, production resource, or customer launch was created by this reconciliation. The wedding-only, four-package catalogue update (`DEC-025` through `DEC-028`) is a documentation- and catalog-data-level product feature, not a production release.
 
-GitHub `main` is the permanent source of truth. The repository remains private. Claude Code must enter through `CLAUDE.md`, which preserves the task-controlled implementation gate. Production deployment and customer launch remain unauthorized.
+GitHub `main` is the permanent source of truth. The repository remains private. Claude Code must enter through `CLAUDE.md`, which preserves the implementation gate. Production deployment and customer launch remain unauthorized.
 
 ---
 
@@ -441,6 +442,6 @@ GitHub `main` is the permanent source of truth. The repository remains private. 
 ## Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.10.  
-**Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; Decision 10 fulfilled by the verified `IMP-004` engineering baseline; `IMP-005` and `IMP-010` are `VERIFIED` from successful GitHub-hosted pull-request and post-merge CI evidence; `IMP-020` is `READY` by dependency reconciliation only and has not started.
+**Approved version:** 1.12.  
+**Approved date:** 2026-08-25.  
+**Owner decisions:** Decisions 1–10 approved as proposed; Decision 10 fulfilled by the verified `IMP-004` engineering baseline; `IMP-005` and `IMP-010` are `VERIFIED` from successful GitHub-hosted pull-request and post-merge CI evidence; `IMP-020` is `READY` by dependency reconciliation only and has not started. Commercial model and MVP scope reconciled to wedding-only, four-package Bronze/Silver/Gold/Platinum per `DEC-025`–`DEC-028`.

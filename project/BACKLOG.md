@@ -3,8 +3,8 @@
 **File:** `project/BACKLOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
-**Approved date:** 2026-08-17  
+**Version:** 1.1  
+**Approved date:** 2026-08-17 (Section 7 extended 2026-08-25 per `DEC-027`)  
 **Current MVP focus:** Weddings only  
 **Authority:** No backlog item is approved scope merely because it appears here
 
@@ -159,6 +159,31 @@ No code spike, vendor feature, customer request, or competitor feature bypasses 
 **Horizon:** LATER
 
 **Reason:** An “other” event type would create uncontrolled content/schema/template scope and weaken product clarity.
+
+### EVT-009 — Holiday-gathering invitations
+
+**State:** DEFERRED  
+**Horizon:** GROWTH
+
+**Prerequisites:** validated demand, seasonal template/copy scope, pricing review.
+
+### EVT-010 — Trip/vacation invitations
+
+**State:** DEFERRED  
+**Horizon:** GROWTH
+
+**Prerequisites:** validated demand, itinerary-style content model, pricing review.
+
+### EVT-011 — Hotel/package-offer invitations
+
+**State:** DEFERRED  
+**Horizon:** LATER
+
+**Risks:** commercial-offer content differs materially from a personal event invitation; may require a distinct product line rather than an occasion category.
+
+### 7.1 Implementation note (2026-08-25)
+
+PR #4 ("Vision V2") shipped `src/lib/catalog.ts` with a typed 8-category occasion data model (wedding plus the seven non-wedding categories tracked as `EVT-001`–`EVT-011` above) and briefly rendered all eight as selectable-looking cards on the public homepage. This was reconciled per `project/DECISIONS.md` `DEC-027`: `DEC-004`'s wedding-only MVP scope is reaffirmed, and the seven non-wedding categories are retained in code as a non-customer-reachable data scaffold — not deleted, but not selectable or linked anywhere a customer can reach in the MVP. **The mere presence of this data in code is not authorization to expose it.** Promotion of any specific occasion out of this backlog into `TASKS.md` still requires the normal gate in Section 1 of this file, independent of what already exists in `catalog.ts`.
 
 ---
 
@@ -741,6 +766,6 @@ Do not review merely to fill a release. Stable simplicity is a valid outcome.
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
-**Approved date:** 2026-08-17.  
+**Approved version:** 1.1.  
+**Approved date:** 2026-08-17 (Section 7 extended 2026-08-25 per `DEC-027`).  
 **Owner decisions:** Decisions 1–10 approved as proposed.

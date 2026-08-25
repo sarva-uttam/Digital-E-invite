@@ -1,8 +1,10 @@
 # Autonomous Delivery Plan V2
 
-**Status:** Active  
-**Effective date:** 2026-08-25  
-**Execution mode:** Continuous, dependency-aware, no routine approval pauses
+> **Retired 2026-08-25 (`project/DECISIONS.md` `DEC-028`):** This ledger is no longer authoritative. `project/TASKS.md` is the single authoritative execution ledger; see its "Retired-ledger mapping" note (under `IMP-006`) for how each item below maps onto the `IMP-*` numbering. This file is kept for historical traceability only.
+
+**Status:** Retired — superseded by `project/TASKS.md` (`DEC-028`)  
+**Effective date:** 2026-08-25 (retired same day)  
+**Execution mode:** Continuous, dependency-aware, no routine approval pauses — this cadence is carried forward into `project/TASKS.md`, not lost
 
 ## Work rules
 

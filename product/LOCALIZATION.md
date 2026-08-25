@@ -3,9 +3,9 @@
 **File:** `product/LOCALIZATION.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
-**Approved date:** 2026-08-17  
-**Depends on:** approved `docs/00_CLAUDE_RULES.md` through `docs/13_ROADMAP.md` and approved `product/PRICING_RULES.md`, `product/ENTITLEMENTS.md`, `product/AI_USAGE_RULES.md`, and `product/GUEST_RULES.md`
+**Version:** 1.1  
+**Approved date:** 2026-08-17 (language-slot table reconciled 2026-08-25 to the four-tier structure per `DEC-025`)  
+**Depends on:** approved `docs/00_CLAUDE_RULES.md` through `docs/13_ROADMAP.md`, approved `product/PRICING_RULES.md`, `product/ENTITLEMENTS.md`, `product/AI_USAGE_RULES.md`, `product/GUEST_RULES.md`, and `project/DECISIONS.md` (DEC-025)
 
 ---
 
@@ -45,11 +45,14 @@ Interface language is never package-restricted.
 
 The host-created title, body, event wording, RSVP instructions, guest-facing custom messages, and translations published for an invitation.
 
-Simultaneously published invitation languages are package entitlements:
+Simultaneously published invitation languages are package entitlements (`project/DECISIONS.md` `DEC-025`):
 
-- Essential: 1;
-- Signature: 2;
-- Premium: 3.
+- Bronze: 1;
+- Silver: 2;
+- Gold: 3;
+- Platinum: 4.
+
+A published-language slot does not by itself activate a language whose own quality/operational gate (Section 2, `DEC-020`) has not separately passed — Platinum's fourth slot does not automatically activate Russian.
 
 ### 3.3 Transactional communication language
 
@@ -614,7 +617,7 @@ A failed gate disables only the unready capability/language surface; it must not
 
 ### Decision 6 — Invitation slots
 
-**Approved:** Count only simultaneously published invitation content variants against the approved Essential 1, Signature 2, Premium 3 limits; do not count interface languages or drafts.
+**Superseded 2026-08-25 by `DEC-025`:** Count only simultaneously published invitation content variants against the approved Bronze 1, Silver 2, Gold 3, Platinum 4 limits; do not count interface languages or drafts.
 
 ### Decision 7 — Locale identifiers
 
@@ -677,6 +680,6 @@ A failed gate disables only the unready capability/language surface; it must not
 ## 38. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
-**Approved date:** 2026-08-17.  
+**Approved version:** 1.1.  
+**Approved date:** 2026-08-17 (Decision 6 superseded 2026-08-25 by `DEC-025`).  
 **Owner decisions:** Decisions 1–20 approved as proposed.

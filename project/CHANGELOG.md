@@ -3,8 +3,8 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.17  
-**Approved date:** 2026-08-25  
+**Version:** 1.18  
+**Approved date:** 2026-08-26  
 **Current phase:** Application implementation — continuous, dependency-aware, task-ledger-controlled (`DEC-028`)  
 **Application release status:** No application release exists
 
@@ -297,6 +297,22 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - Updated `src/lib/catalog.ts`, `src/lib/catalog.test.ts`, `src/app/page.tsx`, and `src/app/layout.tsx` so only the `wedding` occasion is customer-reachable, the four package tiers carry the approved entitlements/prices, and a guest-capacity add-on price calculator (not a real checkout) is available; the 7 non-wedding categories remain in the typed data model but are not rendered or linked.
 - No production deployment, payment-provider activation, or customer launch occurred; `IMP-050`–`IMP-055` payment-integrity gates remain `BLOCKED` and unaffected.
 - **Migration/action required:** None for existing verified engineering work (`IMP-004`, `IMP-005`, `IMP-010` untouched). **Compatibility/customer impact:** None — no application release exists.
+
+### Migration-system milestone — `IMP-020` (2026-08-26)
+
+**Track:** APPLICATION  
+**Application version:** 0.1.0 (unreleased)  
+**Status:** IMPLEMENTED — pull request open; merge/CI evidence to follow  
+**Application release:** None
+
+- Established the migration system and tooling per `docs/06_DATABASE_DESIGN.md` §23: `drizzle.config.ts`, `src/db/client.ts`, `src/db/migrate.ts`, `scripts/db-migrate.mjs`, `docker-compose.yml` (disposable local PostgreSQL, pinned `postgres:18.6-alpine`), a PostgreSQL service container and four new steps in `.github/workflows/ci.yml` (migration-history check, schema-drift check, apply-to-disposable-database, database integration tests), and `src/db/test-safety.ts`/`vitest.db.config.mts` guarding the destructive test suite against ever targeting a non-disposable database.
+- Scope is deliberately the tooling only: `src/db/schema/index.ts` is an empty barrel. Domain tables belong to their own dependent tasks (`IMP-021`, `IMP-022`, `IMP-023`, `IMP-050`, etc.), each already mapped to its own section of the database design document; this task does not anticipate their scope.
+- Verified against current official PostgreSQL 18.0 release notes (not assumed) that PostgreSQL 18 provides a native `uuidv7()` function, satisfying `docs/06_DATABASE_DESIGN.md` §6.1's identifier strategy with no extension required.
+- A pre-existing, unmerged, un-reviewed branch (`imp-020-migration-base-schema`, forked before Vision V2/PR #4 existed, no PR ever opened, no CI ever run against it) was discovered during this task. It was inspected for design quality — its migration-tooling patterns (native `uuidv7()` default, credential-free `generate`/`check`, disposable-database safety guard) independently reached the same conclusions adopted here — but it was **not merged**: it implements the full database across every domain in one unreviewed commit, which is out of this task's scope and predates the wedding-only/four-package reconciliation. It remains on the remote, untouched, for the owner's own disposal.
+- **Local verification:** `format:check`/`lint`/`typecheck`/`test`/`build` pass (only the pre-existing, already-documented Windows `core.autocrlf`/`server-only` local-checkout artifacts present; staged git blobs confirmed LF); `drizzle-kit generate`/`check` pass against the empty schema (no DB connection required); `npm audit --audit-level=high` reports only the 4 pre-existing moderate findings; secret scan clean.
+- **Not locally verified:** Docker Desktop's daemon is unavailable in this environment, so the live-database steps (`db:migrate`, `test:db`) could not run locally. GitHub Actions' PostgreSQL service container is the first live verification of these steps; recorded once that CI run completes.
+- No provider activation, production database, production credential, or production/staging resource was created.
+- **Migration/action required:** None yet — no domain table exists to migrate data into. **Compatibility/customer impact:** None — no application release exists.
 
 ## 9. 2026-08-17 — Documentation foundation
 

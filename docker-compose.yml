@@ -1,0 +1,29 @@
+name: ai-digital-invitation-platform
+
+# Disposable local/test PostgreSQL 18 (IMP-020). Not a production or staging
+# resource — see README.md "Database development" for usage.
+#
+# Image tag pinned to an exact current PostgreSQL 18 patch rather than a
+# floating "18" or "latest" tag, per docs/12_DEPLOYMENT.md's guidance that
+# "latest" is never a production deployment policy, applied here for
+# reproducible local development too.
+services:
+  postgres:
+    image: postgres:18.6-alpine
+    restart: "no"
+    environment:
+      POSTGRES_USER: app_local
+      POSTGRES_PASSWORD: local_only_password
+      POSTGRES_DB: ai_invite_dev
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_local -d ai_invite_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

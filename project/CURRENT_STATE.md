@@ -5,8 +5,8 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.17  
-**Snapshot date:** 2026-08-25  
+**Version:** 1.18  
+**Snapshot date:** 2026-08-26  
 **Repository:** `monsieur-zordi/Digital-E-invite`  
 **Branch:** `main`  
 **Claude Package version:** 1.0  
@@ -48,7 +48,7 @@ The product, domain, architecture, security, testing, deployment, roadmap, prici
 **Implementation state:** `IMP-004`, `IMP-005`, and `IMP-010` are verified and merged; no product feature or downstream task has started  
 **Production state:** No production application exists; production deployment is unauthorized  
 **Customer availability:** Not launched  
-**Next action:** `IMP-020 — Create migration system and base schema` is `READY` solely because its complete dependencies (`IMP-003`, `IMP-010`) are verified. It has not started and is not performed by this reconciliation.
+**Next action:** `IMP-020 — Create migration system and base schema` is `IMPLEMENTED` (migration tooling only; schema intentionally empty pending `IMP-021`+) with a pull request open; `IMP-021`/`IMP-022`/`IMP-050` become the next candidates once it merges, though `IMP-021` remains additionally `BLOCKED` by `IMP-013` (unresolved authentication decision).
 
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Owner decision `DEC-024` grants task-controlled application implementation authorization; only `READY` tasks may be performed.
 
@@ -392,7 +392,8 @@ None. The planned package, final audit, correction commit, and handoff records a
 
 ### 19.2 Implementation-task gates
 
-- `IMP-020` is `READY` but has not started;
+- `IMP-020` is `IMPLEMENTED`, pull request open, pending merge/CI evidence;
+- `IMP-021` will remain `BLOCKED` by `IMP-013` even after `IMP-020` merges;
 - `IMP-011` remains `BLOCKED` by the unresolved observability decision;
 - `IMP-012` remains `BLOCKED` by the unresolved authentication decision;
 - `IMP-041` remains `BLOCKED` by `IMP-040`;
@@ -414,8 +415,8 @@ None. The planned package, final audit, correction commit, and handoff records a
 ## 20. Immediate next actions
 
 1. Preserve `IMP-010` verification evidence and the repository's private state.
-2. If separately instructed, begin only the `READY` task `IMP-020`; this reconciliation does not perform it.
-3. Keep `IMP-011`, `IMP-012`, `IMP-041`, and all other blocked tasks blocked until every recorded dependency and specialist decision is satisfied.
+2. Merge the open `IMP-020` pull request once its CI passes, then record final merge/CI evidence in `project/TASKS.md`.
+3. Keep `IMP-011`, `IMP-012`, `IMP-021`, `IMP-041`, and all other blocked tasks blocked until every recorded dependency and specialist decision is satisfied.
 4. Preserve the approved exact versions and environment separation; do not configure unresolved providers or production resources.
 5. Maintain the manual policy that `CI / quality-gate` must pass before merge while technical enforcement is unavailable.
 
@@ -531,6 +532,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.17.  
-**Snapshot date:** 2026-08-25.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, and `IMP-010` are recorded `VERIFIED` under Decisions 5/6/9. `IMP-020` is `READY` by dependency reconciliation only and has not started. Package model reconciled to wedding-only, four-tier Bronze/Silver/Gold/Platinum per `DEC-025`–`DEC-028`.
+**Approved version:** 1.18.  
+**Snapshot date:** 2026-08-26.  
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, and `IMP-010` are recorded `VERIFIED` under Decisions 5/6/9. `IMP-020` is `IMPLEMENTED` (migration system/tooling; schema intentionally empty pending `IMP-021`+), pull request open. Package model reconciled to wedding-only, four-tier Bronze/Silver/Gold/Platinum per `DEC-025`–`DEC-028`.

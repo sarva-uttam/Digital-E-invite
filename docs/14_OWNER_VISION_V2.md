@@ -1,17 +1,18 @@
 # Owner Vision V2 — Autonomous Product Rebuild
 
-**Status:** Owner-authorized and authoritative  
+**Status:** Owner-authorized and authoritative, as reconciled 2026-08-25  
 **Effective date:** 2026-08-25  
-**Supersedes:** conflicting scope, package, and routine approval assumptions in the v1 documentation
+**Supersedes:** conflicting package and routine-approval assumptions in the v1 documentation  
+**Reconciled by:** `project/DECISIONS.md` `DEC-025`–`DEC-028` (2026-08-25) — the MVP launch scope below is wedding-only, not multi-occasion; the earlier "launches with... and is deliberately extensible to [other occasions]" wording described the *architecture's* extensibility, not approved MVP launch scope, and is corrected accordingly. Package names and the autonomous-execution mandate below remain authoritative.
 
 ## Product promise
 
-Create the easiest way for a host to turn an idea into a beautiful, hosted, shareable digital invitation and guest experience. The platform launches with weddings as its flagship category and is deliberately extensible to engagements, birthdays, religious celebrations, holidays, trips, hotel offers, corporate occasions, and other invitation-led experiences.
+Create the easiest way for a host to turn an idea into a beautiful, hosted, shareable digital invitation and guest experience. **The MVP is wedding-only** (`DEC-004`, reaffirmed `DEC-027`): weddings are the sole customer-reachable occasion at launch, including Hindu, Muslim, Christian, interfaith, civil, and non-religious paths selected explicitly by the customer. The underlying architecture and catalogue data model are deliberately designed to extend later to engagements, birthdays, religious celebrations, holidays, trips, hotel offers, corporate occasions, and other invitation-led experiences — but those remain future, backlog-gated expansion candidates (`project/BACKLOG.md`), not current MVP scope, and must not be selectable or linked anywhere a customer can reach.
 
 The product replaces the cost and friction of printing and distributing physical cards with a guided digital flow:
 
 1. discover the platform through compelling examples;
-2. choose an occasion;
+2. start a wedding invitation (the sole MVP occasion; `DEC-027`);
 3. answer a short visual and factual questionnaire;
 4. select a package;
 5. generate a bounded AI-assisted concept;
@@ -35,7 +36,7 @@ The product replaces the cost and friction of printing and distributing physical
 
 ## Packages
 
-The commercial ladder is Bronze, Silver, Gold, and Platinum. Exact launch prices remain configurable until commercial validation.
+The commercial ladder is Bronze, Silver, Gold, and Platinum, with owner-approved entitlements and base MUR prices recorded in `project/DECISIONS.md` `DEC-025` (799/1,499/2,999/5,999), and an explicit MUR 15/guest capacity add-on (`DEC-026`).
 
 - **Bronze:** elegant essentials, one concept, core hosted invitation, standard sharing, RSVP basics.
 - **Silver:** richer themes, more concepts and refinements, enhanced sections and guest capacity.

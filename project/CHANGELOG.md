@@ -3,9 +3,9 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.16  
-**Approved date:** 2026-08-21  
-**Current phase:** Application implementation — authorized and task-controlled  
+**Version:** 1.17  
+**Approved date:** 2026-08-25  
+**Current phase:** Application implementation — continuous, dependency-aware, task-ledger-controlled (`DEC-028`)  
 **Application release status:** No application release exists
 
 ---
@@ -269,6 +269,35 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - Technical required-status-check enforcement remains unavailable on the current private-repository plan; the successful CI-before-merge manual policy was followed.
 - **Migration/action required:** None. **Compatibility/customer impact:** None — merged but not deployed; `Application release: None`.
 
+### Vision V2 autonomous rebuild — PR #4 (2026-08-24)
+
+**Track:** PACKAGE + APPLICATION  
+**Application version:** 0.1.0 (unreleased)  
+**Status:** MERGED — governance and catalogue reset; superseding reconciliation follows immediately below  
+**Application release:** None
+
+- Owner authorized "Vision V2": a product-direction reset toward a wedding-first, multi-occasion catalogue, a four-package Bronze/Silver/Gold/Platinum commercial ladder, and continuous autonomous implementation without routine approval pauses.
+- PR #4 ("Vision V2: autonomous rebuild and invitation discovery experience") merged to `main` as `152a06061d252bf850f9d3d057fd30b4497652d2` on 2026-08-24T20:26:43Z, from branch `vision-v2-autonomous-rebuild`, 11 files changed (+1054/−558).
+- Added `docs/14_OWNER_VISION_V2.md` and `project/TASKS_V2.md`; added V2 banners to `CLAUDE.md`, `docs/00_CLAUDE_RULES.md`, `project/CURRENT_STATE.md`, and `README.md`.
+- Shipped real implementation, not only governance: `src/lib/catalog.ts` (8 typed occasion categories, 4 typed package tiers with placeholder `concepts` values and no price/capacity/hosting/language fields) and `src/lib/catalog.test.ts` asserting that structure; `src/app/page.tsx` rendering all 8 occasions as customer-facing cards; `src/app/layout.tsx` metadata describing the product as covering "weddings and life's meaningful moments."
+- **This entry is recorded retroactively as part of the 2026-08-25 reconciliation below** — no changelog entry existed for PR #4 at merge time, which was itself a process gap (`docs/00_CLAUDE_RULES.md` §61/§81) closed by this record.
+- No provider activation, database, migration, infrastructure, deployment, production credential, or customer launch occurred.
+
+### Wedding-only, four-package reconciliation (2026-08-25)
+
+**Track:** PACKAGE  
+**Application version:** 0.1.0 (unreleased)  
+**Status:** ACCEPTED — governance and product-rule documents reconciled; no deployment  
+**Application release:** None
+
+- Owner reviewed Vision V2 against the older approved three-package documentation package, identified contradictions (wedding-only vs. multi-occasion MVP scope; four packages vs. Essential/Signature/Premium; two live task ledgers), and issued new authoritative commercial decisions.
+- Recorded `project/DECISIONS.md` `DEC-025` (four-package Bronze/Silver/Gold/Platinum entitlements and MUR prices: 799/1,499/2,999/5,999), `DEC-026` (MUR 15/guest capacity add-on), `DEC-027` (wedding-only MVP reaffirmed; the 8-category occasion catalogue in `src/lib/catalog.ts` retained in code but not customer-reachable), and `DEC-028` (`project/TASKS_V2.md` retired; `project/TASKS.md` is the single authoritative ledger, carrying forward the continuous/autonomous execution cadence).
+- Superseded `DEC-005`, `DEC-007` in full and partially superseded `DEC-009` (four base prices only).
+- Reconciled `README.md`, `project/CURRENT_STATE.md`, `docs/02_BUSINESS_MODEL.md`, `docs/03_MVP_PRD.md`, `docs/04_DOMAIN_MODEL.md`, `docs/06_DATABASE_DESIGN.md`, `docs/10_DESIGN_SYSTEM.md`, `product/PRICING_RULES.md`, `product/ENTITLEMENTS.md`, `product/AI_USAGE_RULES.md`, `product/GUEST_RULES.md`, `product/LOCALIZATION.md`, and `project/BACKLOG.md` (Section 7 extended) to the four-package structure and reaffirmed wedding-only scope, each preserving its superseded historical text per the append-only decision convention rather than silently rewriting it.
+- Updated `src/lib/catalog.ts`, `src/lib/catalog.test.ts`, `src/app/page.tsx`, and `src/app/layout.tsx` so only the `wedding` occasion is customer-reachable, the four package tiers carry the approved entitlements/prices, and a guest-capacity add-on price calculator (not a real checkout) is available; the 7 non-wedding categories remain in the typed data model but are not rendered or linked.
+- No production deployment, payment-provider activation, or customer launch occurred; `IMP-050`–`IMP-055` payment-integrity gates remain `BLOCKED` and unaffected.
+- **Migration/action required:** None for existing verified engineering work (`IMP-004`, `IMP-005`, `IMP-010` untouched). **Compatibility/customer impact:** None — no application release exists.
+
 ## 9. 2026-08-17 — Documentation foundation
 
 **Track:** PACKAGE  
@@ -471,6 +500,6 @@ Customer release notes must never claim a capability that is merely documented, 
 ## 13. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.15.  
-**Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; the `IMP-004`, `IMP-005`, and `IMP-010` entries recorded under Decision 8 as `VERIFIED`, merged, and undeployed. `IMP-020` is `READY` by dependency reconciliation only and has not started.
+**Approved version:** 1.17.  
+**Approved date:** 2026-08-25.  
+**Owner decisions:** Decisions 1–10 approved as proposed; the `IMP-004`, `IMP-005`, and `IMP-010` entries recorded under Decision 8 as `VERIFIED`, merged, and undeployed. `IMP-020` is `READY` by dependency reconciliation only and has not started. The Vision V2 rebuild (PR #4) and the wedding-only/four-package reconciliation (`DEC-025`–`DEC-028`) are recorded under Section 8.

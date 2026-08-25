@@ -1,4 +1,50 @@
-import { occasionCategories, packageTiers } from "@/lib/catalog";
+import { packageTiers } from "@/lib/catalog";
+import { GuestCapacityCalculator } from "./GuestCapacityCalculator";
+
+// Wedding cultural/religious paths, explicitly selected by the host (docs/14_OWNER_VISION_V2.md,
+// CLAUDE.md "Product truths"). This is presentational wedding content, not the occasion catalogue —
+// the MVP is wedding-only (project/DECISIONS.md DEC-004, reaffirmed DEC-027), so no non-wedding
+// occasion is rendered here.
+const weddingTraditions = [
+  {
+    id: "hindu",
+    label: "Hindu",
+    description:
+      "Sacred ceremony details, mandap imagery, and multi-day event structure, shaped around your family's customs.",
+    flagship: true,
+  },
+  {
+    id: "muslim",
+    label: "Muslim",
+    description: "Nikah and reception details presented with care and respect.",
+    flagship: false,
+  },
+  {
+    id: "christian",
+    label: "Christian",
+    description: "Church ceremony and reception details in one elegant flow.",
+    flagship: false,
+  },
+  {
+    id: "interfaith",
+    label: "Interfaith",
+    description:
+      "Honour two traditions in one invitation, exactly as you describe them.",
+    flagship: false,
+  },
+  {
+    id: "civil",
+    label: "Civil",
+    description: "A clean, modern invitation for a civil ceremony.",
+    flagship: false,
+  },
+  {
+    id: "non-religious",
+    label: "Non-religious",
+    description: "A celebration on your own terms, free of assumed symbols.",
+    flagship: false,
+  },
+] as const;
 
 const steps = [
   [
@@ -27,7 +73,7 @@ export default function HomePage() {
         </a>
         <nav aria-label="Main navigation">
           <a href="#how">How it works</a>
-          <a href="#occasions">Occasions</a>
+          <a href="#traditions">Traditions</a>
           <a href="#packages">Packages</a>
         </nav>
         <a className="button buttonSmall" href="#create">
@@ -112,29 +158,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="occasions section" id="occasions">
+      <section className="occasions section" id="traditions">
         <div className="shell">
-          <p className="kicker">One home for every celebration</p>
+          <p className="kicker">One wedding, every tradition welcome</p>
           <h2 className="sectionTitle">
-            Weddings first.
+            Your ceremony,
             <br />
-            <em>Every meaningful moment next.</em>
+            <em>told your way.</em>
           </h2>
           <div className="occasionGrid">
-            {occasionCategories.map((occasion) => (
+            {weddingTraditions.map((tradition) => (
               <article
-                className={occasion.flagship ? "featured" : ""}
-                key={occasion.id}
+                className={tradition.flagship ? "featured" : ""}
+                key={tradition.id}
               >
                 <span>
-                  {occasion.flagship ? "Our signature" : "Create for"}
+                  {tradition.flagship ? "Our signature" : "Also available"}
                 </span>
-                <h3>{occasion.label}</h3>
-                <p>
-                  {occasion.flagship
-                    ? "Culturally thoughtful journeys for Hindu, Muslim, Christian, civil and interfaith celebrations."
-                    : "A flexible invitation experience shaped around your occasion."}
-                </p>
+                <h3>{tradition.label}</h3>
+                <p>{tradition.description}</p>
               </article>
             ))}
           </div>
@@ -157,6 +199,12 @@ export default function HomePage() {
               <div>
                 <p>{tier.eyebrow}</p>
                 <h3>{tier.name}</h3>
+                <p className="tierPrice">
+                  Rs {tier.priceMur.toLocaleString("en-US")}
+                </p>
+                <p className="tierMeta">
+                  {tier.guestCapacity} guests · {tier.hostingDays}-day hosting
+                </p>
               </div>
               <ul>
                 {tier.features.map((feature) => (
@@ -169,6 +217,20 @@ export default function HomePage() {
             </article>
           ))}
         </div>
+        <p className="tiersFootnote">
+          Need more guests?{" "}
+          <a href="#guest-capacity">Estimate additional capacity ↓</a>
+        </p>
+      </section>
+
+      <section className="section shell" id="guest-capacity">
+        <p className="kicker">Growing the guest list</p>
+        <h2 className="sectionTitle">
+          Add guests,
+          <br />
+          <em>see the price instantly.</em>
+        </h2>
+        <GuestCapacityCalculator />
       </section>
 
       <section className="cta" id="create">
@@ -194,7 +256,7 @@ export default function HomePage() {
         <a className="brand" href="#top">
           <span>É</span>lan
         </a>
-        <p>Beautiful invitations for life&apos;s meaningful moments.</p>
+        <p>Beautiful wedding invitations, thoughtfully made.</p>
         <p>© 2026 Élan. Working product identity.</p>
       </footer>
     </main>

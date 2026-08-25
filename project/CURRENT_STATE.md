@@ -1,12 +1,12 @@
-> **Current authority update — 2026-08-25:** Vision V2 autonomous rebuilding is active on branch `vision-v2-autonomous-rebuild`. `docs/14_OWNER_VISION_V2.md` and `project/TASKS_V2.md` supersede conflicting v1 scope, package, and routine-approval statements. The first delivery slice covers vision/governance reset, the customer-facing discovery experience, and a typed four-tier catalogue. Production launch, paid provider activation, real credentials/customer data, legal commitments, and destructive operations remain hard stops.
+> **Current authority update — 2026-08-25:** The MVP is reconciled as **wedding-only** with a **four-package Bronze/Silver/Gold/Platinum** commercial ladder and owner-approved entitlements/prices (`project/DECISIONS.md` `DEC-025`–`DEC-028`). Continuous, dependency-aware implementation remains authorized without routine approval pauses. `project/TASKS_V2.md` is retired; `project/TASKS.md` is the single authoritative ledger. Production launch, paid provider activation, real credentials/customer data, legal commitments, and destructive operations remain hard stops.
 
 # Current State
 
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.16  
-**Snapshot date:** 2026-08-21  
+**Version:** 1.17  
+**Snapshot date:** 2026-08-25  
 **Repository:** `monsieur-zordi/Digital-E-invite`  
 **Branch:** `main`  
 **Claude Package version:** 1.0  
@@ -161,23 +161,25 @@ This summary is descriptive. Exact rules remain in the approved documents.
 
 ## 8. Approved package working model
 
-The current approved entitlement catalogue uses working package names:
+The current approved entitlement catalogue uses four package names (`DEC-025`, superseding the earlier Essential/Signature/Premium three-tier model):
 
-- Essential;
-- Signature;
-- Premium.
+- Bronze;
+- Silver;
+- Gold;
+- Platinum.
 
-Approved event-specific allowances include:
+Approved event-specific allowances and base MUR prices include:
 
-| Entitlement | Essential | Signature | Premium |
-|---|---:|---:|---:|
-| Total AI concepts | 1 | 3 | 5 |
-| AI refinements | 2 | 6 | 12 |
-| Active invited-person capacity | 100 | 300 | 750 |
-| Public hosting | 30 days | 90 days | 365 days |
-| Simultaneously published invitation languages | 1 | 2 | 3 |
+| Entitlement | Bronze | Silver | Gold | Platinum |
+|---|---:|---:|---:|---:|
+| Total AI concepts | 1 | 2 | 3 | 5 |
+| AI refinements | 2 | 4 | 8 | 12 |
+| Active invited-person capacity | 75 | 150 | 300 | 750 |
+| Public hosting | 90 days | 180 days | 365 days | 545 days |
+| Simultaneously published invitation languages | 1 | 2 | 3 | 4 |
+| Price (MUR) | 799 | 1,499 | 2,999 | 5,999 |
 
-These allowances are approved. Final launch prices are not.
+These allowances and the four base MUR prices are approved (`DEC-025`). Additional guest capacity is available as an explicit MUR 15/guest add-on (`DEC-026`); the checkout mechanism itself remains gated behind payment-provider selection. EUR/USD price books, discounts, and refund rules remain undecided.
 
 ---
 
@@ -529,6 +531,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.15.  
-**Snapshot date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, and `IMP-010` are recorded `VERIFIED` under Decisions 5/6/9. `IMP-020` is `READY` by dependency reconciliation only and has not started.
+**Approved version:** 1.17.  
+**Snapshot date:** 2026-08-25.  
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, and `IMP-010` are recorded `VERIFIED` under Decisions 5/6/9. `IMP-020` is `READY` by dependency reconciliation only and has not started. Package model reconciled to wedding-only, four-tier Bronze/Silver/Gold/Platinum per `DEC-025`–`DEC-028`.

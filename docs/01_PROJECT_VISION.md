@@ -3,9 +3,9 @@
 **File:** `docs/01_PROJECT_VISION.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved  
-**Version:** 1.0  
+**Version:** 1.1  
 **Owner Decision:** Approved  
-**Approval Date:** 16 August 2026  
+**Approval Date:** 16 August 2026 (Section 8 clarified 25 August 2026 per `DEC-027`)  
 **Document Type:** Product vision and strategic direction  
 **Depends On:** `docs/00_CLAUDE_RULES.md`  
 **Last Updated:** 16 August 2026  
@@ -170,7 +170,7 @@ Mauritius remains the initial beachhead market and a core part of the product id
 
 # 8. Initial Event Focus
 
-Weddings are the explicit primary launch category.
+Weddings are the explicit primary launch category. For the current MVP specifically, weddings are the **only** customer-reachable event type (`docs/03_MVP_PRD.md`; `project/DECISIONS.md` `DEC-004`, reaffirmed `DEC-027`) — the extensibility described below is long-term product direction, not approved MVP scope.
 
 Weddings provide a meaningful starting point because they often involve:
 

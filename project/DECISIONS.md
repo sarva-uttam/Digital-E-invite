@@ -3,8 +3,8 @@
 **File:** `project/DECISIONS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.3  
-**Approved date:** 2026-08-20  
+**Version:** 1.4  
+**Approved date:** 2026-08-25  
 **Current MVP focus:** Weddings only
 
 ---
@@ -123,7 +123,7 @@ New IDs are appended and never renumbered.
 
 ### DEC-005 — One-time event packages, not subscriptions
 
-**State:** ACCEPTED  
+**State:** SUPERSEDED — package-tier portion superseded by `DEC-025`; the "one-time, not subscription" commercial model itself remains in force  
 **Decision date:** 2026-08-17
 
 **Context:** Customers buy for a specific wedding rather than an ongoing software service.
@@ -149,7 +149,7 @@ New IDs are appended and never renumbered.
 
 ### DEC-007 — Approved package dimensions
 
-**State:** ACCEPTED  
+**State:** SUPERSEDED by `DEC-025`  
 **Decision date:** 2026-08-17
 
 **Context:** Package differentiation needs concrete, enforceable bounds.
@@ -183,7 +183,7 @@ First publication must occur within 180 days of purchase unless an approved exce
 
 ### DEC-009 — Final launch prices remain undecided
 
-**State:** ACCEPTED  
+**State:** ACCEPTED — PARTIALLY SUPERSEDED BY DEC-025 for the four base MUR package prices; the general caution against treating other historical figures as approved remains in force  
 **Decision date:** 2026-08-17
 
 **Context:** Historical rupee figures were early hypotheses without completed cost, tax, provider or market validation.
@@ -423,6 +423,93 @@ The architecture remains a TypeScript modular monolith in one repository, with a
 **Production non-authorization:** This decision does not authorize production deployment, customer launch, production credentials/data, production provider activation, payment-provider selection, unresolved AI/authentication/observability/email/provider selection, or bypass of any professional, security, legal, privacy, commercial or production gate.
 
 **Sources:** Explicit owner authorization dated 2026-08-20; `CLAUDE.md`; `project/TASKS.md`; `project/CURRENT_STATE.md`; `DEC-023`.
+
+---
+
+### DEC-025 — Four-package commercial structure and entitlements (Bronze/Silver/Gold/Platinum)
+
+**State:** ACCEPTED  
+**Decision date:** 2026-08-25  
+**Authority:** Explicit owner commercial decision, superseding `DEC-005` and `DEC-007`
+
+**Context:** PR #4 ("Vision V2") renamed the commercial ladder from three tiers (Essential/Signature/Premium) to four (Bronze/Silver/Gold/Platinum) in `docs/14_OWNER_VISION_V2.md` and shipped a typed `packageTiers` skeleton in `src/lib/catalog.ts`, but neither carried owner-approved entitlements or prices — the code shipped placeholder `concepts` values with no capacity, hosting, language, or price fields. The reconciliation audit (this decision's originating review) flagged this as an unapproved gap that must not be silently filled from the old three-tier numbers or from the placeholder code values.
+
+**Decision:** The commercial ladder is exactly four one-time, event-scoped packages: Bronze, Silver, Gold, Platinum. Approved entitlements and MUR base prices:
+
+| Entitlement | Bronze | Silver | Gold | Platinum |
+|---|---:|---:|---:|---:|
+| Initial AI concepts | 1 | 2 | 3 | 5 |
+| Refinements/regenerations | 2 | 4 | 8 | 12 |
+| Active invited people (base capacity) | 75 | 150 | 300 | 750 |
+| Hosting from first publication | 90 days | 180 days | 365 days | 545 days |
+| Simultaneously published invitation languages | 1 | 2 | 3 | 4 |
+| Price (MUR, base/primary currency) | 799 | 1,499 | 2,999 | 5,999 |
+
+First publication must still occur within 180 days of purchase unless an approved exception applies — this specific rule is carried forward unchanged from the now-superseded `DEC-007`, not reinvented.
+
+**Entitlement definitions (binding, to prevent later technical/customer-service disputes):**
+
+- **Initial AI concept** — one distinct generated design direction, not every individual image or text generation performed to produce it.
+- **Refinement/regeneration** — one customer-requested AI processing action that materially regenerates an approved part of the concept. A minor factual correction (e.g. fixing the wedding time or a venue spelling) that requires no regeneration does not consume a refinement.
+- **Active invited person** — one individual guest currently counted toward an event's invitation capacity. A family of four counts as four people even when they share one private party link.
+- **Hosting duration** — begins when the invitation is first successfully published, not when the customer creates an account or completes purchase.
+- **Published-language slot** — one complete invitation-content language that may be live simultaneously. It does not by itself mean automatic machine translation is included, and it does not activate a language whose own quality/operational gate (see `DEC-020`) has not separately passed. Platinum's four language slots do not automatically activate Russian or any other not-yet-gated language.
+
+**Positioning notes (non-binding context, preserved from the owner's rationale):** Bronze is the affordable-entry package competing with the cost of printed cards while still providing the complete core workflow, not an intentionally degraded product. Silver is the mainstream choice for smaller/medium Mauritian weddings. Gold is intended to carry a "Most Popular" label and enough premium motion/design differentiation to feel noticeably richer than Silver. Platinum is the luxury tier for large weddings, matching the richest Vision V2 experience principles (advanced motion, named-guest personalization, music, highest creative flexibility).
+
+**Consequences:** `product/PRICING_RULES.md`, `product/ENTITLEMENTS.md`, `product/AI_USAGE_RULES.md`, `product/GUEST_RULES.md`, `product/LOCALIZATION.md`, `docs/02_BUSINESS_MODEL.md`, `docs/03_MVP_PRD.md`, `docs/04_DOMAIN_MODEL.md`, `docs/06_DATABASE_DESIGN.md`, `docs/10_DESIGN_SYSTEM.md`, `README.md`, and `project/CURRENT_STATE.md` must be updated to this table and must stop referencing Essential/Signature/Premium as approved names. `src/lib/catalog.ts` must be updated to carry these exact fields. These are approved **catalog/price-book values**, not a production-payment authorization — provider selection, tax review, and payment-integrity gates (`DEC-011` through `DEC-013`, `IMP-050` through `IMP-055`) remain separately required before any customer can actually be charged.
+
+**Sources:** Explicit owner decision, 2026-08-25 reconciliation review; supersedes `DEC-005` (tier-naming portion only) and `DEC-007` in full; partially supersedes `DEC-009` for these four base prices only.
+
+---
+
+### DEC-026 — Guest-capacity add-on pricing
+
+**State:** ACCEPTED  
+**Decision date:** 2026-08-25  
+**Authority:** Explicit owner commercial decision, implementing `DEC-008`'s "no automatic overages" rule for the four-package structure
+
+**Context:** `DEC-008` requires that additional guest capacity be purchased through an explicit, priced, confirmed add-on rather than billed automatically. No add-on price existed for the four-package structure.
+
+**Decision:** A host may purchase additional active-invited-person capacity beyond their package's base capacity (see `DEC-025`) at **MUR 15 per additional guest**, in whole-guest increments, always as an explicit, confirmed, separately priced purchase — never an automatic or silent overage charge. The owner specified an acceptable range of MUR 10–15 per additional guest; MUR 15 is adopted as the current approved rate because it is the simplest round figure at the top of that authorized range, and remains adjustable by a future decision without needing re-justification of the range itself.
+
+**Scope boundary:** This decision approves the **price and product rule** for the add-on. It does not authorize a functioning purchase/checkout flow — payment-provider selection and the payment-integrity implementation tasks (`IMP-050` through `IMP-055`) remain `BLOCKED` under existing gates. Until those are implemented, any guest-capacity add-on control in the product (e.g. a capacity stepper on the catalogue page) may compute and display the resulting price, but must not claim to complete a real purchase.
+
+**Consequences:** `product/PRICING_RULES.md`, `product/ENTITLEMENTS.md`, and `product/GUEST_RULES.md` must document this add-on rule. `src/lib/catalog.ts` should expose the add-on rate as typed catalog data so the rule is centrally defined rather than duplicated in UI code, per `docs/00_CLAUDE_RULES.md` §9.
+
+**Sources:** Explicit owner decision, 2026-08-25 reconciliation review; implements `DEC-008`; depends on `DEC-025`.
+
+---
+
+### DEC-027 — Wedding-only MVP reaffirmed; multi-occasion catalogue data retained but not customer-reachable
+
+**State:** ACCEPTED  
+**Decision date:** 2026-08-25  
+**Authority:** Explicit owner product-scope decision, reaffirming `DEC-004`
+
+**Context:** PR #4 ("Vision V2") shipped `src/lib/catalog.ts` with 8 typed occasion categories (wedding plus 7 non-wedding categories) and rendered all 8 as live, selectable-looking cards on the public homepage (`src/app/page.tsx`), with SEO metadata (`src/app/layout.tsx`) describing the product as covering "weddings and life's meaningful moments." `docs/14_OWNER_VISION_V2.md` and `CLAUDE.md` likewise described the MVP itself as multi-occasion. This directly contradicted the still-standing, never-superseded `DEC-004` ("Weddings are the only MVP event type") and `project/BACKLOG.md`, which independently still listed every one of those same occasions as `DEFERRED`/`HOLD`, not approved scope.
+
+**Decision:** `DEC-004` is reaffirmed without change: the MVP is wedding-only, and non-wedding occasions remain future expansion candidates outside the MVP, governed by `project/BACKLOG.md`'s promotion gate. Rather than deleting the occasion-catalogue data model PR #4 introduced, the eight-category typed data in `src/lib/catalog.ts` is **retained** as a non-customer-reachable extensibility scaffold: only the `wedding` category may be selectable or rendered as reachable in any customer-facing MVP surface (homepage, questionnaire, event creation). The other seven categories remain present in code as typed data (preserving the Vision V2 groundwork for future expansion) but must not be linked, rendered as selectable, or otherwise reachable by a customer in the wedding-only MVP.
+
+**Consequences:** `src/app/page.tsx` and `src/app/layout.tsx` must be updated so no non-wedding occasion is presented to customers and no page copy/metadata implies multi-occasion MVP scope. `src/lib/catalog.test.ts`'s assertion that `occasionCategories.length > 4` must be replaced with an assertion appropriate to "eight categories exist in data, exactly one (`wedding`) is customer-reachable in the MVP." `docs/14_OWNER_VISION_V2.md` and `CLAUDE.md`'s multi-occasion MVP-launch framing must be corrected to describe weddings as the MVP scope, with other occasions described strictly as a future/backlog direction, not part of the current launch. `project/BACKLOG.md` should note that the occasion catalogue data model already exists in code but is intentionally not exposed, to prevent a future contributor from assuming its mere presence in code is authorization to expose it.
+
+**Sources:** Explicit owner decision, 2026-08-25 reconciliation review; reaffirms `DEC-004`; sources `project/BACKLOG.md` (`EVT-001` through `EVT-008`).
+
+---
+
+### DEC-028 — `TASKS_V2.md` folded into `TASKS.md`; single execution ledger restored
+
+**State:** ACCEPTED  
+**Decision date:** 2026-08-25  
+**Authority:** Implements the owner's reconciliation instruction that autonomous implementation authorization remains valid while production/security/privacy/testing/payment gates stay binding; the choice of a single ledger (vs. two) is an engineering-governance judgment call within that instruction
+
+**Context:** PR #4 added `project/TASKS_V2.md` as a new, differently structured execution ledger (`V2-001` through `V2-012`) without reconciling it against the pre-existing `project/TASKS.md` (`IMP-*` ledger, governed by `DEC-024`), and without updating `docs/00_CLAUDE_RULES.md` §3's source-of-truth precedence list to even acknowledge `TASKS_V2.md`'s existence. Two live, unmerged execution ledgers is itself a governance defect independent of any product-scope question.
+
+**Decision:** `project/TASKS.md` remains the single authoritative execution ledger — there is exactly one task list, not two. `project/TASKS_V2.md` is retired in place: its file is kept for historical traceability but is marked superseded and no longer read as authoritative; its useful sequencing (marketing/discovery experience, catalogue/entitlement foundation, survey, guest personalization, premium motion) is folded into `project/TASKS.md` as new task entries in the existing `IMP-*` numbering scheme. The **execution cadence** carried forward is the owner's reaffirmed continuous/autonomous mode (research, design, implement, test, document, open a pull request, and continue through dependency-safe work without pausing for routine approval between ordinary tasks) rather than `DEC-024`'s stricter "one task at a time, stop for review before a materially new task group" cadence — this narrowly supersedes only that cadence clause of `DEC-024`. `DEC-024`'s hard stops (no self-approving owner gates, no performing genuinely `BLOCKED` work, and all named production/security/privacy/payment/legal stop conditions) remain fully binding and are not loosened by this decision.
+
+**Consequences:** `docs/00_CLAUDE_RULES.md` §3 does not need editing, since it already names `project/TASKS.md` and never needs to name `TASKS_V2.md`. `CLAUDE.md`'s authority order, which currently lists `project/TASKS_V2.md` as its #3 authority, must be corrected to point to `project/TASKS.md`. This decision resolves both *which single ledger* is authoritative and confirms the continuous-execution cadence applies to it; the hard-stop list itself is unchanged.
+
+**Sources:** Reconciliation review, 2026-08-25; `DEC-024`; `docs/00_CLAUDE_RULES.md` §3.
 
 ---
 

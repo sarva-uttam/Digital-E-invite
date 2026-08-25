@@ -3,9 +3,9 @@
 **File:** `docs/10_DESIGN_SYSTEM.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
-**Approved date:** 2026-08-17  
-**Depends on:** `docs/00_CLAUDE_RULES.md` through `docs/09_SECURITY_ARCHITECTURE.md`
+**Version:** 1.1  
+**Approved date:** 2026-08-17 (package-count reference reconciled 2026-08-25 per `DEC-025`)  
+**Depends on:** `docs/00_CLAUDE_RULES.md` through `docs/09_SECURITY_ARCHITECTURE.md`; `project/DECISIONS.md` (DEC-025)
 
 ---
 
@@ -516,7 +516,7 @@ The Vibe Tuner is presented as guided refinement, not unrestricted chat.
 
 ## 21. Package comparison and entitlements
 
-- Compare packages using an accessible table on wide screens and equivalent stacked cards on mobile.
+- Compare the four approved packages (Bronze, Silver, Gold, Platinum — `project/DECISIONS.md` `DEC-025`) using an accessible table on wide screens and equivalent stacked cards on mobile.
 - Use exact, approved entitlement language.
 - Do not use “unlimited” for metered AI.
 - Distinguish included concepts, regenerations, hosting duration, guest capacity, branding, quality, and languages.
@@ -787,6 +787,6 @@ Accessibility conformance requires testing the implemented product, not merely c
 ## 33. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
-**Approved date:** 2026-08-17.  
+**Approved version:** 1.1.  
+**Approved date:** 2026-08-17 (package-count reference reconciled 2026-08-25 per `DEC-025`).  
 **Owner decisions:** Decisions 1–15 approved as proposed.

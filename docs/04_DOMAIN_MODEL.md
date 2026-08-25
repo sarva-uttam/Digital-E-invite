@@ -3,12 +3,12 @@
 **File:** docs/04_DOMAIN_MODEL.md  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved  
-**Version:** 1.0  
+**Version:** 1.1  
 **Owner Decision:** Approved  
 **Approval Date:** 16 August 2026  
 **Document Type:** Canonical domain model and vocabulary  
-**Depends On:** docs/00_CLAUDE_RULES.md; docs/01_PROJECT_VISION.md; docs/02_BUSINESS_MODEL.md; docs/03_MVP_PRD.md  
-**Last Updated:** 16 August 2026  
+**Depends On:** docs/00_CLAUDE_RULES.md; docs/01_PROJECT_VISION.md; docs/02_BUSINESS_MODEL.md; docs/03_MVP_PRD.md; project/DECISIONS.md (DEC-025)  
+**Last Updated:** 25 August 2026 — commercial catalogue tier count reconciled to four tiers  
 
 ---
 
@@ -264,7 +264,7 @@ Invariants:
 
 A Package Definition is versioned and may contain internal code, customer-facing name, description, availability, market applicability, state, and Entitlement Definitions.
 
-The commercial structure has entry, recommended middle, and premium tiers. Silver, Gold, and Platinum remain working labels.
+The commercial structure has exactly four tiers — Bronze, Silver, Gold, and Platinum — as approved final names (`project/DECISIONS.md` `DEC-025`).
 
 A Price Book defines versioned market-specific package prices, currency, validity period, and applicable display or tax behaviour.
 
@@ -776,6 +776,6 @@ Approved on 16 August 2026:
 # 32. Approval Record
 
 **Owner Decision:** Approved  
-**Approval Date:** 16 August 2026  
-**Approved Version:** 1.0  
+**Approval Date:** 16 August 2026 (commercial catalogue reconciled 25 August 2026 per `DEC-025`)  
+**Approved Version:** 1.1  
 **Authority:** Approved source-of-truth document under the hierarchy established by docs/00_CLAUDE_RULES.md.

@@ -3,9 +3,9 @@
 **File:** `product/ENTITLEMENTS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.0  
-**Approved date:** 2026-08-17  
-**Depends on:** approved `docs/00_CLAUDE_RULES.md` through `docs/13_ROADMAP.md` and `product/PRICING_RULES.md`  
+**Version:** 1.1  
+**Approved date:** 2026-08-17 (catalogue reconciled 2026-08-25 to the four-tier Bronze/Silver/Gold/Platinum structure per `project/DECISIONS.md` `DEC-025`, `DEC-026`)  
+**Depends on:** approved `docs/00_CLAUDE_RULES.md` through `docs/13_ROADMAP.md`, `product/PRICING_RULES.md`, and `project/DECISIONS.md` (DEC-025, DEC-026)  
 **Closely related:** `product/AI_USAGE_RULES.md`, `product/GUEST_RULES.md`, `product/LOCALIZATION.md`
 
 ---
@@ -64,31 +64,35 @@ MVP has no transferable account balance, pooled planner credits, organization wa
 
 ---
 
-## 5. Package catalogue proposal
+## 5. Package catalogue
 
-The following is the proposed initial entitlement catalogue for validation and launch, subject to owner approval and the cost/quality gates in `product/PRICING_RULES.md`.
+The following is the owner-approved entitlement catalogue (`DEC-025`), subject to the cost/quality gates in `product/PRICING_RULES.md`.
 
-| Capability | Essential | Signature | Premium |
-|---|---:|---:|---:|
-| Complete wedding invitation workflow | Yes | Yes | Yes |
-| Initial AI concept allowance | 1 | 3 | 5 |
-| AI refinement allowance | 2 | 6 | 12 |
-| Included invitee capacity | 100 | 300 | 750 |
-| Public hosting from first publication | 30 days | 90 days | 365 days |
-| Simultaneously published invitation languages | 1 | 2 | 3 |
-| Core reviewed themes | Yes | Yes | Yes |
-| Expanded reviewed themes/motifs | No | Yes | Yes |
-| Premium reviewed themes/motifs | No | No | Yes |
-| Owner-selected cultural/religious motifs | Core set | Expanded set | Expanded set |
-| Platform attribution | Subtle attribution | Removed | Removed |
-| Manual content edits before/after payment | Yes | Yes | Yes |
-| Controlled palette/type/layout settings | Yes | Yes | Yes |
-| Accountless RSVP | Yes | Yes | Yes |
-| Guest-party management | Yes | Yes | Yes |
-| CSV import/export | Yes | Yes | Yes |
-| QR code/direct share link | Yes | Yes | Yes |
-| Standard responsive asset delivery | Yes | Yes | Yes |
-| Priority support queue | No | Yes | Yes |
+| Capability | Bronze | Silver | Gold | Platinum |
+|---|---:|---:|---:|---:|
+| Complete wedding invitation workflow | Yes | Yes | Yes | Yes |
+| Initial AI concept allowance | 1 | 2 | 3 | 5 |
+| AI refinement allowance | 2 | 4 | 8 | 12 |
+| Included invitee capacity | 75 | 150 | 300 | 750 |
+| Public hosting from first publication | 90 days | 180 days | 365 days | 545 days |
+| Simultaneously published invitation languages | 1 | 2 | 3 | 4 |
+| Core reviewed themes | Yes | Yes | Yes | Yes |
+| Expanded reviewed themes/motifs | No | Yes | Yes | Yes |
+| Premium reviewed themes/motifs and premium motion | No | No | Yes | Yes |
+| Named-guest personalization and bespoke premium elements | No | No | No | Yes |
+| Owner-selected cultural/religious motifs | Core set | Expanded set | Expanded set | Expanded set |
+| Platform attribution | Subtle attribution | Removed | Removed | Removed |
+| Manual content edits before/after payment | Yes | Yes | Yes | Yes |
+| Controlled palette/type/layout settings | Yes | Yes | Yes | Yes |
+| Accountless RSVP | Yes | Yes | Yes | Yes |
+| Guest-party management | Yes | Yes | Yes | Yes |
+| CSV import/export | Yes | Yes | Yes | Yes |
+| QR code/direct share link | Yes | Yes | Yes | Yes |
+| Standard responsive asset delivery | Yes | Yes | Yes | Yes |
+| Priority support queue | No | Yes | Yes | Yes |
+| Price (MUR) | 799 | 1,499 | 2,999 | 5,999 |
+
+Additional guest capacity beyond the included amount is available on every tier as an explicit MUR 15/guest add-on (`DEC-026`); see Section 13.3.
 
 ### 5.1 Catalogue interpretation
 
@@ -216,9 +220,10 @@ Marketing copy is rendered from the same approved catalogue data or checked agai
 ## 10. AI concept entitlement
 
 - The package total includes the qualifying preview concept already used for that event.
-- Essential therefore has no additional initial concept after purchase if its preview concept succeeded, but retains its refinement allowance.
-- Signature has two remaining initial concepts after one successful preview concept.
-- Premium has four remaining initial concepts after one successful preview concept.
+- Bronze therefore has no additional initial concept after purchase if its preview concept succeeded, but retains its refinement allowance.
+- Silver has one remaining initial concept after one successful preview concept.
+- Gold has two remaining initial concepts after one successful preview concept.
+- Platinum has four remaining initial concepts after one successful preview concept.
 - If no preview concept was successfully consumed, the full paid allowance is available.
 - One request reserves one unit before provider work.
 - A qualifying successful normalized result consumes one unit.
@@ -277,17 +282,18 @@ The proposed commercial unit is **invitees**, not guest parties, RSVP submission
 
 ### 13.3 Capacity add-on
 
-A verified capacity-pack purchase appends a quantity grant. Pack sizes and prices remain in the activated catalogue/price book. Refund/reversal never deletes guest data automatically; it may block new additions and create support review when current usage exceeds remaining capacity.
+A verified per-guest capacity purchase appends a quantity grant equal to the confirmed additional-guest count, at MUR 15 per additional guest (`DEC-026`), in whole-guest increments. The add-on is explicit and confirmed before charge — never an automatic overage. Refund/reversal never deletes guest data automatically; it may block new additions and create support review when current usage exceeds remaining capacity.
 
 ---
 
 ## 14. Language entitlement
 
-- Essential: one simultaneously published invitation content language.
-- Signature: up to two.
-- Premium: up to three.
+- Bronze: one simultaneously published invitation content language.
+- Silver: up to two.
+- Gold: up to three.
+- Platinum: up to four.
 - Eligible MVP invitation languages are English, French, and Mauritian Kreol (`mfe`) when each is implementation-ready and human-reviewed.
-- Russian does not become an MVP entitlement until Russian support is separately activated.
+- Russian does not become an MVP entitlement until Russian support is separately activated (`DEC-020`). Platinum's fourth language slot does not by itself activate Russian or any other not-yet-gated language.
 - Product interface, checkout safety text, privacy notices, and accessibility are not intentionally degraded because of package tier.
 - Owner-entered names, venues, addresses, and factual details remain owner-controlled.
 - AI translation/refinement use follows `AI_USAGE_RULES.md`; manually supplied reviewed variants do not consume AI merely because another language slot is used.
@@ -299,9 +305,10 @@ Changing which language occupies a slot is allowed before publication and throug
 ## 15. Theme and motif entitlement
 
 - Every tier includes neutral, complete, accessible core themes.
-- Essential may use the core reviewed collection and core owner-selected motif options.
-- Signature adds the expanded reviewed collection.
-- Premium adds premium reviewed designs in addition to the expanded collection.
+- Bronze may use the core reviewed collection and core owner-selected motif options.
+- Silver adds the expanded reviewed collection.
+- Gold adds premium reviewed designs and premium motion in addition to the expanded collection.
+- Platinum adds named-guest personalization and bespoke premium elements on top of Gold.
 - Theme labels and membership are versioned.
 - Existing paid/published use is not broken when a theme is retired; unsafe themes may be disabled through an audited security/policy process with a safe replacement path.
 - No tier permits cultural/religious inference from identity, name, locale, or venue.
@@ -313,8 +320,8 @@ Theme access does not override factual visibility, WCAG 2.2 AA target, responsiv
 
 ## 16. Branding entitlement
 
-- Essential public invitations include restrained platform attribution.
-- Signature and Premium may remove platform attribution.
+- Bronze public invitations include restrained platform attribution.
+- Silver, Gold, and Platinum may remove platform attribution.
 - Attribution must not distract from the event, reveal private data, contain third-party ads, or impair accessibility.
 - Preview mode may show preview/watermark treatment regardless of selected package until verified payment.
 - No tier includes customer white-label/reseller branding in MVP.
@@ -330,9 +337,10 @@ Theme access does not override factual visibility, WCAG 2.2 AA target, responsiv
 - Payment alone does not start hosting.
 - Ordinary edits, unpublish/republish, or new invitation versions do not reset the start.
 - End time is calculated from the package duration using an approved calendar/instant rule and stored explicitly.
-- Essential: 30 days.
-- Signature: 90 days.
-- Premium: 365 days.
+- Bronze: 90 days.
+- Silver: 180 days.
+- Gold: 365 days.
+- Platinum: 545 days.
 
 ### 17.2 Before first publication
 
@@ -411,8 +419,8 @@ Package differentiation may use approved generation/rendering quality presets af
 
 ## 21. Support entitlement
 
-- Essential: self-service guidance plus standard payment/technical support path.
-- Signature and Premium: priority queue during stated support hours.
+- Bronze: self-service guidance plus standard payment/technical support path.
+- Silver, Gold, and Platinum: priority queue during stated support hours.
 - Security, privacy requests, incorrect payment, accessibility blockers, and platform incidents are triaged by severity rather than package.
 - No tier promises 24/7 support, guaranteed resolution, dedicated account manager, design concierge, or custom creative labor in MVP.
 - Support cannot bypass authorization, payment verification, audit, refund, or entitlement controls.
@@ -433,8 +441,8 @@ An upgrade:
 
 Examples:
 
-- Essential with one consumed concept upgrading to Signature receives a total concept allowance of three, leaving two.
-- Essential with 80 invitees upgrading to Signature moves to a total capacity of 300, leaving 220 available.
+- Bronze with one consumed concept upgrading to Silver receives a total concept allowance of two, leaving one.
+- Bronze with 60 invitees upgrading to Silver moves to a total capacity of 150, leaving 90 available.
 - Hosting before first publication changes to the target package duration.
 - Hosting after first publication extends only according to the explicit upgrade rule stored in the catalogue; proposed default is to recalculate the end as `first_published_at + target duration`, never shorten an existing later extension.
 - Language/theme/branding changes become available after verified grant and a new invitation version/publish action where needed.
@@ -647,7 +655,7 @@ Reconciliation jobs are idempotent and create review items rather than silently 
 
 At minimum test:
 
-- exact catalogue mapping for all three packages;
+- exact catalogue mapping for all four packages;
 - preview concept counting into paid totals;
 - no duplicate payment grant;
 - concurrent reservation/consumption;
@@ -723,39 +731,39 @@ Existing paid rights cannot be reduced retroactively except where law, security,
 
 ### Decision 3 — Initial concept allowances
 
-**Approved:** Set total initial AI concept allowances to Essential 1, Signature 3, and Premium 5, with the successful pre-payment preview concept counting toward that total.
+**Superseded 2026-08-25 by `DEC-025`:** Set total initial AI concept allowances to Bronze 1, Silver 2, Gold 3, and Platinum 5, with the successful pre-payment preview concept counting toward that total.
 
 ### Decision 4 — Refinement allowances
 
-**Approved:** Set AI refinement allowances to Essential 2, Signature 6, and Premium 12; manual edits consume none. Exact request counting and failure rules are finalized in `AI_USAGE_RULES.md`.
+**Superseded 2026-08-25 by `DEC-025`:** Set AI refinement allowances to Bronze 2, Silver 4, Gold 8, and Platinum 12; manual edits consume none. Exact request counting and failure rules are finalized in `AI_USAGE_RULES.md`.
 
 ### Decision 5 — Invitee capacity
 
-**Approved:** Set included invitee capacity to Essential 100, Signature 300, and Premium 750, with capacity counted under `GUEST_RULES.md`, no deletion at the limit, and no automatic overage billing.
+**Superseded 2026-08-25 by `DEC-025`/`DEC-026`:** Set included invitee capacity to Bronze 75, Silver 150, Gold 300, and Platinum 750, with capacity counted under `GUEST_RULES.md`, no deletion at the limit, and no automatic (unconfirmed) overage billing — additional capacity is available as an explicit MUR 15/guest add-on.
 
 ### Decision 6 — Hosting duration
 
-**Approved:** Include 30, 90, and 365 days of public hosting for Essential, Signature, and Premium respectively, beginning at first successful publication and never resetting through ordinary edits/republishing.
+**Superseded 2026-08-25 by `DEC-025`:** Include 90, 180, 365, and 545 days of public hosting for Bronze, Silver, Gold, and Platinum respectively, beginning at first successful publication and never resetting through ordinary edits/republishing.
 
 ### Decision 7 — First-publication window
 
-**Approved:** Require first publication within 180 days of verified purchase unless support grants an audited extension; payment itself does not begin public hosting.
+**Approved:** Require first publication within 180 days of verified purchase unless support grants an audited extension; payment itself does not begin public hosting. *(Unchanged by `DEC-025`, which explicitly carries this rule forward.)*
 
 ### Decision 8 — Language slots
 
-**Approved:** Allow 1, 2, and 3 simultaneous invitation content languages for Essential, Signature, and Premium respectively, drawn from activated English, French, and Mauritian Kreol; never restrict the product interface by package.
+**Superseded 2026-08-25 by `DEC-025`:** Allow 1, 2, 3, and 4 simultaneous invitation content languages for Bronze, Silver, Gold, and Platinum respectively, drawn from activated English, French, and Mauritian Kreol; never restrict the product interface by package.
 
 ### Decision 9 — Themes and motifs
 
-**Approved:** Give every tier complete neutral/core reviewed themes, Signature an expanded collection, and Premium the expanded plus premium collection; all motifs remain owner-selected, allow-listed, accessible, and non-inferred.
+**Superseded 2026-08-25:** Give every tier complete neutral/core reviewed themes; Silver adds an expanded collection; Gold adds premium designs and premium motion; Platinum adds named-guest personalization and bespoke premium elements. All motifs remain owner-selected, allow-listed, accessible, and non-inferred.
 
 ### Decision 10 — Branding
 
-**Approved:** Use restrained platform attribution on Essential and remove it on Signature/Premium, while retaining legally/security-required disclosures and excluding customer white label from MVP.
+**Superseded 2026-08-25:** Use restrained platform attribution on Bronze and remove it on Silver/Gold/Platinum, while retaining legally/security-required disclosures and excluding customer white label from MVP.
 
 ### Decision 11 — Support
 
-**Approved:** Provide standard support access to Essential and a priority queue to Signature/Premium during stated hours, without promising 24/7 service or letting package tier override incident severity.
+**Superseded 2026-08-25:** Provide standard support access to Bronze and a priority queue to Silver/Gold/Platinum during stated hours, without promising 24/7 service or letting package tier override incident severity.
 
 ### Decision 12 — Preview access
 
@@ -798,6 +806,6 @@ Existing paid rights cannot be reduced retroactively except where law, security,
 ## 37. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.0.  
-**Approved date:** 2026-08-17.  
-**Owner decisions:** Decisions 1–20 approved as proposed.
+**Approved version:** 1.1.  
+**Approved date:** 2026-08-17 (Decisions 3–6 and 8–11 superseded 2026-08-25 by `DEC-025`/`DEC-026`).  
+**Owner decisions:** Decisions 1–20 approved as proposed; see supersession notes above.

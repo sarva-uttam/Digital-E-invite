@@ -3,10 +3,10 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.14  
-**Approved date:** 2026-08-21  
-**Current phase:** Application implementation — authorized and task-controlled  
-**Application implementation authorization:** GRANTED — task-controlled; only `READY` tasks may be performed
+**Version:** 1.15  
+**Approved date:** 2026-08-25  
+**Current phase:** Application implementation — authorized, continuous, dependency-aware (`DEC-028`)  
+**Application implementation authorization:** GRANTED — this is the single authoritative execution ledger (`project/TASKS_V2.md` retired); ordinary dependency-safe tasks may proceed continuously without a routine approval pause, subject to unchanged hard stops
 
 ---
 
@@ -16,7 +16,7 @@ This file is the authoritative ordered work queue for the current project scope.
 
 It translates the approved documentation into small, reviewable tasks with dependencies, acceptance evidence, and explicit gates. It is not a wish list; deferred ideas belong in `project/BACKLOG.md`.
 
-Claude Code must work from the highest-priority unblocked task, complete and verify it, update this ledger and `CURRENT_STATE.md` when materially necessary, then stop for review before beginning a materially new task group.
+Claude Code must work from the highest-priority unblocked task, complete and verify it, update this ledger and `CURRENT_STATE.md` when materially necessary, then continue to the next dependency-safe `READY` task without a routine approval pause (`DEC-028`) — stopping only at a named hard-stop condition (`CLAUDE.md`, `docs/00_CLAUDE_RULES.md`) or when no task is `READY`.
 
 ---
 
@@ -387,6 +387,25 @@ This gate does not authorize production deployment, customer launch, provider co
 - The dependency audit reports only the 4 recorded moderate-severity `esbuild`/`drizzle-kit` development-tooling findings; no approved dependency version was changed. The secret scan reported no known patterns and remains explicitly non-comprehensive.
 - Technical branch-protection/required-status-check enforcement remains unavailable for this private repository on its current plan. Interim policy remains: no pull request may be merged into `main` unless `CI / quality-gate` succeeds; PR #2 complied.
 - No product feature, provider configuration, database, migration, infrastructure, deployment, production resource, or application release was created. `IMP-010` was not performed.
+
+### IMP-006 — Marketing/discovery homepage and typed catalogue foundation
+
+**Priority:** P0  
+**State:** IMPLEMENTED (reconciled)  
+**Dependencies:** IMP-005  
+**Origin:** Folded in from the retired `project/TASKS_V2.md` (`V2-002`, `V2-003`) per `DEC-028`.  
+**Acceptance criteria:** responsive public discovery homepage; the four approved packages presented as typed, tested application data (not scattered UI constants); wedding-only customer-reachable scope (`DEC-027`); no non-wedding occasion selectable or linked; accessible, reduced-motion-safe, mobile-first.
+
+**Implementation evidence — 2026-08-24, reconciled 2026-08-25:**
+
+- Implemented via PR #4 (`vision-v2-autonomous-rebuild`, merged as `152a06061d252bf850f9d3d057fd30b4497652d2`): `src/lib/catalog.ts` (typed occasion and package data), `src/lib/catalog.test.ts`, `src/app/page.tsx`, `src/app/layout.tsx`, `src/app/globals.css`.
+- As originally merged, this shipped 8 typed occasion categories rendered as customer-selectable cards (multi-occasion) and placeholder package `concepts` values with no approved entitlements/prices — both corrected by the 2026-08-25 reconciliation (`DEC-025`–`DEC-027`).
+- Reconciled state: package data carries the `DEC-025` entitlements/prices and a `DEC-026` guest-capacity add-on calculator; only the `wedding` occasion is rendered/selectable; the remaining 7 occasion categories remain in the typed data model, unlinked and unrendered, per `DEC-027`.
+- No provider, database, payment, or production activation is part of this task.
+
+### Retired-ledger mapping (`DEC-028`)
+
+The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's existing tasks rather than creating new ones: `V2-001` → this reconciliation and `DEC-025`–`DEC-028`; `V2-002`/`V2-003` → `IMP-006` above; `V2-004` → `IMP-032`; `V2-005` → `IMP-020`; `V2-006` → `IMP-012`/`IMP-013`; `V2-007` → `IMP-033`/`IMP-034`; `V2-008` → `IMP-070`–`IMP-075`; `V2-009` → `IMP-040`–`IMP-045`; `V2-010` → `IMP-050`–`IMP-055`; `V2-011` → `IMP-034`/`IMP-063` (premium motion/sharing); `V2-012` → `IMP-100`–`IMP-107`. No `IMP-*` task's `BLOCKED`/`READY` state changes as a result of this mapping.
 
 ---
 
@@ -889,6 +908,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.13.  
-**Approved date:** 2026-08-21.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, and `IMP-010` are `VERIFIED` with evidence under Decision 10. `IMP-020` is `READY` because its complete dependencies (`IMP-003`, `IMP-010`) are verified; it has not started. Specialist-decision gates remain binding.
+**Approved version:** 1.15.  
+**Approved date:** 2026-08-25.  
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-020` is `READY` because its complete dependencies (`IMP-003`, `IMP-010`) are verified; it has not started. Specialist-decision gates remain binding. This ledger is now the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.

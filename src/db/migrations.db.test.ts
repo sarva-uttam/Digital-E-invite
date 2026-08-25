@@ -54,9 +54,16 @@ describe("migration application from an empty database", () => {
   it("applies the full migration history to an empty database, and reapplying is a safe no-op", async () => {
     const testDatabaseUrl = requireTestDatabaseUrl();
 
-    // Reset to a genuinely empty database before applying anything.
+    // Reset to a genuinely empty database before applying anything. The
+    // migration-history table lives in its own "drizzle" schema, separate
+    // from "public" — dropping only "public" leaves history rows recording
+    // migrations 0000/0001 as already applied even though the tables they
+    // created were just destroyed, so the migrator would see "nothing to
+    // do" and silently skip recreating them. Both schemas must reset
+    // together for this test to actually prove a from-scratch apply works.
     await client.db.execute(sql`drop schema if exists public cascade`);
     await client.db.execute(sql`create schema public`);
+    await client.db.execute(sql`drop schema if exists drizzle cascade`);
 
     await runMigrations(testDatabaseUrl);
 

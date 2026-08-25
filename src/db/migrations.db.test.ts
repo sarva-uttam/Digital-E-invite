@@ -3,9 +3,10 @@
  * PostgreSQL 18 database — see vitest.db.config.mts. Run with
  * `npm run test:db`.
  *
- * These tests verify the migration *tooling*, not domain tables: IMP-020's
- * committed schema is intentionally empty (see src/db/schema/index.ts).
- * Table-specific assertions belong to the task that introduces each table.
+ * These tests verify the migration *tooling* (applying the full history to
+ * an empty database, idempotent re-apply), not table-specific business
+ * behavior — that belongs to each table's own task (e.g.
+ * src/db/schema/operations.db.test.ts for IMP-022).
  */
 
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -50,7 +51,7 @@ describe("PostgreSQL baseline", () => {
 });
 
 describe("migration application from an empty database", () => {
-  it("applies the (currently empty) migration history, and reapplying is a safe no-op", async () => {
+  it("applies the full migration history to an empty database, and reapplying is a safe no-op", async () => {
     const testDatabaseUrl = requireTestDatabaseUrl();
 
     // Reset to a genuinely empty database before applying anything.
@@ -66,6 +67,13 @@ describe("migration application from an empty database", () => {
       ) as exists
     `);
     expect(historyTable.rows[0]?.exists).toBe(true);
+
+    const expectedTables = ["audit_events", "job_executions", "outbox_events"];
+    const tables = await client.db.execute<{ table_name: string }>(sql`
+      select table_name from information_schema.tables
+      where table_schema = 'public' and table_name = any(${expectedTables})
+    `);
+    expect(tables.rows.map((r) => r.table_name).sort()).toEqual(expectedTables);
 
     // Re-applying must not throw and must not duplicate history rows.
     const before = await client.db.execute<{ count: string }>(

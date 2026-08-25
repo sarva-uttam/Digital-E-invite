@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.19  
+**Version:** 1.20  
 **Approved date:** 2026-08-26  
 **Current phase:** Application implementation — continuous, dependency-aware, task-ledger-controlled (`DEC-028`)  
 **Application release status:** No application release exists
@@ -314,6 +314,20 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 - **Live/CI verification — 2026-08-26:** the first CI run failed `Format check` for real on `src/db/migrations/meta/_journal.json` (drizzle-kit's generated JSON did not match this repo's Prettier style); fixed in `e52133b122123f8f9a8c79f47c71238075a5b915`. The corrected run ([`32904136112`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32904136112)) passed all steps, including the four new IMP-020 steps against a real disposable PostgreSQL 18 container — migration-history check, schema-drift check, applying migrations, and database integration tests (PostgreSQL major version 18 confirmed, `uuidv7()` confirmed callable, idempotent re-apply confirmed). PR #6 merged normally as `1710eff1a1fa9528d018b98ad26fe4562bb97936`; the push-to-`main` run ([`32904336343`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32904336343)) also passed.
 - No provider activation, production database, production credential, or production/staging resource was created.
 - **Migration/action required:** None yet — no domain table exists to migrate data into. **Compatibility/customer impact:** None — no application release exists.
+
+### Append-only audit and outbox milestone — `IMP-022` (2026-08-26)
+
+**Track:** APPLICATION  
+**Application version:** 0.1.0 (unreleased)  
+**Status:** IMPLEMENTED — pull request open; merge/CI evidence to follow
+
+- Added the first real domain tables per `docs/06_DATABASE_DESIGN.md` §16: `outbox_events` (transactional outbox, unique `deduplication_key`), `job_executions` (execution history, FK to `outbox_events`), `audit_events` (append-only). Added the §19-specified indexes for both operational tables.
+- `audit_events.actor_account_id`/`event_id` are deliberately plain `uuid` columns without a foreign-key constraint yet — the referenced `accounts`/`events` tables belong to `IMP-021`, which remains `BLOCKED` on the unresolved authentication decision (`IMP-013`); adding the constraint is `IMP-021`'s job once those tables exist. Disclosed, not silent.
+- Append-only enforcement uses a raw-SQL `BEFORE UPDATE OR DELETE` trigger on `audit_events` rather than a separate database role (role separation is a deployment-topology decision this repository hasn't made yet) — role-independent enforcement of the same invariant.
+- New behavioral tests (`src/db/schema/operations.db.test.ts`) against a real database: dedup-key rejection and `ON CONFLICT DO NOTHING` safe replay, job-execution FK behavior, and audit insert-succeeds/update-rejected/delete-rejected.
+- **Not locally verified:** as with `IMP-020`, Docker Desktop's daemon is unavailable in this environment; GitHub Actions' PostgreSQL service container is the first live verification of these tests.
+- No provider activation, production database, production credential, or production/staging resource was created.
+- **Migration/action required:** None — this is the first migration introducing tables; nothing pre-existing to migrate. **Compatibility/customer impact:** None — no application release exists.
 
 ## 9. 2026-08-17 — Documentation foundation
 

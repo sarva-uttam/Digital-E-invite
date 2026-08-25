@@ -1,0 +1,80 @@
+/**
+ * Migration-system integration tests (IMP-020). Requires a real disposable
+ * PostgreSQL 18 database — see vitest.db.config.mts. Run with
+ * `npm run test:db`.
+ *
+ * These tests verify the migration *tooling*, not domain tables: IMP-020's
+ * committed schema is intentionally empty (see src/db/schema/index.ts).
+ * Table-specific assertions belong to the task that introduces each table.
+ */
+
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { sql } from "drizzle-orm";
+import { createDbClient } from "./client";
+import type { DbClient } from "./client";
+import { runMigrations } from "./migrate";
+import { requireTestDatabaseUrl } from "./test-safety";
+
+let client: DbClient;
+
+beforeAll(() => {
+  const testDatabaseUrl = requireTestDatabaseUrl();
+  client = createDbClient(testDatabaseUrl);
+});
+
+afterAll(async () => {
+  await client.close();
+});
+
+describe("PostgreSQL baseline", () => {
+  it("reports major version 18, matching DEC-023", async () => {
+    const result = await client.db.execute<{ server_version_num: string }>(
+      sql`show server_version_num`,
+    );
+    const versionNum = Number.parseInt(
+      result.rows[0]?.server_version_num ?? "0",
+      10,
+    );
+    expect(Math.floor(versionNum / 10000)).toBe(18);
+  });
+
+  it("provides the native uuidv7() function required by docs/06_DATABASE_DESIGN.md §6.1", async () => {
+    const result = await client.db.execute<{ id: string }>(
+      sql`select uuidv7() as id`,
+    );
+    const id = result.rows[0]?.id;
+    expect(id).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
+  });
+});
+
+describe("migration application from an empty database", () => {
+  it("applies the (currently empty) migration history, and reapplying is a safe no-op", async () => {
+    const testDatabaseUrl = requireTestDatabaseUrl();
+
+    // Reset to a genuinely empty database before applying anything.
+    await client.db.execute(sql`drop schema if exists public cascade`);
+    await client.db.execute(sql`create schema public`);
+
+    await runMigrations(testDatabaseUrl);
+
+    const historyTable = await client.db.execute<{ exists: boolean }>(sql`
+      select exists (
+        select 1 from information_schema.tables
+        where table_schema = 'drizzle' and table_name = '__drizzle_migrations'
+      ) as exists
+    `);
+    expect(historyTable.rows[0]?.exists).toBe(true);
+
+    // Re-applying must not throw and must not duplicate history rows.
+    const before = await client.db.execute<{ count: string }>(
+      sql`select count(*)::text as count from drizzle.__drizzle_migrations`,
+    );
+    await runMigrations(testDatabaseUrl);
+    const after = await client.db.execute<{ count: string }>(
+      sql`select count(*)::text as count from drizzle.__drizzle_migrations`,
+    );
+    expect(after.rows[0]?.count).toBe(before.rows[0]?.count);
+  });
+});

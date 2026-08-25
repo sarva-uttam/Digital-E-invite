@@ -7,12 +7,12 @@ An AI-assisted digital invitation platform for creating, personalizing, publishi
 **Claude Package version:** 1.0  
 **Package status:** Implementation Preparation Ready  
 **Repository status:** Private, owner-controlled repository; documentation package complete; final audit passed and corrections verified  
-**Application status:** Engineering baseline, CI quality gates, and configuration/environment boundaries are verified (`IMP-004`, `IMP-005`, `IMP-010`); no product feature is implemented and no application release exists  
+**Application status:** Engineering baseline, CI quality gates, configuration/environment boundaries, and the migration system are verified (`IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`); no product feature or domain table is implemented and no application release exists  
 **Initial operating market:** Mauritius  
 **Availability vision:** Global  
 **MVP event type:** Weddings only  
 **Document status:** Approved — Owner Approved  
-**Version:** 1.12  
+**Version:** 1.13  
 **Approved date:** 2026-08-25
 
 ---
@@ -239,6 +239,24 @@ No `.env` file is required to run these commands: unset baseline variables fall 
 
 ---
 
+## Database development (`IMP-020`)
+
+The migration system and tooling are established; the committed schema is intentionally empty (`src/db/schema/index.ts`) until dependent tasks (`IMP-021` and later) add domain tables. `docs/06_DATABASE_DESIGN.md` §23 governs migration policy: every schema change is a reviewed, committed SQL migration; `drizzle-kit push`/direct schema sync is never used against a shared database.
+
+```bash
+docker compose up -d postgres   # disposable local PostgreSQL 18 (docker-compose.yml)
+npm run db:generate && npm run format   # generate a migration from schema changes, then format (drizzle-kit's own JSON output does not match this repo's Prettier style); review the SQL before committing
+npm run db:check                # migration-history consistency / drift check
+DATABASE_DIRECT_URL=postgresql://app_local:local_only_password@localhost:5432/ai_invite_dev npm run db:migrate
+npm run test:db                 # database integration tests; requires TEST_DATABASE_URL
+```
+
+`npm run test:db` and `npm run db:migrate` never fall back from `TEST_DATABASE_URL`/`DATABASE_DIRECT_URL` to any other variable, and the test suite refuses to run destructive operations against a database that does not look disposable (`src/db/test-safety.ts`) — see that file's guard for the exact rule. CI runs the same migration/check/integration-test sequence against a disposable, job-scoped PostgreSQL service container (`.github/workflows/ci.yml`); it is never pointed at a real database.
+
+**Rollback/repair:** Drizzle's migration history (`drizzle.__drizzle_migrations`) is append-only and immutable (§23) — a bad migration is corrected by writing and committing a new forward migration, never by editing or deleting an applied one. There is no destructive migration to roll back yet, since the committed schema has no tables.
+
+---
+
 ## Repository map
 
 ```text
@@ -255,9 +273,16 @@ No `.env` file is required to run these commands: unset baseline variables fall 
 ├── eslint.config.mjs
 ├── .prettierrc.json
 ├── vitest.config.mts
+├── vitest.db.config.mts    # database integration tests (IMP-020)
+├── drizzle.config.ts       # Drizzle Kit config (IMP-020)
+├── docker-compose.yml      # disposable local PostgreSQL 18 (IMP-020)
+├── scripts/
+│   ├── secret-scan.sh
+│   └── db-migrate.mjs      # administrative/local migration runner (IMP-020)
 ├── src/
 │   ├── app/            # Next.js App Router (pages, layout, /api/health)
-│   └── lib/            # server-only baseline (environment validation)
+│   ├── lib/            # server-only baseline (environment validation)
+│   └── db/             # migration system and schema (IMP-020; schema is empty pending IMP-021+)
 ├── worker/
 │   └── src/            # separately deployable worker (structural placeholder)
 ├── docs/

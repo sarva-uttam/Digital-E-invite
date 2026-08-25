@@ -3,8 +3,8 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.15  
-**Approved date:** 2026-08-25  
+**Version:** 1.16  
+**Approved date:** 2026-08-26  
 **Current phase:** Application implementation — authorized, continuous, dependency-aware (`DEC-028`)  
 **Application implementation authorization:** GRANTED — this is the single authoritative execution ledger (`project/TASKS_V2.md` retired); ordinary dependency-safe tasks may proceed continuously without a routine approval pause, subject to unchanged hard stops
 
@@ -456,9 +456,26 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 ### IMP-020 — Create migration system and base schema
 
 **Priority:** P0  
-**State:** READY  
+**State:** IMPLEMENTED — evidence below; PR merge/CI evidence to follow once merged  
 **Dependencies:** IMP-003, IMP-010  
 **Acceptance criteria:** versioned forward migrations; documented rollback/repair; local/test database setup; schema matches approved database design.
+
+**Scope note:** This task establishes the migration *system* and tooling per `docs/06_DATABASE_DESIGN.md` §23. The committed schema (`src/db/schema/index.ts`) is intentionally empty — domain tables are owned by their own dependent tasks (`IMP-021` users/events, `IMP-022` audit/outbox, `IMP-023` entitlements, `IMP-050` catalogue/pricing, etc.), each mapping to its own numbered section of the database design document. An empty-but-tooling-verified schema is a deliberate, disclosed scope boundary, not an oversight.
+
+**Implementation evidence — 2026-08-26:**
+
+- Added `drizzle.config.ts` (Drizzle Kit, PostgreSQL dialect, `strict`/`verbose`); `src/db/schema/index.ts` (empty barrel, documented as the extension point for later tasks); `src/db/client.ts` (connection factory, migration/test-only, no application route may import it); `src/db/migrate.ts` (reviewed forward-migration runner, `drizzle-orm/node-postgres/migrator`); `scripts/db-migrate.mjs` (administrative/local runner reading `DATABASE_DIRECT_URL` only, never falling back to another variable, never logging the connection string).
+- Identifier strategy verified against current official PostgreSQL 18.0 release notes before implementation (not assumed): PostgreSQL 18 provides a native `uuidv7()` function (RFC 9562, sub-millisecond timestamp precision), so `docs/06_DATABASE_DESIGN.md` §6.1's "database-generated UUIDv7 when the selected PostgreSQL version supports the required generation function" is satisfiable with no extension; a test in `src/db/migrations.db.test.ts` asserts `uuidv7()` is callable and returns a version-7 UUID.
+- Added `docker-compose.yml`: disposable local PostgreSQL, pinned to `postgres:18.6-alpine` (verified to exist on the official Docker Hub `postgres` image at implementation time), matching the `DEC-023` PostgreSQL 18 baseline; not a production/staging resource.
+- Added `.github/workflows/ci.yml` PostgreSQL service container (same pinned image; synthetic, job-scoped, non-secret credentials) and four new CI steps: `db:check` (migration-history consistency), a schema-drift check (`drizzle-kit generate` must produce no uncommitted diff), `db:migrate` against the disposable CI database, and `test:db` (database integration tests) — implementing `docs/06_DATABASE_DESIGN.md` §23's "CI creates a clean database and applies the entire migration history" and "CI checks migration-history consistency and schema drift."
+- Added `src/db/test-safety.ts`: every destructive test helper requires `TEST_DATABASE_URL` explicitly (never falls back to `DATABASE_URL`/`DATABASE_DIRECT_URL`) and refuses to run unless the target looks disposable (localhost/127.0.0.1/::1 host, or a database name containing "test") — enforced by construction, not by convention.
+- Added `vitest.db.config.mts` + `src/db/vitest-global-setup.ts` (separate `npm run test:db` suite, `fileParallelism: false`, fails rather than silently skips when no disposable database is configured) and excluded `src/db/**/*.db.test.ts` from the ordinary `npm test` run in `vitest.config.mts`, so the unit-test suite never silently requires a live database.
+- `src/db/migrations.db.test.ts` verifies: the connected database reports PostgreSQL major version 18; `uuidv7()` works; the full (currently empty) migration history applies to a freshly emptied schema and creates `drizzle.__drizzle_migrations`; and re-applying is an idempotent no-op (`docs/06_DATABASE_DESIGN.md` §23, "Applied migration history is immutable").
+- `package.json`: added `pg@8.23.0`/`@types/pg@8.23.1` (both verified to exist on the npm registry at implementation time) and `db:generate`/`db:check`/`db:migrate`/`test:db` scripts; no `push`/schema-sync script was added, matching §23's "Production never uses automatic schema push/synchronization."
+- **Rollback/repair, documented in `README.md`:** migration history is append-only and immutable; a bad migration is corrected by a new forward migration, never by editing/deleting an applied one. There is no destructive migration to roll back yet since the committed schema has no tables.
+- **Local verification performed (2026-08-26):** `npm run format:check`/`lint`/`typecheck`/`test`/`build` all pass, with only the pre-existing, already-documented Windows `core.autocrlf`/`server-only` local-checkout artifacts present (verified staged git blobs are LF, matching the repository's committed convention, not CRLF); `npx drizzle-kit generate` and `npx drizzle-kit check` both succeed against the empty schema with no DB connection required; `npm audit --audit-level=high` reports only the 4 pre-existing moderate `esbuild`/`drizzle-kit` findings; the secret scan reports no known patterns.
+- **Local verification NOT performed:** Docker Desktop's daemon is not running in this environment (CLI present, no backend), so `npm run test:db` and a live `npm run db:migrate` could not be exercised locally. This is disclosed rather than assumed passing — the GitHub Actions PostgreSQL service container in the pushed PR is the actual, first live verification of the migration/integration-test steps added here; its result is the authoritative evidence for those steps, recorded once the PR's CI run completes.
+- No provider selection/activation, production database, production credential, or production/staging resource was created. `docker-compose.yml`'s Postgres instance and the CI service container are both disposable and non-production.
 
 ### IMP-021 — Implement users, events, and event versions
 
@@ -479,7 +496,7 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 **Priority:** P0  
 **State:** BLOCKED  
 **Dependencies:** IMP-020, IMP-022  
-**Acceptance criteria:** immutable grants/reservations/consumption/releases/reversals; 1/3/5, 2/6/12, 100/300/750, hosting/language rules; atomic concurrency tests.
+**Acceptance criteria:** immutable grants/reservations/consumption/releases/reversals; 1/2/3/5, 2/4/8/12, 75/150/300/750, hosting/language rules per `DEC-025`; atomic concurrency tests.
 
 ### IMP-024 — Implement retention and deletion foundations
 
@@ -908,6 +925,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.15.  
-**Approved date:** 2026-08-25.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-020` is `READY` because its complete dependencies (`IMP-003`, `IMP-010`) are verified; it has not started. Specialist-decision gates remain binding. This ledger is now the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.
+**Approved version:** 1.16.  
+**Approved date:** 2026-08-26.  
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-020` is `IMPLEMENTED` with local evidence recorded above; PR merge/CI evidence follows once merged, at which point `IMP-021`, `IMP-022`, and `IMP-050` become eligible under their recorded dependencies (though `IMP-021` remains additionally `BLOCKED` by `IMP-013`, itself blocked on the unresolved authentication decision). Specialist-decision gates remain binding. This ledger is the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.

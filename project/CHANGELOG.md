@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.20  
+**Version:** 1.21  
 **Approved date:** 2026-08-26  
 **Current phase:** Application implementation — continuous, dependency-aware, task-ledger-controlled (`DEC-028`)  
 **Application release status:** No application release exists
@@ -319,13 +319,14 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 **Track:** APPLICATION  
 **Application version:** 0.1.0 (unreleased)  
-**Status:** IMPLEMENTED — pull request open; merge/CI evidence to follow
+**Status:** VERIFIED — merged as `a2af4f11c9099caa85ac9a09174ecc6bce9ab131`; not deployed
 
 - Added the first real domain tables per `docs/06_DATABASE_DESIGN.md` §16: `outbox_events` (transactional outbox, unique `deduplication_key`), `job_executions` (execution history, FK to `outbox_events`), `audit_events` (append-only). Added the §19-specified indexes for both operational tables.
 - `audit_events.actor_account_id`/`event_id` are deliberately plain `uuid` columns without a foreign-key constraint yet — the referenced `accounts`/`events` tables belong to `IMP-021`, which remains `BLOCKED` on the unresolved authentication decision (`IMP-013`); adding the constraint is `IMP-021`'s job once those tables exist. Disclosed, not silent.
 - Append-only enforcement uses a raw-SQL `BEFORE UPDATE OR DELETE` trigger on `audit_events` rather than a separate database role (role separation is a deployment-topology decision this repository hasn't made yet) — role-independent enforcement of the same invariant.
 - New behavioral tests (`src/db/schema/operations.db.test.ts`) against a real database: dedup-key rejection and `ON CONFLICT DO NOTHING` safe replay, job-execution FK behavior, and audit insert-succeeds/update-rejected/delete-rejected.
-- **Not locally verified:** as with `IMP-020`, Docker Desktop's daemon is unavailable in this environment; GitHub Actions' PostgreSQL service container is the first live verification of these tests.
+- **Not locally verified:** as with `IMP-020`, Docker Desktop's daemon is unavailable in this environment.
+- **Live/CI verification — 2026-08-26:** the first two CI runs on PR #7 each caught a real bug the local environment couldn't: a `sql`` array-interpolation mistake (`= any(${array})` needs an actual array, not comma-separated params — fixed with `in (${sql.join(...)})`), and the append-only trigger assertions checking the wrong error layer (drizzle-orm wraps the raw PostgreSQL error, carrying the trigger's message, in `.cause`, not the top-level message). A third run then caught a test-reset bug (dropping only the `public` schema left the separate `drizzle` migration-history schema believing everything was already applied, so re-migration silently did nothing). All three fixed and reverified live; the corrected run ([`32908549386`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32908549386)) passed all 10 database integration tests against a real PostgreSQL 18 container. PR #7 merged normally as `a2af4f11c9099caa85ac9a09174ecc6bce9ab131`; the push-to-`main` run ([`32908707050`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32908707050)) also passed.
 - No provider activation, production database, production credential, or production/staging resource was created.
 - **Migration/action required:** None — this is the first migration introducing tables; nothing pre-existing to migrate. **Compatibility/customer impact:** None — no application release exists.
 

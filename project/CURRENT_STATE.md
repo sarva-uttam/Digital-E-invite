@@ -5,7 +5,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.20  
+**Version:** 1.21  
 **Snapshot date:** 2026-08-26  
 **Repository:** `monsieur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -48,7 +48,7 @@ The product, domain, architecture, security, testing, deployment, roadmap, prici
 **Implementation state:** `IMP-004`, `IMP-005`, and `IMP-010` are verified and merged; no product feature or downstream task has started  
 **Production state:** No production application exists; production deployment is unauthorized  
 **Customer availability:** Not launched  
-**Next action:** `IMP-020` is `VERIFIED` (merged as `1710eff1a1fa9528d018b98ad26fe4562bb97936`). `IMP-022 — Implement append-only audit and outbox foundations` is `IMPLEMENTED` (outbox/job/audit tables and the audit append-only trigger; pull request open). `IMP-050` is `READY`. `IMP-021` remains `BLOCKED` by `IMP-013` (unresolved authentication decision).
+**Next action:** `IMP-020` and `IMP-022` are `VERIFIED` (merged as `1710eff1a1fa9528d018b98ad26fe4562bb97936` and `a2af4f11c9099caa85ac9a09174ecc6bce9ab131`). `IMP-023 — Implement entitlement ledger and projections` is `IN_PROGRESS`. `IMP-050` is `READY`. `IMP-021` remains `BLOCKED` by `IMP-013` (unresolved authentication decision).
 
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Owner decision `DEC-024` grants task-controlled application implementation authorization; only `READY` tasks may be performed.
 
@@ -531,6 +531,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.20.  
+**Approved version:** 1.21.  
 **Snapshot date:** 2026-08-26.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, and `IMP-020` are recorded `VERIFIED` under Decisions 5/6/9. `IMP-022` is `IMPLEMENTED` (outbox/job/audit tables per `docs/06_DATABASE_DESIGN.md` §16), pull request open; `IMP-050` is `READY`. Package model reconciled to wedding-only, four-tier Bronze/Silver/Gold/Platinum per `DEC-025`–`DEC-028`.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`, and `IMP-022` are recorded `VERIFIED` under Decisions 5/6/9. `IMP-023` is `IN_PROGRESS`; `IMP-050` is `READY`. Package model reconciled to wedding-only, four-tier Bronze/Silver/Gold/Platinum per `DEC-025`–`DEC-028`.

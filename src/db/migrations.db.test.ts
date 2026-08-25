@@ -68,10 +68,17 @@ describe("migration application from an empty database", () => {
     `);
     expect(historyTable.rows[0]?.exists).toBe(true);
 
+    // Drizzle's sql`` tag interpolates a JS array as comma-separated
+    // scalar params, not a Postgres array literal, so `= any(${array})`
+    // fails with "op ANY/ALL (array) requires array on right side" — use
+    // `in (...)` instead, which is exactly what that parameter shape is.
     const expectedTables = ["audit_events", "job_executions", "outbox_events"];
     const tables = await client.db.execute<{ table_name: string }>(sql`
       select table_name from information_schema.tables
-      where table_schema = 'public' and table_name = any(${expectedTables})
+      where table_schema = 'public' and table_name in (${sql.join(
+        expectedTables.map((t) => sql`${t}`),
+        sql`, `,
+      )})
     `);
     expect(tables.rows.map((r) => r.table_name).sort()).toEqual(expectedTables);
 

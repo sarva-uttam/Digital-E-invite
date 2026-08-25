@@ -18,6 +18,40 @@ function must<T>(value: T | undefined, what: string): T {
   return value;
 }
 
+/**
+ * Asserts `promise` rejects and that `pattern` matches somewhere in the
+ * error message chain. drizzle-orm's node-postgres driver wraps the raw
+ * PostgreSQL error (whose `.message` carries our trigger's RAISE
+ * EXCEPTION text) in its own "Failed query: ..." error and attaches the
+ * original as `.cause` — `.rejects.toThrow(pattern)` only checks the
+ * outer message, so it never sees the database's own error text. Walking
+ * `.cause` finds it.
+ */
+async function expectRejectionMatching(
+  promise: Promise<unknown>,
+  pattern: RegExp,
+): Promise<void> {
+  let caught: unknown;
+  try {
+    await promise;
+  } catch (error) {
+    caught = error;
+  }
+  expect(caught, "expected promise to reject").toBeInstanceOf(Error);
+
+  const messages: string[] = [];
+  let current: unknown = caught;
+  while (current instanceof Error) {
+    messages.push(current.message);
+    current = current.cause;
+  }
+
+  expect(
+    messages.some((message) => pattern.test(message)),
+    `expected one of [${messages.join(" | ")}] to match ${pattern}`,
+  ).toBe(true);
+}
+
 let client: DbClient;
 
 beforeAll(() => {
@@ -54,8 +88,13 @@ describe("outbox_events — replay/idempotency", () => {
 
     await client.db.insert(outboxEvents).values(row);
 
-    await expect(client.db.insert(outboxEvents).values(row)).rejects.toThrow(
-      /deduplication_key/,
+    // Matches the constraint-violation error itself (via the .cause chain
+    // — see expectRejectionMatching), not the INSERT statement's own SQL
+    // text, which would trivially contain the column name "deduplication_key"
+    // regardless of whether the constraint actually fired.
+    await expectRejectionMatching(
+      client.db.insert(outboxEvents).values(row),
+      /outbox_events_deduplication_key_unique/,
     );
   });
 
@@ -176,12 +215,13 @@ describe("audit_events — database-enforced append-only", () => {
       })
       .returning();
 
-    await expect(
+    await expectRejectionMatching(
       client.db
         .update(auditEvents)
         .set({ reasonNote: "attempted correction" })
         .where(sql`${auditEvents.id} = ${must(row, "inserted audit row").id}`),
-    ).rejects.toThrow(/append-only/);
+      /append-only/,
+    );
   });
 
   it("rejects DELETE via the append-only trigger", async () => {
@@ -195,10 +235,11 @@ describe("audit_events — database-enforced append-only", () => {
       })
       .returning();
 
-    await expect(
+    await expectRejectionMatching(
       client.db
         .delete(auditEvents)
         .where(sql`${auditEvents.id} = ${must(row, "inserted audit row").id}`),
-    ).rejects.toThrow(/append-only/);
+      /append-only/,
+    );
   });
 });

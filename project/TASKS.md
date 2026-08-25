@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.16  
+**Version:** 1.18  
 **Approved date:** 2026-08-26  
 **Current phase:** Application implementation — authorized, continuous, dependency-aware (`DEC-028`)  
 **Application implementation authorization:** GRANTED — this is the single authoritative execution ledger (`project/TASKS_V2.md` retired); ordinary dependency-safe tasks may proceed continuously without a routine approval pause, subject to unchanged hard stops
@@ -456,7 +456,7 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 ### IMP-020 — Create migration system and base schema
 
 **Priority:** P0  
-**State:** IMPLEMENTED — evidence below; PR merge/CI evidence to follow once merged  
+**State:** VERIFIED  
 **Dependencies:** IMP-003, IMP-010  
 **Acceptance criteria:** versioned forward migrations; documented rollback/repair; local/test database setup; schema matches approved database design.
 
@@ -474,7 +474,8 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 - `package.json`: added `pg@8.23.0`/`@types/pg@8.23.1` (both verified to exist on the npm registry at implementation time) and `db:generate`/`db:check`/`db:migrate`/`test:db` scripts; no `push`/schema-sync script was added, matching §23's "Production never uses automatic schema push/synchronization."
 - **Rollback/repair, documented in `README.md`:** migration history is append-only and immutable; a bad migration is corrected by a new forward migration, never by editing/deleting an applied one. There is no destructive migration to roll back yet since the committed schema has no tables.
 - **Local verification performed (2026-08-26):** `npm run format:check`/`lint`/`typecheck`/`test`/`build` all pass, with only the pre-existing, already-documented Windows `core.autocrlf`/`server-only` local-checkout artifacts present (verified staged git blobs are LF, matching the repository's committed convention, not CRLF); `npx drizzle-kit generate` and `npx drizzle-kit check` both succeed against the empty schema with no DB connection required; `npm audit --audit-level=high` reports only the 4 pre-existing moderate `esbuild`/`drizzle-kit` findings; the secret scan reports no known patterns.
-- **Local verification NOT performed:** Docker Desktop's daemon is not running in this environment (CLI present, no backend), so `npm run test:db` and a live `npm run db:migrate` could not be exercised locally. This is disclosed rather than assumed passing — the GitHub Actions PostgreSQL service container in the pushed PR is the actual, first live verification of the migration/integration-test steps added here; its result is the authoritative evidence for those steps, recorded once the PR's CI run completes.
+- **Local verification NOT performed:** Docker Desktop's daemon is not running in this environment (CLI present, no backend), so `npm run test:db` and a live `npm run db:migrate` could not be exercised locally. Disclosed rather than assumed passing.
+- **Live/CI verification — 2026-08-26:** PR #6 (`imp-020-migration-system`) initially failed `Format check` on `src/db/migrations/meta/_journal.json` (drizzle-kit's own generated JSON did not match this repo's Prettier style, not the local Windows CRLF artifact); fixed in commit `e52133b122123f8f9a8c79f47c71238075a5b915` and documented in `README.md` ("run `npm run format` after `db:generate`"). The corrected PR's GitHub-hosted `CI / quality-gate` run [`32904136112`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32904136112) passed all steps, including the four new IMP-020 steps against a real disposable PostgreSQL 18 service container: migration-history consistency check, schema-drift check, applying migrations, and database integration tests (which verified PostgreSQL major version 18, that `uuidv7()` is callable and returns a version-7 UUID, and that applying the migration history is idempotent). PR #6 merged normally as `1710eff1a1fa9528d018b98ad26fe4562bb97936`; the immediate push-to-`main` CI run [`32904336343`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32904336343) also passed. Local `main` fast-forwarded `4cc6a44..1710eff` and matches `origin/main`.
 - No provider selection/activation, production database, production credential, or production/staging resource was created. `docker-compose.yml`'s Postgres instance and the CI service container are both disposable and non-production.
 
 ### IMP-021 — Implement users, events, and event versions
@@ -487,9 +488,20 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 ### IMP-022 — Implement append-only audit and outbox foundations
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** IMPLEMENTED — evidence below; PR merge/CI evidence to follow once merged  
 **Dependencies:** IMP-020  
 **Acceptance criteria:** append-only audit events; safe actor/reason metadata; transactional outbox or approved equivalent; replay/idempotency tests.
+
+**Implementation evidence — 2026-08-26:**
+
+- Added `src/db/schema/operations.ts` implementing `docs/06_DATABASE_DESIGN.md` §16 exactly: `outbox_events` (§16.1, transactional outbox — domain change and outbox row inserted in the same transaction by the caller; unique `deduplication_key`), `job_executions` (§16.2, execution history, FK to `outbox_events`), `audit_events` (§16.3, append-only). Also added the §19-specified indexes: `outbox_events(available_at)` partial (unprocessed only), `audit_events(event_id, occurred_at desc)`, `audit_events(actor_account_id, occurred_at desc)`.
+- **Deferred foreign keys (disclosed, not silent):** `audit_events.actor_account_id`/`event_id` are plain `uuid` columns without a DB-level foreign-key constraint. The design doc specifies them as references to `accounts(id)`/`events(id)`, but those tables belong to `IMP-021`, which is `BLOCKED` on the unresolved authentication decision (`IMP-013`). Adding the constraint is `IMP-021`'s responsibility once those tables exist (additive `ALTER TABLE`, consistent with §23's expand-and-contract policy). `target_id` has no FK even in the approved design (polymorphic target), so this does not weaken a pattern the schema otherwise treats as strict.
+- **Append-only enforcement:** rather than inventing database role separation (a deployment-topology decision this repository has not made — §21, gated behind `docs/12_DEPLOYMENT.md`), added a raw-SQL migration (`0001_audit_events_append_only_trigger.sql`, per §4's allowance for reviewed raw SQL) with a `BEFORE UPDATE OR DELETE` trigger that raises on any attempt to modify or delete an `audit_events` row, regardless of role — role-independent enforcement of the same §16.3 invariant a role grant would provide, and exactly the "small, stable database invariant" §17 reserves triggers for.
+- `src/db/schema/operations.db.test.ts`: behavioral tests against a real database — `outbox_events` unique-`deduplication_key` rejection and an `ON CONFLICT DO NOTHING` safe-replay path (constraint-level idempotency); `job_executions` FK behavior including a null `outbox_event_id`; `audit_events` insert succeeds, UPDATE and DELETE both rejected by the trigger.
+- `src/db/migrations.db.test.ts` updated: the "applies migration history to an empty database" test now also asserts the three real tables exist after a from-scratch apply (previously asserted only the tooling worked against an empty schema).
+- **Local verification:** `format`/`lint`/`typecheck`/`test`/`build` all pass (same pre-existing, already-documented Windows CRLF/`server-only` artifacts as `IMP-020`, no new ones); `drizzle-kit generate`/`check` report no drift after generating both migrations; `npm audit --audit-level=high` and the secret scan are unchanged/clean.
+- **Not locally verified:** as with `IMP-020`, Docker Desktop's daemon is unavailable in this environment, so `operations.db.test.ts` and the updated `migrations.db.test.ts` assertions could not run locally. GitHub Actions' PostgreSQL service container is the first live verification.
+- No provider selection/activation, production database, production credential, or production/staging resource was created.
 
 ### IMP-023 — Implement entitlement ledger and projections
 
@@ -597,7 +609,7 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 ### IMP-050 — Implement versioned catalogue and price-book model
 
 **Priority:** P0  
-**State:** BLOCKED  
+**State:** READY — `DEC-025` provides the approved catalog/price-book values (base MUR prices, sandbox-only; production charging remains separately gated by `IMP-051`–`IMP-055`)  
 **Dependencies:** IMP-020, approved launch price book (amounts may remain sandbox-only until approved)  
 **Acceptance criteria:** immutable package/price/tax/currency snapshots; MUR primary; market activation; no client authority; historical prices preserved.
 
@@ -925,6 +937,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.16.  
+**Approved version:** 1.18.  
 **Approved date:** 2026-08-26.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-020` is `IMPLEMENTED` with local evidence recorded above; PR merge/CI evidence follows once merged, at which point `IMP-021`, `IMP-022`, and `IMP-050` become eligible under their recorded dependencies (though `IMP-021` remains additionally `BLOCKED` by `IMP-013`, itself blocked on the unresolved authentication decision). Specialist-decision gates remain binding. This ledger is the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-022` is `IMPLEMENTED` with local evidence recorded above; PR merge/CI evidence follows once merged, at which point `IMP-023` becomes `READY`. `IMP-050` is `READY`. `IMP-021` remains `BLOCKED` by `IMP-013`, itself blocked on the unresolved authentication decision. Specialist-decision gates remain binding. This ledger is the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.

@@ -245,7 +245,7 @@ The migration system and tooling are established; the committed schema is intent
 
 ```bash
 docker compose up -d postgres   # disposable local PostgreSQL 18 (docker-compose.yml)
-npm run db:generate             # generate a migration from schema changes (review the SQL before committing)
+npm run db:generate && npm run format   # generate a migration from schema changes, then format (drizzle-kit's own JSON output does not match this repo's Prettier style); review the SQL before committing
 npm run db:check                # migration-history consistency / drift check
 DATABASE_DIRECT_URL=postgresql://app_local:local_only_password@localhost:5432/ai_invite_dev npm run db:migrate
 npm run test:db                 # database integration tests; requires TEST_DATABASE_URL

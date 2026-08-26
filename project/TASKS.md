@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.20  
+**Version:** 1.21  
 **Approved date:** 2026-08-26  
 **Current phase:** Application implementation — authorized, continuous, dependency-aware (`DEC-028`)  
 **Application implementation authorization:** GRANTED — this is the single authoritative execution ledger (`project/TASKS_V2.md` retired); ordinary dependency-safe tasks may proceed continuously without a routine approval pause, subject to unchanged hard stops
@@ -507,7 +507,7 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 ### IMP-023 — Implement entitlement ledger and projections
 
 **Priority:** P0  
-**State:** IMPLEMENTED — evidence below; PR merge/CI evidence to follow once merged  
+**State:** VERIFIED  
 **Dependencies:** IMP-020, IMP-022  
 **Acceptance criteria:** immutable grants/reservations/consumption/releases/reversals; 1/2/3/5, 2/4/8/12, 75/150/300/750, hosting/language rules per `DEC-025`; atomic concurrency tests.
 
@@ -522,7 +522,8 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 - Added `src/db/repositories/entitlements.ts` implementing §12.3's atomic reservation rule: `grantEntitlements`, `reserveEntitlement`, `consumeEntitlement`, `releaseEntitlement`, `adjustEntitlement`, and `reconstructBalanceFromLedger` (rebuilds a balance purely from the ledger, independent of the projection, per §12.2's "must be fully reconstructable from the ledger"). Every write is one transaction that locks the balance row via `INSERT ... ON CONFLICT DO UPDATE` (Postgres takes the same row-level lock this pattern would with an explicit `SELECT ... FOR UPDATE`), checks availability/sufficiency, appends the ledger entry idempotently (`ON CONFLICT DO NOTHING` on the same key the schema's unique index enforces), and only then updates the balance — so a duplicate call with the same idempotency key is a safe no-op rather than a double-apply. Balance-update semantics per entry type are documented as an explicit internal convention at the top of the file, since the design doc names the columns and entry types but doesn't itself specify the arithmetic.
 - `src/db/repositories/entitlements.db.test.ts`: grant idempotency-on-replay; reserve/consume/release lifecycle with the ledger-reconstructed balance verified against the projection; rejection of over-capacity reservation; positive and negative `adjustEntitlement` corrections; and the required **atomic concurrency test** — 10 concurrent reservation attempts (each its own database connection, not a shared one) against a single available unit, asserting exactly 1 succeeds and 9 fail with `InsufficientEntitlementError`, proving the row-lock actually serializes concurrent writers rather than merely looking correct under sequential testing.
 - **Local verification:** `format`/`lint`/`typecheck`/`test`/`build` all pass (same pre-existing Windows CRLF/`server-only` artifacts as `IMP-020`/`IMP-022`, no new ones); `drizzle-kit generate`/`check` report no drift after generating both migrations; `npm audit --audit-level=high` and the secret scan are unchanged/clean.
-- **Not locally verified:** as with `IMP-020`/`IMP-022`, Docker Desktop's daemon is unavailable in this environment, so none of the database integration tests — including the concurrency test, whose correctness depends on real Postgres row-locking behavior that cannot be meaningfully simulated — could run locally. GitHub Actions' PostgreSQL service container is the first live verification.
+- **Not locally verified:** as with `IMP-020`/`IMP-022`, Docker Desktop's daemon is unavailable in this environment, so none of the database integration tests — including the concurrency test, whose correctness depends on real Postgres row-locking behavior that cannot be meaningfully simulated — could run locally.
+- **Live/CI verification — 2026-08-26:** PR #8 (`imp-023-entitlement-ledger`) passed `CI / quality-gate` on the first run ([`32910597945`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32910597945)), including all IMP-020-established database steps and the atomic concurrency test against a real PostgreSQL 18 container — 10 concurrent reservation attempts, exactly 1 succeeded, 9 correctly rejected. PR #8 merged normally as `0edb9d2e2b1c613ab74d6e415e84a42d240e485d`; the push-to-`main` run ([`32913465761`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32913465761)) also passed. Local `main` fast-forwarded `a2af4f1..0edb9d2`.
 - No provider selection/activation, production database, production credential, or production/staging resource was created.
 
 ### IMP-024 — Implement retention and deletion foundations
@@ -624,7 +625,7 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 ### IMP-050 — Implement versioned catalogue and price-book model
 
 **Priority:** P0  
-**State:** READY — `DEC-025` provides the approved catalog/price-book values (base MUR prices, sandbox-only; production charging remains separately gated by `IMP-051`–`IMP-055`)  
+**State:** IN_PROGRESS  
 **Dependencies:** IMP-020, approved launch price book (amounts may remain sandbox-only until approved)  
 **Acceptance criteria:** immutable package/price/tax/currency snapshots; MUR primary; market activation; no client authority; historical prices preserved.
 
@@ -952,6 +953,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.20.  
+**Approved version:** 1.21.  
 **Approved date:** 2026-08-26.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`, `IMP-022`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-023` is `IMPLEMENTED` with local evidence recorded above; PR merge/CI evidence follows once merged. `IMP-050` is `READY`. `IMP-021` remains `BLOCKED` by `IMP-013`, itself blocked on the unresolved authentication decision. Specialist-decision gates remain binding. This ledger is the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`, `IMP-022`, `IMP-023`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-050` is `IN_PROGRESS`. `IMP-021` remains `BLOCKED` by `IMP-013`, itself blocked on the unresolved authentication decision. Specialist-decision gates remain binding. This ledger is the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.

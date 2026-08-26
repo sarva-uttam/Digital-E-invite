@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.22  
+**Version:** 1.23  
 **Approved date:** 2026-08-26  
 **Current phase:** Application implementation — continuous, dependency-aware, task-ledger-controlled (`DEC-028`)  
 **Application release status:** No application release exists
@@ -334,13 +334,14 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 **Track:** APPLICATION  
 **Application version:** 0.1.0 (unreleased)  
-**Status:** IMPLEMENTED — pull request open; merge/CI evidence to follow
+**Status:** VERIFIED — merged as `0edb9d2e2b1c613ab74d6e415e84a42d240e485d`; not deployed
 
 - Added `entitlement_ledger_entries` and `entitlement_balances` per `docs/06_DATABASE_DESIGN.md` §12: an append-only ledger (all 7 entry types; database trigger prevents UPDATE/DELETE, same pattern as `IMP-022`'s `audit_events`) with a transactionally maintained balance projection reconstructable purely from the ledger.
 - Added `src/lib/entitlements.ts` deriving grant quantities from `src/lib/catalog.ts` — the single approved source of the `DEC-025` numbers — instead of a second copy. Hosting duration is deliberately excluded (a time window, not a ledger-trackable quantity; owned by `IMP-062`).
 - Added `src/db/repositories/entitlements.ts` implementing §12.3's atomic reservation rule: every grant/reserve/consume/release/adjust operation locks the balance row (`INSERT ... ON CONFLICT DO UPDATE`, which takes the same row lock an explicit `SELECT ... FOR UPDATE` would), checks availability, and appends the ledger entry idempotently in one transaction.
 - New tests include the required atomic concurrency case: 10 concurrent reservation attempts (separate database connections) against a single available unit — exactly 1 succeeds, 9 fail with a typed insufficiency error, proving the lock actually serializes concurrent writers.
 - **Not locally verified:** as with `IMP-020`/`IMP-022`, Docker Desktop's daemon is unavailable in this environment — none of the database tests, including the concurrency test (whose correctness depends on real Postgres locking behavior), could run locally.
+- **Live/CI verification — 2026-08-26:** unlike `IMP-020`/`IMP-022`, PR #8 passed `CI / quality-gate` on the first run ([`32910597945`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32910597945)) — the concurrency test confirmed 10 concurrent reservation attempts against a single available unit resolved to exactly 1 success and 9 correct rejections on a real PostgreSQL 18 container. Merged as `0edb9d2e2b1c613ab74d6e415e84a42d240e485d`; push-to-`main` run ([`32913465761`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32913465761)) also passed.
 - No provider activation, production database, production credential, or production/staging resource was created.
 - **Migration/action required:** None. **Compatibility/customer impact:** None — no application release exists.
 

@@ -6,3 +6,4 @@
  * numbered section of docs/06_DATABASE_DESIGN.md.
  */
 export * from "./operations";
+export * from "./entitlements";

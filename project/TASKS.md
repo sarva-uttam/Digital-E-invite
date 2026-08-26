@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.21  
+**Version:** 1.22  
 **Approved date:** 2026-08-26  
 **Current phase:** Application implementation — authorized, continuous, dependency-aware (`DEC-028`)  
 **Application implementation authorization:** GRANTED — this is the single authoritative execution ledger (`project/TASKS_V2.md` retired); ordinary dependency-safe tasks may proceed continuously without a routine approval pause, subject to unchanged hard stops
@@ -625,9 +625,21 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 ### IMP-050 — Implement versioned catalogue and price-book model
 
 **Priority:** P0  
-**State:** IN_PROGRESS  
+**State:** IMPLEMENTED — evidence below; PR merge/CI evidence to follow once merged  
 **Dependencies:** IMP-020, approved launch price book (amounts may remain sandbox-only until approved)  
 **Acceptance criteria:** immutable package/price/tax/currency snapshots; MUR primary; market activation; no client authority; historical prices preserved.
+
+**Implementation evidence — 2026-08-26:**
+
+- Added `src/db/schema/catalogue.ts` implementing `docs/06_DATABASE_DESIGN.md` §10 exactly: `package_definitions` (§10.1), `entitlement_definitions` (§10.2, FK to `package_definitions`), `price_book_entries` (§10.3, FK to `package_definitions`, integer minor-unit `amountMinor`, never floating point), `purchases` (§10.4, FK to `package_definitions`/`price_book_entries`), `purchase_entitlement_snapshots` (§10.5, FK to `purchases`).
+- **Deferred foreign keys**, same disclosed pattern as `IMP-022`/`IMP-023`: `purchases.eventId`/`accountId` are plain `uuid` columns without FK constraints — the referenced `events`/`accounts` tables belong to `IMP-021`, not yet implemented. Every other FK in this task's schema (to `package_definitions`, `price_book_entries`, `purchases`) is real and enforced from the start, since this task creates all three referenced tables itself.
+- **Append-only enforcement** on `purchase_entitlement_snapshots` (same trigger pattern as `IMP-022`/`IMP-023`): unlike `purchases` (which has a legitimate mutable `status` lifecycle — `CREATED` → `PAYMENT_PENDING` → `PAID` → ...), a purchase's entitlement snapshot has no legitimate update path at all once written.
+- `package_definitions.status`/`price_book_entries.status` use the closest approved analogue, `product/PRICING_RULES.md` §6's price-book state vocabulary (`DRAFT`/`SCHEDULED`/`ACTIVE`/`RETIRED`/`CANCELLED`) — the design doc names the columns but not this vocabulary explicitly; disclosed as an engineering choice, not a new commercial decision. `purchases.status` uses exactly the 8 states §10.4 specifies.
+- Added `src/db/repositories/catalogue.ts`: `ensureCatalogueSeeded()` idempotently seeds all four `DEC-025` tiers (from `src/lib/catalog.ts`, the single approved source — not a second copy) as version-1 `ACTIVE` package definitions with 5 entitlement definitions each (the 4 ledger-trackable ones plus `hosting_days`, which `IMP-023` deliberately excluded from the runtime ledger as a time window rather than a consumable, but which is still part of what a package *defines*) and one `MU`/`MUR` price-book entry; `getActivePackageDefinition`/`getActivePriceBookEntry`; `createPriceBookEntry` (rejects overlapping active intervals per §10.3); `createPurchaseSnapshot`, whose signature has **no amount parameter at all** — every amount is looked up from the currently active price-book entry, structurally (not just conventionally) satisfying "no client authority."
+- `src/db/repositories/catalogue.db.test.ts`: seed correctness and idempotency against the exact `catalog.ts` amounts; purchase-snapshot total derivation with no client-supplied amount; **historical-price preservation** — retiring the seeded price and activating a new one leaves an already-created purchase's snapshot amounts unchanged; overlapping-price-interval rejection; append-only trigger rejection of UPDATE/DELETE on `purchase_entitlement_snapshots`.
+- **Local verification:** `format`/`lint`/`typecheck`/`test`/`build` all pass (same pre-existing Windows CRLF/`server-only` artifacts as prior IMP-020/022/023 evidence, no new ones); `drizzle-kit generate`/`check` report no drift after generating all three migrations (including the append-only trigger); `npm audit --audit-level=high` and the secret scan are unchanged/clean.
+- **Not locally verified:** as with `IMP-020`/`IMP-022`/`IMP-023`, Docker Desktop's daemon is unavailable in this environment, so none of the database integration tests could run locally. GitHub Actions' PostgreSQL service container is the first live verification.
+- No provider selection/activation, production database, production credential, or production/staging resource was created. No production price was published or charged — these are approved catalog/sandbox values per `DEC-025`, and actual payment processing remains gated behind `IMP-051`–`IMP-055`.
 
 ### IMP-051 — Research and approve payment provider/acquirer
 
@@ -953,6 +965,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.21.  
+**Approved version:** 1.22.  
 **Approved date:** 2026-08-26.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`, `IMP-022`, `IMP-023`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-050` is `IN_PROGRESS`. `IMP-021` remains `BLOCKED` by `IMP-013`, itself blocked on the unresolved authentication decision. Specialist-decision gates remain binding. This ledger is the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`, `IMP-022`, `IMP-023`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-050` is `IMPLEMENTED` with local evidence recorded above; PR merge/CI evidence follows once merged. `IMP-021` remains `BLOCKED` by `IMP-013`, itself blocked on the unresolved authentication decision. Specialist-decision gates remain binding. This ledger is the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.

@@ -3,7 +3,7 @@
 **File:** `project/CHANGELOG.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.24  
+**Version:** 1.25  
 **Approved date:** 2026-08-26  
 **Current phase:** Application implementation — continuous, dependency-aware, task-ledger-controlled (`DEC-028`)  
 **Application release status:** No application release exists
@@ -349,12 +349,13 @@ Never include secrets, private guest data, payment data, vulnerability exploitat
 
 **Track:** APPLICATION  
 **Application version:** 0.1.0 (unreleased)  
-**Status:** IMPLEMENTED — pull request open; merge/CI evidence to follow
+**Status:** VERIFIED — merged as `8e2bbb7903acdd137647b6b9c934bad060ffc09f`; not deployed
 
 - Added `package_definitions`, `entitlement_definitions`, `price_book_entries`, `purchases`, `purchase_entitlement_snapshots` per `docs/06_DATABASE_DESIGN.md` §10. `purchase_entitlement_snapshots` is append-only (same database-trigger pattern as `IMP-022`/`IMP-023`); `purchases` itself keeps a legitimate mutable `status` lifecycle (`CREATED` → `PAYMENT_PENDING` → `PAID` → ...), so it is not trigger-locked.
 - Added `src/db/repositories/catalogue.ts`: `ensureCatalogueSeeded()` idempotently loads all four `DEC-025` package tiers from `src/lib/catalog.ts` (not a second copy of the numbers) into version-1 `ACTIVE` catalogue rows with an `MU`/`MUR` price-book entry each; `createPriceBookEntry()` rejects overlapping active price intervals (§10.3); `createPurchaseSnapshot()` has **no amount parameter in its signature at all** — every amount is looked up from the currently active price-book entry, structurally (not just conventionally) preventing client-supplied prices.
 - New tests confirm historical-price preservation: retiring the seeded price and activating a new one leaves an already-created purchase's snapshot amounts unchanged, satisfying §10.4/§10.5's "captures exactly what was sold even if package definitions later change."
 - **Not locally verified:** as with `IMP-020`/`IMP-022`/`IMP-023`, Docker Desktop's daemon is unavailable in this environment — none of the database tests could run locally.
+- **Live/CI verification — 2026-08-26:** PR #9 passed `CI / quality-gate` on the first run ([`32915046338`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32915046338)). Merged as `8e2bbb7903acdd137647b6b9c934bad060ffc09f`; push-to-`main` run ([`32915766527`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32915766527)) also passed.
 - No provider activation, production database, production credential, or production/staging resource was created. No production price was published or charged — these are approved catalog/sandbox values (`DEC-025`); actual payment processing remains gated behind `IMP-051`–`IMP-055`.
 - **Migration/action required:** None. **Compatibility/customer impact:** None — no application release exists.
 

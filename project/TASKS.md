@@ -3,7 +3,7 @@
 **File:** `project/TASKS.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.22  
+**Version:** 1.23  
 **Approved date:** 2026-08-26  
 **Current phase:** Application implementation — authorized, continuous, dependency-aware (`DEC-028`)  
 **Application implementation authorization:** GRANTED — this is the single authoritative execution ledger (`project/TASKS_V2.md` retired); ordinary dependency-safe tasks may proceed continuously without a routine approval pause, subject to unchanged hard stops
@@ -625,7 +625,7 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 ### IMP-050 — Implement versioned catalogue and price-book model
 
 **Priority:** P0  
-**State:** IMPLEMENTED — evidence below; PR merge/CI evidence to follow once merged  
+**State:** VERIFIED  
 **Dependencies:** IMP-020, approved launch price book (amounts may remain sandbox-only until approved)  
 **Acceptance criteria:** immutable package/price/tax/currency snapshots; MUR primary; market activation; no client authority; historical prices preserved.
 
@@ -638,7 +638,8 @@ The retired `project/TASKS_V2.md`'s remaining items map onto this ledger's exist
 - Added `src/db/repositories/catalogue.ts`: `ensureCatalogueSeeded()` idempotently seeds all four `DEC-025` tiers (from `src/lib/catalog.ts`, the single approved source — not a second copy) as version-1 `ACTIVE` package definitions with 5 entitlement definitions each (the 4 ledger-trackable ones plus `hosting_days`, which `IMP-023` deliberately excluded from the runtime ledger as a time window rather than a consumable, but which is still part of what a package *defines*) and one `MU`/`MUR` price-book entry; `getActivePackageDefinition`/`getActivePriceBookEntry`; `createPriceBookEntry` (rejects overlapping active intervals per §10.3); `createPurchaseSnapshot`, whose signature has **no amount parameter at all** — every amount is looked up from the currently active price-book entry, structurally (not just conventionally) satisfying "no client authority."
 - `src/db/repositories/catalogue.db.test.ts`: seed correctness and idempotency against the exact `catalog.ts` amounts; purchase-snapshot total derivation with no client-supplied amount; **historical-price preservation** — retiring the seeded price and activating a new one leaves an already-created purchase's snapshot amounts unchanged; overlapping-price-interval rejection; append-only trigger rejection of UPDATE/DELETE on `purchase_entitlement_snapshots`.
 - **Local verification:** `format`/`lint`/`typecheck`/`test`/`build` all pass (same pre-existing Windows CRLF/`server-only` artifacts as prior IMP-020/022/023 evidence, no new ones); `drizzle-kit generate`/`check` report no drift after generating all three migrations (including the append-only trigger); `npm audit --audit-level=high` and the secret scan are unchanged/clean.
-- **Not locally verified:** as with `IMP-020`/`IMP-022`/`IMP-023`, Docker Desktop's daemon is unavailable in this environment, so none of the database integration tests could run locally. GitHub Actions' PostgreSQL service container is the first live verification.
+- **Not locally verified:** as with `IMP-020`/`IMP-022`/`IMP-023`, Docker Desktop's daemon is unavailable in this environment, so none of the database integration tests could run locally.
+- **Live/CI verification — 2026-08-26:** PR #9 (`imp-050-catalogue-price-book`) passed `CI / quality-gate` on the first run ([`32915046338`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32915046338)), including all IMP-020-established database steps. PR #9 merged normally as `8e2bbb7903acdd137647b6b9c934bad060ffc09f`; the push-to-`main` run ([`32915766527`](https://github.com/monsieur-zordi/Digital-E-invite/actions/runs/32915766527)) also passed. Local `main` fast-forwarded `0edb9d2..8e2bbb7`.
 - No provider selection/activation, production database, production credential, or production/staging resource was created. No production price was published or charged — these are approved catalog/sandbox values per `DEC-025`, and actual payment processing remains gated behind `IMP-051`–`IMP-055`.
 
 ### IMP-051 — Research and approve payment provider/acquirer
@@ -965,6 +966,6 @@ If any requirement cannot be verified, the task remains `IN_REVIEW`, `IMPLEMENTE
 ## 21. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.22.  
+**Approved version:** 1.23.  
 **Approved date:** 2026-08-26.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`, `IMP-022`, `IMP-023`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-050` is `IMPLEMENTED` with local evidence recorded above; PR merge/CI evidence follows once merged. `IMP-021` remains `BLOCKED` by `IMP-013`, itself blocked on the unresolved authentication decision. Specialist-decision gates remain binding. This ledger is the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`, `IMP-022`, `IMP-023`, `IMP-050`, and (reconciled) `IMP-006` are `VERIFIED`/`IMPLEMENTED` with evidence under Decision 10. `IMP-021` remains `BLOCKED` by `IMP-013`, itself blocked on the unresolved authentication decision — owner asked to continue with `IMP-021` once that decision is made; awaiting it. Specialist-decision gates remain binding. This ledger is the single authoritative execution ledger and carries the continuous/dependency-aware execution cadence forward (`DEC-028`); `project/TASKS_V2.md` is retired.

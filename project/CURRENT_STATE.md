@@ -5,7 +5,7 @@
 **File:** `project/CURRENT_STATE.md`  
 **Project:** AI Digital Invitation Platform  
 **Status:** Approved — Owner Approved  
-**Version:** 1.24  
+**Version:** 1.25  
 **Snapshot date:** 2026-08-26  
 **Repository:** `monsieur-zordi/Digital-E-invite`  
 **Branch:** `main`  
@@ -48,7 +48,7 @@ The product, domain, architecture, security, testing, deployment, roadmap, prici
 **Implementation state:** `IMP-004`, `IMP-005`, and `IMP-010` are verified and merged; no product feature or downstream task has started  
 **Production state:** No production application exists; production deployment is unauthorized  
 **Customer availability:** Not launched  
-**Next action:** `IMP-020`, `IMP-022`, and `IMP-023` are `VERIFIED` (merged as `1710eff1a1fa9528d018b98ad26fe4562bb97936`, `a2af4f11c9099caa85ac9a09174ecc6bce9ab131`, and `0edb9d2e2b1c613ab74d6e415e84a42d240e485d`). `IMP-050 — Implement versioned catalogue and price-book model` is `IMPLEMENTED` (catalogue/price-book/purchase-snapshot schema and repository; pull request open). `IMP-021` remains `BLOCKED` by `IMP-013` (unresolved authentication decision).
+**Next action:** `IMP-020`, `IMP-022`, `IMP-023`, and `IMP-050` are `VERIFIED` (merged as `1710eff1a1fa9528d018b98ad26fe4562bb97936`, `a2af4f11c9099caa85ac9a09174ecc6bce9ab131`, `0edb9d2e2b1c613ab74d6e415e84a42d240e485d`, and `8e2bbb7903acdd137647b6b9c934bad060ffc09f`). `IMP-021` remains `BLOCKED` by `IMP-013` (unresolved authentication decision) — the owner has directed continuing with `IMP-021` once that decision is made.
 
 All 28 planned Claude Code package files exist on `main` and are owner-approved. Claude Package v1.0 is formally declared with status `Implementation Preparation Ready`. Documentation-package assembly is complete, the final cross-document audit passed after its approved corrections were committed and verified, and `DOC-001` through `DOC-010` are verified. Owner decision `DEC-024` grants task-controlled application implementation authorization; only `READY` tasks may be performed.
 
@@ -531,6 +531,6 @@ Secrets, private customer data, raw payment data, and sensitive legal/security m
 ## 25. Approval record
 
 **Status:** Approved — Owner Approved.  
-**Approved version:** 1.24.  
+**Approved version:** 1.25.  
 **Snapshot date:** 2026-08-26.  
-**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`, `IMP-022`, and `IMP-023` are recorded `VERIFIED` under Decisions 5/6/9. `IMP-050` is `IMPLEMENTED` (catalogue/price-book/purchase-snapshot model per `docs/06_DATABASE_DESIGN.md` §10), pull request open. Package model reconciled to wedding-only, four-tier Bronze/Silver/Gold/Platinum per `DEC-025`–`DEC-028`.
+**Owner decisions:** Decisions 1–10 approved as proposed; `IMP-004`, `IMP-005`, `IMP-010`, `IMP-020`, `IMP-022`, `IMP-023`, and `IMP-050` are recorded `VERIFIED` under Decisions 5/6/9. `IMP-021` remains `BLOCKED` by `IMP-013`, pending the owner's authentication decision. Package model reconciled to wedding-only, four-tier Bronze/Silver/Gold/Platinum per `DEC-025`–`DEC-028`.
